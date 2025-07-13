@@ -85,12 +85,12 @@ class TestReportError:
         # Verify logger configuration
         mock_get_logger.assert_called_once_with("test_component")
         mock_logger.error.assert_called_once()
-        
+
         # Verify the extra data was passed correctly
         call_args = mock_logger.error.call_args
-        assert call_args[1]['extra']['context'] == "test_context"
-        assert call_args[1]['extra']['data'] == sample_context_data
-        assert call_args[1]['extra']['tags'] == sample_tags
+        assert call_args[1]["extra"]["context"] == "test_context"
+        assert call_args[1]["extra"]["data"] == sample_context_data
+        assert call_args[1]["extra"]["tags"] == sample_tags
 
     @patch("claude_monitor.error_handling.logging.getLogger")
     def test_report_error_with_info_level(
@@ -242,7 +242,6 @@ class TestReportError:
         # Should handle complex exceptions properly
         mock_get_logger.assert_called_once_with("test_component")
         mock_logger.error.assert_called_once()
-
 
     @patch("claude_monitor.error_handling.logging.getLogger")
     def test_report_error_empty_tags_dict(
