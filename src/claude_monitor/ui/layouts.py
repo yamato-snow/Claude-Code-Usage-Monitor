@@ -7,12 +7,12 @@ This module consolidates layout management functionality including:
 
 from __future__ import annotations
 
-from typing import Any, Final, Sequence
+from typing import Final, Sequence
 
 
 class HeaderManager:
     """Manager for header layout and formatting."""
-    
+
     # Type constants for header configuration
     DEFAULT_SEPARATOR_CHAR: Final[str] = "="
     DEFAULT_SEPARATOR_LENGTH: Final[int] = 60
@@ -49,7 +49,7 @@ class HeaderManager:
 
 class ScreenManager:
     """Manager for overall screen layout and organization."""
-    
+
     # Type constants for screen configuration
     DEFAULT_SCREEN_WIDTH: Final[int] = 80
     DEFAULT_SCREEN_HEIGHT: Final[int] = 24
@@ -90,7 +90,9 @@ class ScreenManager:
         self.margin_top = top
         self.margin_bottom = bottom
 
-    def create_full_screen_layout(self, content_sections: Sequence[Sequence[str]]) -> list[str]:
+    def create_full_screen_layout(
+        self, content_sections: Sequence[Sequence[str]]
+    ) -> list[str]:
         """Create full screen layout with multiple content sections.
 
         Args:

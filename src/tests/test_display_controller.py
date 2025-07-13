@@ -1,7 +1,7 @@
 """Tests for DisplayController class."""
 
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict
 from unittest.mock import Mock, patch
 
 import pytest
@@ -61,7 +61,9 @@ class TestDisplayController:
         assert controller.live_manager is not None
         assert controller.notification_manager is not None
 
-    def test_extract_session_data(self, controller: Any, sample_active_block: Dict[str, Any]) -> None:
+    def test_extract_session_data(
+        self, controller: Any, sample_active_block: Dict[str, Any]
+    ) -> None:
         """Test session data extraction."""
         result = controller._extract_session_data(sample_active_block)
 

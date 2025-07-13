@@ -6,7 +6,7 @@ Orchestrates UI components and coordinates display updates.
 import logging
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import pytz
 from rich.console import Console, Group, RenderableType
@@ -71,12 +71,18 @@ class DisplayController:
             return args.custom_limit_tokens, args.custom_limit_tokens
         return token_limit, token_limit
 
-    def _calculate_time_data(self, session_data: Dict[str, Any], current_time: datetime) -> Dict[str, Any]:
+    def _calculate_time_data(
+        self, session_data: Dict[str, Any], current_time: datetime
+    ) -> Dict[str, Any]:
         """Calculate time-related data for the session."""
         return self.session_calculator.calculate_time_data(session_data, current_time)
 
     def _calculate_cost_predictions(
-        self, session_data: Dict[str, Any], time_data: Dict[str, Any], args: Any, cost_limit_p90: Optional[float]
+        self,
+        session_data: Dict[str, Any],
+        time_data: Dict[str, Any],
+        args: Any,
+        cost_limit_p90: Optional[float],
     ) -> Dict[str, Any]:
         """Calculate cost-related predictions."""
         # Determine cost limit based on plan
@@ -573,7 +579,9 @@ class SessionCalculator:
         """Initialize session calculator."""
         self.tz_handler = TimezoneHandler()
 
-    def calculate_time_data(self, session_data: Dict[str, Any], current_time: datetime) -> Dict[str, Any]:
+    def calculate_time_data(
+        self, session_data: Dict[str, Any], current_time: datetime
+    ) -> Dict[str, Any]:
         """Calculate time-related data for the session.
 
         Args:
@@ -621,7 +629,10 @@ class SessionCalculator:
         }
 
     def calculate_cost_predictions(
-        self, session_data: Dict[str, Any], time_data: Dict[str, Any], cost_limit: Optional[float] = None
+        self,
+        session_data: Dict[str, Any],
+        time_data: Dict[str, Any],
+        cost_limit: Optional[float] = None,
     ) -> Dict[str, Any]:
         """Calculate cost-related predictions.
 

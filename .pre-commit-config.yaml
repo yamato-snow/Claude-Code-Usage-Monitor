@@ -6,11 +6,11 @@ repos:
       # Lint-only pass (no auto-fix)
       - id: ruff
         args:
-          - --config=ruff.toml
+          - --config=.ruff.toml
       # Formatting pass (auto-fix)
       - id: ruff-format
         args:
-          - --config=ruff.toml
+          - --config=.ruff.toml
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

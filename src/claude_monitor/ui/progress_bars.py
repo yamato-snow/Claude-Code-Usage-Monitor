@@ -6,7 +6,7 @@ Provides token usage, time progress, and model usage progress bars.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Final, Optional, Protocol, TypedDict
+from typing import Any, Final, Protocol, TypedDict
 
 from claude_monitor.utils.time_utils import percentage
 
@@ -14,6 +14,7 @@ from claude_monitor.utils.time_utils import percentage
 # Type definitions for progress bar components
 class ModelStatsDict(TypedDict, total=False):
     """Type definition for model statistics dictionary."""
+
     input_tokens: int
     output_tokens: int
     total_tokens: int
@@ -22,6 +23,7 @@ class ModelStatsDict(TypedDict, total=False):
 
 class ProgressBarStyleConfig(TypedDict, total=False):
     """Configuration for progress bar styling."""
+
     filled_char: str
     empty_char: str
     filled_style: str | None
@@ -30,13 +32,14 @@ class ProgressBarStyleConfig(TypedDict, total=False):
 
 class ThresholdConfig(TypedDict):
     """Configuration for color thresholds."""
+
     threshold: float
     style: str
 
 
 class ProgressBarRenderer(Protocol):
     """Protocol for progress bar rendering."""
-    
+
     def render(self, *args: Any, **kwargs: Any) -> str:
         """Render the progress bar."""
         ...
@@ -44,12 +47,12 @@ class ProgressBarRenderer(Protocol):
 
 class BaseProgressBar(ABC):
     """Abstract base class for progress bar components."""
-    
+
     # Type constants for validation
     MIN_WIDTH: Final[int] = 10
     MAX_WIDTH: Final[int] = 200
     DEFAULT_WIDTH: Final[int] = 50
-    
+
     # Default styling constants
     DEFAULT_FILLED_CHAR: Final[str] = "█"
     DEFAULT_EMPTY_CHAR: Final[str] = "░"
@@ -67,9 +70,13 @@ class BaseProgressBar(ABC):
     def _validate_width(self) -> None:
         """Validate width parameter."""
         if self.width < self.MIN_WIDTH:
-            raise ValueError(f"Progress bar width must be at least {self.MIN_WIDTH} characters")
+            raise ValueError(
+                f"Progress bar width must be at least {self.MIN_WIDTH} characters"
+            )
         if self.width > self.MAX_WIDTH:
-            raise ValueError(f"Progress bar width must not exceed {self.MAX_WIDTH} characters")
+            raise ValueError(
+                f"Progress bar width must not exceed {self.MAX_WIDTH} characters"
+            )
 
     def _calculate_filled_segments(
         self, percentage: float, max_value: float = 100.0
@@ -158,18 +165,18 @@ class BaseProgressBar(ABC):
 
 class TokenProgressBar(BaseProgressBar):
     """Token usage progress bar component."""
-    
+
     # Color threshold constants
     HIGH_USAGE_THRESHOLD: Final[float] = 90.0
     MEDIUM_USAGE_THRESHOLD: Final[float] = 50.0
     LOW_USAGE_THRESHOLD: Final[float] = 0.0
-    
+
     # Style constants
     HIGH_USAGE_STYLE: Final[str] = "cost.high"
     MEDIUM_USAGE_STYLE: Final[str] = "cost.medium"
     LOW_USAGE_STYLE: Final[str] = "cost.low"
     BORDER_STYLE: Final[str] = "table.border"
-    
+
     # Icon constants
     HIGH_USAGE_ICON: Final[str] = "🔴"
     MEDIUM_USAGE_ICON: Final[str] = "🟡"
@@ -189,14 +196,18 @@ class TokenProgressBar(BaseProgressBar):
         color_thresholds: list[tuple[float, str]] = [
             (self.HIGH_USAGE_THRESHOLD, self.HIGH_USAGE_STYLE),
             (self.MEDIUM_USAGE_THRESHOLD, self.MEDIUM_USAGE_STYLE),
-            (self.LOW_USAGE_THRESHOLD, self.LOW_USAGE_STYLE)
+            (self.LOW_USAGE_THRESHOLD, self.LOW_USAGE_STYLE),
         ]
 
-        filled_style: str = self._get_color_style_by_threshold(percentage, color_thresholds)
+        filled_style: str = self._get_color_style_by_threshold(
+            percentage, color_thresholds
+        )
         bar: str = self._render_bar(
             filled,
             filled_style=filled_style,
-            empty_style=self.BORDER_STYLE if percentage < self.HIGH_USAGE_THRESHOLD else self.MEDIUM_USAGE_STYLE,
+            empty_style=self.BORDER_STYLE
+            if percentage < self.HIGH_USAGE_THRESHOLD
+            else self.MEDIUM_USAGE_STYLE,
         )
 
         if percentage >= self.HIGH_USAGE_THRESHOLD:

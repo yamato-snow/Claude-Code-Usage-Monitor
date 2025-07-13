@@ -3,7 +3,7 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 from claude_monitor.core.plans import DEFAULT_TOKEN_LIMIT, get_token_limit
 from claude_monitor.error_handling import report_error
@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 class MonitoringOrchestrator:
     """Orchestrates monitoring components following SRP."""
 
-    def __init__(self, update_interval: int = 10, data_path: Optional[str] = None) -> None:
+    def __init__(
+        self, update_interval: int = 10, data_path: Optional[str] = None
+    ) -> None:
         """Initialize orchestrator with components.
 
         Args:
@@ -75,7 +77,9 @@ class MonitoringOrchestrator:
         """
         self._args = args
 
-    def register_update_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
+    def register_update_callback(
+        self, callback: Callable[[Dict[str, Any]], None]
+    ) -> None:
         """Register callback for data updates.
 
         Args:
@@ -85,7 +89,9 @@ class MonitoringOrchestrator:
             self._update_callbacks.append(callback)
             logger.debug("Registered update callback")
 
-    def register_session_callback(self, callback: Callable[[str, str, Optional[Dict[str, Any]]], None]) -> None:
+    def register_session_callback(
+        self, callback: Callable[[str, str, Optional[Dict[str, Any]]], None]
+    ) -> None:
         """Register callback for session changes.
 
         Args:
@@ -144,7 +150,9 @@ class MonitoringOrchestrator:
         try:
             # Fetch data
             start_time: float = time.time()
-            data: Optional[Dict[str, Any]] = self.data_manager.get_data(force_refresh=force_refresh)
+            data: Optional[Dict[str, Any]] = self.data_manager.get_data(
+                force_refresh=force_refresh
+            )
 
             if data is None:
                 logger.warning("No data fetched")

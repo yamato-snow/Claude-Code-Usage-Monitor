@@ -4,7 +4,7 @@ Raw mode setup, input handling, and terminal control.
 
 import logging
 import sys
-from typing import Optional, List, Any, Union
+from typing import Any, List, Optional, Union
 
 from claude_monitor.error_handling import report_error
 from claude_monitor.terminal.themes import print_themed
@@ -21,7 +21,7 @@ except ImportError:
 
 def setup_terminal() -> Optional[List[Any]]:
     """Setup terminal for raw mode to prevent input interference.
-    
+
     Returns:
         Terminal settings list that can be used to restore terminal state,
         or None if terminal setup is not supported or fails.
@@ -41,7 +41,7 @@ def setup_terminal() -> Optional[List[Any]]:
 
 def restore_terminal(old_settings: Optional[List[Any]]) -> None:
     """Restore terminal to original settings.
-    
+
     Args:
         old_settings: Terminal settings to restore, or None if no settings to restore.
     """
@@ -57,7 +57,7 @@ def restore_terminal(old_settings: Optional[List[Any]]) -> None:
 
 def enter_alternate_screen() -> None:
     """Enter alternate screen buffer, clear and hide cursor.
-    
+
     Sends ANSI escape sequences to:
     - Enter alternate screen buffer (\033[?1049h)
     - Clear screen (\033[2J)
@@ -68,11 +68,10 @@ def enter_alternate_screen() -> None:
 
 
 def handle_cleanup_and_exit(
-    old_terminal_settings: Optional[List[Any]], 
-    message: str = "Monitoring stopped."
+    old_terminal_settings: Optional[List[Any]], message: str = "Monitoring stopped."
 ) -> None:
     """Handle cleanup and exit gracefully.
-    
+
     Args:
         old_terminal_settings: Terminal settings to restore before exit.
         message: Exit message to display to user.
@@ -83,15 +82,14 @@ def handle_cleanup_and_exit(
 
 
 def handle_error_and_exit(
-    old_terminal_settings: Optional[List[Any]], 
-    error: Union[Exception, str]
+    old_terminal_settings: Optional[List[Any]], error: Union[Exception, str]
 ) -> None:
     """Handle error cleanup and exit.
-    
+
     Args:
         old_terminal_settings: Terminal settings to restore before exit.
         error: Exception or error message that caused the exit.
-        
+
     Raises:
         The original error after cleanup and reporting.
     """

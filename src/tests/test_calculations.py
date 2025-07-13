@@ -1,7 +1,7 @@
 """Tests for calculations module."""
 
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Dict, List
 from unittest.mock import Mock, patch
 
 import pytest
@@ -50,9 +50,7 @@ class TestBurnRateCalculator:
         return block
 
     def test_calculate_burn_rate_active_block(
-        self, 
-        calculator: BurnRateCalculator, 
-        mock_active_block: Mock
+        self, calculator: BurnRateCalculator, mock_active_block: Mock
     ) -> None:
         """Test burn rate calculation for active block."""
         burn_rate = calculator.calculate_burn_rate(mock_active_block)
@@ -65,18 +63,14 @@ class TestBurnRateCalculator:
         assert burn_rate.cost_per_hour == 1.0
 
     def test_calculate_burn_rate_inactive_block(
-        self, 
-        calculator: BurnRateCalculator, 
-        mock_inactive_block: Mock
+        self, calculator: BurnRateCalculator, mock_inactive_block: Mock
     ) -> None:
         """Test burn rate calculation for inactive block returns None."""
         burn_rate = calculator.calculate_burn_rate(mock_inactive_block)
         assert burn_rate is None
 
     def test_calculate_burn_rate_zero_duration(
-        self, 
-        calculator: BurnRateCalculator, 
-        mock_active_block: Mock
+        self, calculator: BurnRateCalculator, mock_active_block: Mock
     ) -> None:
         """Test burn rate calculation with zero duration returns None."""
         mock_active_block.duration_minutes = 0
@@ -84,9 +78,7 @@ class TestBurnRateCalculator:
         assert burn_rate is None
 
     def test_calculate_burn_rate_no_tokens(
-        self, 
-        calculator: BurnRateCalculator, 
-        mock_active_block: Mock
+        self, calculator: BurnRateCalculator, mock_active_block: Mock
     ) -> None:
         """Test burn rate calculation with no tokens returns None."""
         mock_active_block.token_counts = TokenCounts(
@@ -99,9 +91,7 @@ class TestBurnRateCalculator:
         assert burn_rate is None
 
     def test_calculate_burn_rate_edge_case_small_duration(
-        self, 
-        calculator: BurnRateCalculator, 
-        mock_active_block: Mock
+        self, calculator: BurnRateCalculator, mock_active_block: Mock
     ) -> None:
         """Test burn rate calculation with very small duration."""
         mock_active_block.duration_minutes = 1  # 1 minute minimum for active check
@@ -112,10 +102,10 @@ class TestBurnRateCalculator:
 
     @patch("claude_monitor.core.calculations.datetime")
     def test_project_block_usage_success(
-        self, 
-        mock_datetime: Mock, 
-        calculator: BurnRateCalculator, 
-        mock_active_block: Mock
+        self,
+        mock_datetime: Mock,
+        calculator: BurnRateCalculator,
+        mock_active_block: Mock,
     ) -> None:
         """Test successful usage projection."""
         # Mock current time
@@ -137,10 +127,10 @@ class TestBurnRateCalculator:
 
     @patch("claude_monitor.core.calculations.datetime")
     def test_project_block_usage_no_remaining_time(
-        self, 
-        mock_datetime: Mock, 
-        calculator: BurnRateCalculator, 
-        mock_active_block: Mock
+        self,
+        mock_datetime: Mock,
+        calculator: BurnRateCalculator,
+        mock_active_block: Mock,
     ) -> None:
         """Test projection when block has already ended."""
         # Mock current time to be after block end time
@@ -153,9 +143,7 @@ class TestBurnRateCalculator:
         assert projection is None
 
     def test_project_block_usage_no_burn_rate(
-        self, 
-        calculator: BurnRateCalculator, 
-        mock_inactive_block: Mock
+        self, calculator: BurnRateCalculator, mock_inactive_block: Mock
     ) -> None:
         """Test projection when burn rate cannot be calculated."""
         projection = calculator.project_block_usage(mock_inactive_block)
@@ -196,21 +184,23 @@ class TestHourlyBurnRateCalculation:
 
         return [block1, block2, block3]
 
-    def test_calculate_hourly_burn_rate_empty_blocks(self, current_time: datetime) -> None:
+    def test_calculate_hourly_burn_rate_empty_blocks(
+        self, current_time: datetime
+    ) -> None:
         """Test hourly burn rate with empty blocks."""
         burn_rate = calculate_hourly_burn_rate([], current_time)
         assert burn_rate == 0.0
 
-    def test_calculate_hourly_burn_rate_none_blocks(self, current_time: datetime) -> None:
+    def test_calculate_hourly_burn_rate_none_blocks(
+        self, current_time: datetime
+    ) -> None:
         """Test hourly burn rate with None blocks."""
         burn_rate = calculate_hourly_burn_rate(None, current_time)
         assert burn_rate == 0.0
 
     @patch("claude_monitor.core.calculations._calculate_total_tokens_in_hour")
     def test_calculate_hourly_burn_rate_success(
-        self, 
-        mock_calc_tokens: Mock, 
-        current_time: datetime
+        self, mock_calc_tokens: Mock, current_time: datetime
     ) -> None:
         """Test successful hourly burn rate calculation."""
         mock_calc_tokens.return_value = 180.0  # Total tokens in hour
@@ -225,9 +215,7 @@ class TestHourlyBurnRateCalculation:
 
     @patch("claude_monitor.core.calculations._calculate_total_tokens_in_hour")
     def test_calculate_hourly_burn_rate_zero_tokens(
-        self, 
-        mock_calc_tokens: Mock, 
-        current_time: datetime
+        self, mock_calc_tokens: Mock, current_time: datetime
     ) -> None:
         """Test hourly burn rate calculation with zero tokens."""
         mock_calc_tokens.return_value = 0.0
@@ -239,9 +227,7 @@ class TestHourlyBurnRateCalculation:
 
     @patch("claude_monitor.core.calculations._process_block_for_burn_rate")
     def test_calculate_total_tokens_in_hour(
-        self, 
-        mock_process_block: Mock, 
-        current_time: datetime
+        self, mock_process_block: Mock, current_time: datetime
     ) -> None:
         """Test total tokens calculation for hour."""
         # Mock returns different token counts for each block
@@ -257,7 +243,9 @@ class TestHourlyBurnRateCalculation:
         assert total_tokens == 150.0
         assert mock_process_block.call_count == 3
 
-    def test_process_block_for_burn_rate_gap_block(self, current_time: datetime) -> None:
+    def test_process_block_for_burn_rate_gap_block(
+        self, current_time: datetime
+    ) -> None:
         """Test processing gap block returns zero."""
         gap_block = {"isGap": True, "start_time": "2024-01-01T11:30:00Z"}
         one_hour_ago = current_time - timedelta(hours=1)
@@ -267,9 +255,7 @@ class TestHourlyBurnRateCalculation:
 
     @patch("claude_monitor.core.calculations._parse_block_start_time")
     def test_process_block_for_burn_rate_invalid_start_time(
-        self, 
-        mock_parse_time: Mock, 
-        current_time: datetime
+        self, mock_parse_time: Mock, current_time: datetime
     ) -> None:
         """Test processing block with invalid start time returns zero."""
         mock_parse_time.return_value = None
@@ -283,10 +269,7 @@ class TestHourlyBurnRateCalculation:
     @patch("claude_monitor.core.calculations._determine_session_end_time")
     @patch("claude_monitor.core.calculations._parse_block_start_time")
     def test_process_block_for_burn_rate_old_session(
-        self, 
-        mock_parse_time: Mock, 
-        mock_end_time: Mock, 
-        current_time: datetime
+        self, mock_parse_time: Mock, mock_end_time: Mock, current_time: datetime
     ) -> None:
         """Test processing block that ended before the hour window."""
         one_hour_ago = current_time - timedelta(hours=1)

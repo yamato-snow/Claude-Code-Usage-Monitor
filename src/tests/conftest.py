@@ -1,7 +1,7 @@
 """Shared pytest fixtures for Claude Monitor tests."""
 
 from datetime import datetime, timezone
-from typing import Any, Dict, Generator, List, Set
+from typing import Any, Dict, List, Set
 from unittest.mock import Mock
 
 import pytest

@@ -180,7 +180,9 @@ class TimeFormatDetector:
             return None
 
         try:
-            location: Optional[str] = get_timezone_location(timezone_name, locale_name="en_US")
+            location: Optional[str] = get_timezone_location(
+                timezone_name, locale_name="en_US"
+            )
             if location:
                 for country_code in cls.TWELVE_HOUR_COUNTRIES:
                     if country_code in location or location.endswith(country_code):
@@ -263,7 +265,9 @@ class TimeFormatDetector:
         return "12h" if cls.detect_from_locale() else "24h"
 
     @classmethod
-    def get_preference(cls, args: Any = None, timezone_name: Optional[str] = None) -> bool:
+    def get_preference(
+        cls, args: Any = None, timezone_name: Optional[str] = None
+    ) -> bool:
         """Main entry point - returns True for 12h, False for 24h."""
         cli_pref: Optional[bool] = cls.detect_from_cli(args)
         if cli_pref is not None:
@@ -498,9 +502,9 @@ def percentage(part: float, whole: float, decimal_places: int = 1) -> float:
 
 
 def format_display_time(
-    dt_obj: datetime, 
-    use_12h_format: Optional[bool] = None, 
-    include_seconds: bool = True
+    dt_obj: datetime,
+    use_12h_format: Optional[bool] = None,
+    include_seconds: bool = True,
 ) -> str:
     """Central time formatting with 12h/24h support."""
     if use_12h_format is None:

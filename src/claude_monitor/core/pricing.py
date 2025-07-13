@@ -6,9 +6,9 @@ based on token usage and model pricing. It supports all Claude model types
 with caching.
 """
 
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
-from claude_monitor.core.models import TokenCounts, normalize_model_name, CostMode
+from claude_monitor.core.models import CostMode, TokenCounts, normalize_model_name
 
 
 class PricingCalculator:
@@ -47,7 +47,9 @@ class PricingCalculator:
         },
     }
 
-    def __init__(self, custom_pricing: Optional[Dict[str, Dict[str, float]]] = None) -> None:
+    def __init__(
+        self, custom_pricing: Optional[Dict[str, Dict[str, float]]] = None
+    ) -> None:
         """Initialize with optional custom pricing.
 
         Args:
@@ -180,7 +182,9 @@ class PricingCalculator:
         # Default to Sonnet pricing
         return self.FALLBACK_PRICING["sonnet"]
 
-    def calculate_cost_for_entry(self, entry_data: Dict[str, Any], mode: CostMode) -> float:
+    def calculate_cost_for_entry(
+        self, entry_data: Dict[str, Any], mode: CostMode
+    ) -> float:
         """Calculate cost for a single entry (backward compatibility).
 
         Args:

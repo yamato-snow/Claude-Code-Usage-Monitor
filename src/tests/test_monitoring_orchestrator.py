@@ -2,7 +2,7 @@
 
 import threading
 import time
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 from unittest.mock import Mock, patch
 
 import pytest
@@ -40,7 +40,9 @@ def mock_session_monitor() -> Mock:
 
 
 @pytest.fixture
-def orchestrator(mock_data_manager: Mock, mock_session_monitor: Mock) -> MonitoringOrchestrator:
+def orchestrator(
+    mock_data_manager: Mock, mock_session_monitor: Mock
+) -> MonitoringOrchestrator:
     """Create orchestrator with mocked dependencies."""
     with (
         patch(
@@ -107,7 +109,9 @@ class TestMonitoringOrchestratorLifecycle:
 
         orchestrator.stop()
 
-    def test_start_monitoring_already_running(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_start_monitoring_already_running(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test starting monitoring when already running."""
         orchestrator._monitoring = True
 
@@ -126,7 +130,9 @@ class TestMonitoringOrchestratorLifecycle:
         assert not orchestrator._monitoring
         assert orchestrator._monitor_thread is None
 
-    def test_stop_monitoring_not_running(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_stop_monitoring_not_running(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test stopping monitoring when not running."""
         assert not orchestrator._monitoring
 
@@ -134,7 +140,9 @@ class TestMonitoringOrchestratorLifecycle:
 
         assert not orchestrator._monitoring
 
-    def test_stop_monitoring_with_timeout(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_stop_monitoring_with_timeout(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test stopping monitoring handles thread join timeout."""
         orchestrator.start()
 
@@ -151,7 +159,9 @@ class TestMonitoringOrchestratorLifecycle:
 class TestMonitoringOrchestratorCallbacks:
     """Test callback registration and handling."""
 
-    def test_register_update_callback(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_register_update_callback(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test registering update callback."""
         callback = Mock()
 
@@ -159,7 +169,9 @@ class TestMonitoringOrchestratorCallbacks:
 
         assert callback in orchestrator._update_callbacks
 
-    def test_register_duplicate_callback(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_register_duplicate_callback(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test registering same callback twice only adds once."""
         callback = Mock()
 
@@ -168,7 +180,9 @@ class TestMonitoringOrchestratorCallbacks:
 
         assert orchestrator._update_callbacks.count(callback) == 1
 
-    def test_register_session_callback(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_register_session_callback(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test registering session callback delegates to session monitor."""
         callback = Mock()
 
@@ -209,7 +223,9 @@ class TestMonitoringOrchestratorDataProcessing:
 
         assert orchestrator._args == args
 
-    def test_wait_for_initial_data_success(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_wait_for_initial_data_success(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test waiting for initial data returns True when data received."""
         # Start monitoring which will trigger initial data
         orchestrator.start()
@@ -222,7 +238,9 @@ class TestMonitoringOrchestratorDataProcessing:
         assert result is True
         orchestrator.stop()
 
-    def test_wait_for_initial_data_timeout(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_wait_for_initial_data_timeout(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test waiting for initial data returns False on timeout."""
         # Don't start monitoring, so no data will be received
         result = orchestrator.wait_for_initial_data(timeout=0.1)
@@ -233,7 +251,9 @@ class TestMonitoringOrchestratorDataProcessing:
 class TestMonitoringOrchestratorMonitoringLoop:
     """Test the monitoring loop behavior."""
 
-    def test_monitoring_loop_initial_fetch(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_monitoring_loop_initial_fetch(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test monitoring loop performs initial fetch."""
         with patch.object(orchestrator, "_fetch_and_process_data") as mock_fetch:
             mock_fetch.return_value = {"test": "data"}
@@ -246,7 +266,9 @@ class TestMonitoringOrchestratorMonitoringLoop:
             # Should have called fetch at least once for initial fetch
             assert mock_fetch.call_count >= 1
 
-    def test_monitoring_loop_periodic_updates(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_monitoring_loop_periodic_updates(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test monitoring loop performs periodic updates."""
         orchestrator.update_interval = 0.1  # Very fast for testing
 
@@ -260,7 +282,9 @@ class TestMonitoringOrchestratorMonitoringLoop:
             # Should have called fetch multiple times
             assert mock_fetch.call_count >= 2
 
-    def test_monitoring_loop_stop_event(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_monitoring_loop_stop_event(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test monitoring loop respects stop event."""
         with patch.object(orchestrator, "_fetch_and_process_data") as mock_fetch:
             mock_fetch.return_value = {"test": "data"}
@@ -278,7 +302,9 @@ class TestMonitoringOrchestratorMonitoringLoop:
 class TestMonitoringOrchestratorFetchAndProcess:
     """Test data fetching and processing logic."""
 
-    def test_fetch_and_process_success(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_fetch_and_process_success(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test successful data fetch and processing."""
         test_data: Dict[str, List[Dict[str, Union[str, bool, int, float]]]] = {
             "blocks": [
@@ -312,7 +338,9 @@ class TestMonitoringOrchestratorFetchAndProcess:
         assert result["session_count"] == 1
         assert orchestrator._last_valid_data == result
 
-    def test_fetch_and_process_no_data(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_fetch_and_process_no_data(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test fetch and process when no data available."""
         orchestrator.data_manager.get_data.return_value = None
 
@@ -320,7 +348,9 @@ class TestMonitoringOrchestratorFetchAndProcess:
 
         assert result is None
 
-    def test_fetch_and_process_validation_failure(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_fetch_and_process_validation_failure(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test fetch and process with validation failure."""
         test_data: Dict[str, List[Any]] = {"blocks": []}
         orchestrator.data_manager.get_data.return_value = test_data
@@ -330,7 +360,9 @@ class TestMonitoringOrchestratorFetchAndProcess:
 
         assert result is None
 
-    def test_fetch_and_process_callback_success(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_fetch_and_process_callback_success(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test fetch and process calls callbacks successfully."""
         test_data: Dict[str, List[Dict[str, Union[str, bool, int, float]]]] = {
             "blocks": [
@@ -359,7 +391,9 @@ class TestMonitoringOrchestratorFetchAndProcess:
         assert call_args["data"] == test_data
         assert call_args["token_limit"] == 44000  # Default PRO plan limit
 
-    def test_fetch_and_process_callback_error(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_fetch_and_process_callback_error(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test fetch and process handles callback errors."""
         test_data: Dict[str, List[Dict[str, Union[str, bool, int, float]]]] = {
             "blocks": [
@@ -386,7 +420,9 @@ class TestMonitoringOrchestratorFetchAndProcess:
         callback_success.assert_called_once()  # Other callbacks should still work
         mock_report.assert_called_once()
 
-    def test_fetch_and_process_exception_handling(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_fetch_and_process_exception_handling(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test fetch and process handles exceptions."""
         orchestrator.data_manager.get_data.side_effect = Exception("Fetch failed")
 
@@ -398,7 +434,9 @@ class TestMonitoringOrchestratorFetchAndProcess:
         assert result is None
         mock_report.assert_called_once()
 
-    def test_fetch_and_process_first_data_event(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_fetch_and_process_first_data_event(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test fetch and process sets first data event."""
         test_data: Dict[str, List[Dict[str, Union[str, bool, int, float]]]] = {
             "blocks": [
@@ -421,7 +459,9 @@ class TestMonitoringOrchestratorFetchAndProcess:
 class TestMonitoringOrchestratorTokenLimitCalculation:
     """Test token limit calculation logic."""
 
-    def test_calculate_token_limit_no_args(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_calculate_token_limit_no_args(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test token limit calculation without args."""
         data: Dict[str, List[Any]] = {"blocks": []}
 
@@ -429,7 +469,9 @@ class TestMonitoringOrchestratorTokenLimitCalculation:
 
         assert result == DEFAULT_TOKEN_LIMIT
 
-    def test_calculate_token_limit_pro_plan(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_calculate_token_limit_pro_plan(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test token limit calculation for pro plan."""
         args = Mock()
         args.plan = "pro"
@@ -446,13 +488,18 @@ class TestMonitoringOrchestratorTokenLimitCalculation:
         assert result == 200000
         mock_get_limit.assert_called_once_with("pro")
 
-    def test_calculate_token_limit_custom_plan(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_calculate_token_limit_custom_plan(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test token limit calculation for custom plan."""
         args = Mock()
         args.plan = "custom"
         orchestrator.set_args(args)
 
-        blocks_data: List[Dict[str, int]] = [{"totalTokens": 1000}, {"totalTokens": 1500}]
+        blocks_data: List[Dict[str, int]] = [
+            {"totalTokens": 1000},
+            {"totalTokens": 1500},
+        ]
         data: Dict[str, List[Dict[str, int]]] = {"blocks": blocks_data}
 
         with patch(
@@ -464,7 +511,9 @@ class TestMonitoringOrchestratorTokenLimitCalculation:
         assert result == 175000
         mock_get_limit.assert_called_once_with("custom", blocks_data)
 
-    def test_calculate_token_limit_exception(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_calculate_token_limit_exception(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test token limit calculation handles exceptions."""
         args = Mock()
         args.plan = "pro"
@@ -534,7 +583,9 @@ class TestMonitoringOrchestratorIntegration:
         assert data["session_id"] == "session_1"
         assert data["session_count"] == 1
 
-    def test_monitoring_with_session_changes(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_monitoring_with_session_changes(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test monitoring responds to session changes."""
         # Setup initial data
         initial_data: Dict[str, List[Dict[str, Union[str, bool, int, float]]]] = {
@@ -563,7 +614,9 @@ class TestMonitoringOrchestratorIntegration:
         # Mock data manager to return different data on subsequent calls
         call_count = 0
 
-        def mock_get_data(force_refresh: bool = False) -> Dict[str, List[Dict[str, Union[str, bool, int, float]]]]:
+        def mock_get_data(
+            force_refresh: bool = False,
+        ) -> Dict[str, List[Dict[str, Union[str, bool, int, float]]]]:
             nonlocal call_count
             call_count += 1
             return initial_data if call_count == 1 else changed_data
@@ -603,12 +656,16 @@ class TestMonitoringOrchestratorIntegration:
         # Verify both updates were captured
         assert len(captured_data) >= 2
 
-    def test_monitoring_error_recovery(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_monitoring_error_recovery(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test monitoring recovers from errors."""
         # Setup data manager to fail then succeed
         call_count = 0
 
-        def mock_get_data(force_refresh: bool = False) -> Dict[str, List[Dict[str, Union[str, bool, int, float]]]]:
+        def mock_get_data(
+            force_refresh: bool = False,
+        ) -> Dict[str, List[Dict[str, Union[str, bool, int, float]]]]:
             nonlocal call_count
             call_count += 1
             if call_count == 1:
@@ -647,7 +704,9 @@ class TestMonitoringOrchestratorIntegration:
 class TestMonitoringOrchestratorThreadSafety:
     """Test thread safety of orchestrator."""
 
-    def test_concurrent_callback_registration(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_concurrent_callback_registration(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test thread-safe callback registration."""
         callbacks: List[Mock] = []
 
@@ -699,7 +758,9 @@ class TestMonitoringOrchestratorThreadSafety:
 class TestMonitoringOrchestratorProperties:
     """Test orchestrator properties and state."""
 
-    def test_last_valid_data_property(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_last_valid_data_property(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test last valid data is stored correctly."""
         test_data: Dict[str, List[Dict[str, Union[str, bool, int, float]]]] = {
             "blocks": [
@@ -717,7 +778,9 @@ class TestMonitoringOrchestratorProperties:
         assert orchestrator._last_valid_data == result
         assert orchestrator._last_valid_data["data"] == test_data
 
-    def test_monitoring_state_consistency(self, orchestrator: MonitoringOrchestrator) -> None:
+    def test_monitoring_state_consistency(
+        self, orchestrator: MonitoringOrchestrator
+    ) -> None:
         """Test monitoring state remains consistent."""
         assert not orchestrator._monitoring
         assert orchestrator._monitor_thread is None

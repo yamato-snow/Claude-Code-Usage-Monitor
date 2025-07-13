@@ -119,7 +119,9 @@ class Plans:
             return None
 
     @classmethod
-    def get_token_limit(cls, plan: str, blocks: Optional[List[Dict[str, Any]]] = None) -> int:
+    def get_token_limit(
+        cls, plan: str, blocks: Optional[List[Dict[str, Any]]] = None
+    ) -> int:
         """
         Get the token limit for a plan.
 

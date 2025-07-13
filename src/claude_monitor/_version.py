@@ -5,7 +5,6 @@ as the single source of truth, avoiding version duplication across the codebase.
 """
 
 import importlib.metadata
-import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
@@ -66,7 +65,7 @@ def _get_version_from_pyproject() -> str:
 
 def get_package_info() -> Dict[str, Optional[str]]:
     """Get comprehensive package information.
-    
+
     Returns:
         Dictionary containing version, name, and metadata
     """
@@ -95,7 +94,7 @@ def get_package_info() -> Dict[str, Optional[str]]:
 
 def get_version_info() -> Dict[str, Any]:
     """Get detailed version and system information.
-    
+
     Returns:
         Dictionary containing version, Python version, and system info
     """
@@ -115,10 +114,10 @@ def get_version_info() -> Dict[str, Any]:
 
 def find_project_root(start_path: Optional[Union[str, Path]] = None) -> Optional[Path]:
     """Find the project root directory containing pyproject.toml.
-    
+
     Args:
         start_path: Starting directory for search (defaults to current file location)
-        
+
     Returns:
         Path to project root or None if not found
     """
@@ -126,17 +125,17 @@ def find_project_root(start_path: Optional[Union[str, Path]] = None) -> Optional
         current_dir = Path(__file__).parent
     else:
         current_dir = Path(start_path).resolve()
-    
+
     # Search up to 10 levels to find pyproject.toml
     for _ in range(10):
         if (current_dir / "pyproject.toml").exists():
             return current_dir
-        
+
         parent = current_dir.parent
         if parent == current_dir:  # Reached filesystem root
             break
         current_dir = parent
-    
+
     return None
 
 

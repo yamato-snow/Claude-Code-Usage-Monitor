@@ -1,7 +1,7 @@
 """Tests for session analyzer module."""
 
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from claude_monitor.core.models import SessionBlock, TokenCounts, UsageEntry
 from claude_monitor.data.analyzer import SessionAnalyzer

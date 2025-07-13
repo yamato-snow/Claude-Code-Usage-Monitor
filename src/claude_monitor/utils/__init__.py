@@ -6,4 +6,4 @@
 #   from claude_monitor.utils.timezone import TimezoneHandler
 #   from claude_monitor.utils.paths import discover_claude_data_paths
 
-__all__ = []
+__all__: list[str] = []

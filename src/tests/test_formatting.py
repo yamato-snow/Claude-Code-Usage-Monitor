@@ -1,7 +1,6 @@
 """Tests for formatting utilities."""
 
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple, Union
 from unittest.mock import Mock, patch
 
 from claude_monitor.utils.formatting import (

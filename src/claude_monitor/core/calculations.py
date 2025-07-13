@@ -2,9 +2,13 @@
 
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Protocol, Union
+from typing import Any, Dict, List, Optional, Protocol
 
-from claude_monitor.core.models import BurnRate, SessionBlock, TokenCounts, UsageProjection
+from claude_monitor.core.models import (
+    BurnRate,
+    TokenCounts,
+    UsageProjection,
+)
 from claude_monitor.core.p90_calculator import P90Calculator
 from claude_monitor.error_handling import report_error
 from claude_monitor.utils.time_utils import TimezoneHandler
@@ -16,6 +20,7 @@ _p90_calculator: P90Calculator = P90Calculator()
 
 class BlockLike(Protocol):
     """Protocol for objects that behave like session blocks."""
+
     is_active: bool
     duration_minutes: float
     token_counts: TokenCounts
@@ -86,7 +91,9 @@ class BurnRateCalculator:
         )
 
 
-def calculate_hourly_burn_rate(blocks: List[Dict[str, Any]], current_time: datetime) -> float:
+def calculate_hourly_burn_rate(
+    blocks: List[Dict[str, Any]], current_time: datetime
+) -> float:
     """Calculate burn rate based on all sessions in the last hour."""
     if not blocks:
         return 0.0
@@ -139,7 +146,9 @@ def _parse_block_start_time(block: Dict[str, Any]) -> Optional[datetime]:
         return None
 
 
-def _determine_session_end_time(block: Dict[str, Any], current_time: datetime) -> datetime:
+def _determine_session_end_time(
+    block: Dict[str, Any], current_time: datetime
+) -> datetime:
     """Determine session end time based on block status."""
     if block.get("isActive", False):
         return current_time
@@ -179,7 +188,10 @@ def _calculate_tokens_in_hour(
 
 
 def _log_timestamp_error(
-    exception: Exception, timestamp_str: str, block_id: Optional[str], timestamp_type: str
+    exception: Exception,
+    timestamp_str: str,
+    block_id: Optional[str],
+    timestamp_type: str,
 ) -> None:
     """Log timestamp parsing errors with context."""
     logging.debug(f"Failed to parse {timestamp_type} '{timestamp_str}': {exception}")

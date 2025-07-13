@@ -1,6 +1,6 @@
 """Tests for version management."""
 
-from typing import Any, Dict
+from typing import Dict
 from unittest.mock import mock_open, patch
 
 import pytest
@@ -34,13 +34,17 @@ version = "3.0.0"
         ):
             try:
                 with patch("tomllib.load") as mock_load:
-                    mock_load.return_value: Dict[str, Dict[str, str]] = {"project": {"version": "3.0.0"}}
+                    mock_load.return_value: Dict[str, Dict[str, str]] = {
+                        "project": {"version": "3.0.0"}
+                    }
                     version = _get_version_from_pyproject()
                     assert version == "3.0.0"
             except ImportError:
                 # Python < 3.11, use tomli
                 with patch("tomli.load") as mock_load:
-                    mock_load.return_value: Dict[str, Dict[str, str]] = {"project": {"version": "3.0.0"}}
+                    mock_load.return_value: Dict[str, Dict[str, str]] = {
+                        "project": {"version": "3.0.0"}
+                    }
                     version = _get_version_from_pyproject()
                     assert version == "3.0.0"
 
@@ -70,9 +74,9 @@ def test_version_format() -> None:
     # Should be semantic version format (X.Y.Z) or include "unknown"
     if __version__ != "unknown":
         parts = __version__.split(".")
-        assert len(parts) >= 2, (
-            f"Version should have at least 2 parts, got: {__version__}"
-        )
+        assert (
+            len(parts) >= 2
+        ), f"Version should have at least 2 parts, got: {__version__}"
 
         # First part should be numeric
         assert parts[0].isdigit(), f"Major version should be numeric, got: {parts[0]}"

@@ -2,7 +2,7 @@
 
 import logging
 import time
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from claude_monitor.data.analysis import analyze_usage
 from claude_monitor.error_handling import report_error

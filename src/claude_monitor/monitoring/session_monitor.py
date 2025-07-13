@@ -1,7 +1,7 @@
 """Unified session monitoring - combines tracking and validation."""
 
 import logging
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,9 @@ class SessionMonitor:
     def __init__(self) -> None:
         """Initialize session monitor."""
         self._current_session_id: Optional[str] = None
-        self._session_callbacks: List[Callable[[str, str, Optional[Dict[str, Any]]], None]] = []
+        self._session_callbacks: List[
+            Callable[[str, str, Optional[Dict[str, Any]]], None]
+        ] = []
         self._session_history: List[Dict[str, Any]] = []
 
     def update(self, data: Dict[str, Any]) -> Tuple[bool, List[str]]:
@@ -159,7 +161,9 @@ class SessionMonitor:
             except Exception as e:
                 logger.exception(f"Session callback error: {e}")
 
-    def register_callback(self, callback: Callable[[str, str, Optional[Dict[str, Any]]], None]) -> None:
+    def register_callback(
+        self, callback: Callable[[str, str, Optional[Dict[str, Any]]], None]
+    ) -> None:
         """Register session change callback.
 
         Args:
@@ -168,7 +172,9 @@ class SessionMonitor:
         if callback not in self._session_callbacks:
             self._session_callbacks.append(callback)
 
-    def unregister_callback(self, callback: Callable[[str, str, Optional[Dict[str, Any]]], None]) -> None:
+    def unregister_callback(
+        self, callback: Callable[[str, str, Optional[Dict[str, Any]]], None]
+    ) -> None:
         """Unregister session change callback.
 
         Args:

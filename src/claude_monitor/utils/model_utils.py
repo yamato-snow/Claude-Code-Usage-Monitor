@@ -6,7 +6,7 @@ for backward compatibility.
 
 import logging
 import re
-from typing import Dict, Optional, Match
+from typing import Dict, Match, Optional
 
 logger = logging.getLogger(__name__)
 

@@ -17,7 +17,9 @@ class TimestampProcessor:
         """Initialize with optional timezone handler."""
         self.timezone_handler: TimezoneHandler = timezone_handler or TimezoneHandler()
 
-    def parse_timestamp(self, timestamp_value: Union[str, int, float, datetime, None]) -> Optional[datetime]:
+    def parse_timestamp(
+        self, timestamp_value: Union[str, int, float, datetime, None]
+    ) -> Optional[datetime]:
         """Parse timestamp from various formats to UTC datetime.
 
         Args:

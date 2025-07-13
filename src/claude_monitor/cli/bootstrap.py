@@ -3,9 +3,9 @@
 import logging
 import os
 import sys
-from pathlib import Path
-from typing import Optional, List
 from logging import Handler
+from pathlib import Path
+from typing import List, Optional
 
 from claude_monitor.utils.time_utils import TimezoneHandler
 
@@ -41,7 +41,7 @@ def setup_logging(
 def setup_environment() -> None:
     """Initialize environment variables and system settings."""
     if sys.stdout.encoding != "utf-8":
-        if hasattr(sys.stdout, 'reconfigure'):
+        if hasattr(sys.stdout, "reconfigure"):
             sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
 
     os.environ.setdefault(

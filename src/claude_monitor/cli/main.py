@@ -6,11 +6,7 @@ import logging
 import sys
 import traceback
 from pathlib import Path
-from typing import Optional, List, Dict, Any, Callable
-
-# Type aliases for CLI callbacks
-DataUpdateCallback = Callable[[Dict[str, Any]], None]
-SessionChangeCallback = Callable[[str, str, Optional[Dict[str, Any]]], None]
+from typing import Any, Callable, Dict, List, NoReturn, Optional, Union
 
 from claude_monitor import __version__
 from claude_monitor.cli.bootstrap import (
@@ -33,6 +29,10 @@ from claude_monitor.terminal.manager import (
 )
 from claude_monitor.terminal.themes import get_themed_console, print_themed
 from claude_monitor.ui.display_controller import DisplayController
+
+# Type aliases for CLI callbacks
+DataUpdateCallback = Callable[[Dict[str, Any]], None]
+SessionChangeCallback = Callable[[str, str, Optional[Dict[str, Any]]], None]
 
 
 def get_standard_claude_paths() -> List[str]:
@@ -194,7 +194,9 @@ def _run_monitoring(args: argparse.Namespace) -> None:
             orchestrator.register_update_callback(on_data_update)
 
             # Optional: Register session change callback
-            def on_session_change(event_type: str, session_id: str, session_data: Optional[Dict[str, Any]]) -> None:
+            def on_session_change(
+                event_type: str, session_id: str, session_data: Optional[Dict[str, Any]]
+            ) -> None:
                 """Handle session changes."""
                 if event_type == "session_start":
                     logger.info(f"New session detected: {session_id}")
@@ -242,7 +244,9 @@ def _run_monitoring(args: argparse.Namespace) -> None:
         restore_terminal(old_terminal_settings)
 
 
-def _get_initial_token_limit(args: argparse.Namespace, data_path: Union[str, Path]) -> int:
+def _get_initial_token_limit(
+    args: argparse.Namespace, data_path: Union[str, Path]
+) -> int:
     """Get initial token limit for the plan."""
     logger = logging.getLogger(__name__)
     plan: str = getattr(args, "plan", PlanType.PRO.value)
@@ -298,39 +302,39 @@ def handle_application_error(
     exit_code: int = 1,
 ) -> NoReturn:
     """Handle application-level errors with proper logging and exit.
-    
+
     Args:
         exception: The exception that occurred
         component: Component where the error occurred
         exit_code: Exit code to use when terminating
     """
     logger = logging.getLogger(__name__)
-    
+
     # Log the error with traceback
     logger.error(f"Application error in {component}: {exception}", exc_info=True)
-    
+
     # Report to error handling system
     from claude_monitor.error_handling import report_application_startup_error
-    
+
     report_application_startup_error(
         exception=exception,
         component=component,
         additional_context={
             "exit_code": exit_code,
             "args": sys.argv,
-        }
+        },
     )
-    
+
     # Print user-friendly error message
     print(f"\nError: {exception}", file=sys.stderr)
     print("For more details, check the log files.", file=sys.stderr)
-    
+
     sys.exit(exit_code)
 
 
 def validate_cli_environment() -> Optional[str]:
     """Validate the CLI environment and return error message if invalid.
-    
+
     Returns:
         Error message if validation fails, None if successful
     """
@@ -338,22 +342,22 @@ def validate_cli_environment() -> Optional[str]:
         # Check Python version compatibility
         if sys.version_info < (3, 8):
             return f"Python 3.8+ required, found {sys.version_info.major}.{sys.version_info.minor}"
-        
+
         # Check for required dependencies
         required_modules = ["rich", "pydantic", "watchdog"]
         missing_modules: List[str] = []
-        
+
         for module in required_modules:
             try:
                 __import__(module)
             except ImportError:
                 missing_modules.append(module)
-        
+
         if missing_modules:
             return f"Missing required modules: {', '.join(missing_modules)}"
-        
+
         return None
-        
+
     except Exception as e:
         return f"Environment validation failed: {e}"
 

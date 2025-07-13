@@ -3,10 +3,9 @@
 Consolidates display indicators, error/loading screens, and advanced custom display.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from rich.console import Console, RenderableType
-from rich.text import Text
 
 from claude_monitor.terminal.themes import get_cost_style, get_velocity_indicator
 from claude_monitor.ui.layouts import HeaderManager

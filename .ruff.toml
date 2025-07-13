@@ -3,8 +3,7 @@ line-length = 88
 target-version = "py39"
 
 [lint]
-# Essential rules only
-select = ["E", "W", "F", "I"]  # pycodestyle + Pyflakes + isort
+select = ["E", "W", "F", "I"]
 ignore = ["E501"]  # Line length handled by formatter
 
 [format]

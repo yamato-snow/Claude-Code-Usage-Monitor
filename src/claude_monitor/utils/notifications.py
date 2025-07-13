@@ -11,7 +11,9 @@ class NotificationManager:
 
     def __init__(self, config_dir: Path) -> None:
         self.notification_file: Path = config_dir / "notification_states.json"
-        self.states: Dict[str, Dict[str, Union[bool, Optional[datetime]]]] = self._load_states()
+        self.states: Dict[str, Dict[str, Union[bool, Optional[datetime]]]] = (
+            self._load_states()
+        )
 
         self.default_states: Dict[str, Dict[str, Union[bool, Optional[datetime]]]] = {
             "switch_to_custom": {"triggered": False, "timestamp": None},
@@ -32,14 +34,18 @@ class NotificationManager:
             with open(self.notification_file) as f:
                 states: Dict[str, Dict[str, Any]] = json.load(f)
                 # Convert timestamp strings back to datetime objects
-                parsed_states: Dict[str, Dict[str, Union[bool, Optional[datetime]]]] = {}
+                parsed_states: Dict[
+                    str, Dict[str, Union[bool, Optional[datetime]]]
+                ] = {}
                 for key, state in states.items():
                     parsed_state: Dict[str, Union[bool, Optional[datetime]]] = {
                         "triggered": bool(state.get("triggered", False)),
-                        "timestamp": None
+                        "timestamp": None,
                     }
                     if state.get("timestamp"):
-                        parsed_state["timestamp"] = datetime.fromisoformat(state["timestamp"])
+                        parsed_state["timestamp"] = datetime.fromisoformat(
+                            state["timestamp"]
+                        )
                     parsed_states[key] = parsed_state
                 return parsed_states
         except (json.JSONDecodeError, FileNotFoundError, ValueError):
@@ -54,7 +60,7 @@ class NotificationManager:
                 timestamp_value = state["timestamp"]
                 if isinstance(timestamp_value, datetime):
                     timestamp_str = timestamp_value.isoformat()
-                
+
                 states_to_save[key] = {
                     "triggered": bool(state["triggered"]),
                     "timestamp": timestamp_str,
@@ -97,9 +103,14 @@ class NotificationManager:
         self.states[key] = {"triggered": True, "timestamp": now}
         self._save_states()
 
-    def get_notification_state(self, key: str) -> Dict[str, Union[bool, Optional[datetime]]]:
+    def get_notification_state(
+        self, key: str
+    ) -> Dict[str, Union[bool, Optional[datetime]]]:
         """Get current notification state."""
-        default_state: Dict[str, Union[bool, Optional[datetime]]] = {"triggered": False, "timestamp": None}
+        default_state: Dict[str, Union[bool, Optional[datetime]]] = {
+            "triggered": False,
+            "timestamp": None,
+        }
         return self.states.get(key, default_state)
 
     def is_notification_active(self, key: str) -> bool:

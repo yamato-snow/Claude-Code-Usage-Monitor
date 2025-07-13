@@ -9,7 +9,7 @@ import json
 import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Tuple
 from unittest.mock import Mock, mock_open, patch
 
 import pytest
@@ -34,7 +34,9 @@ class TestLoadUsageEntries:
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
     @patch("claude_monitor.data.reader._process_single_file")
-    def test_load_usage_entries_basic(self, mock_process_file: Mock, mock_find_files: Mock) -> None:
+    def test_load_usage_entries_basic(
+        self, mock_process_file: Mock, mock_find_files: Mock
+    ) -> None:
         mock_find_files.return_value = [
             Path("/test/file1.jsonl"),
             Path("/test/file2.jsonl"),
@@ -78,7 +80,9 @@ class TestLoadUsageEntries:
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
     @patch("claude_monitor.data.reader._process_single_file")
-    def test_load_usage_entries_without_raw(self, mock_process_file: Mock, mock_find_files: Mock) -> None:
+    def test_load_usage_entries_without_raw(
+        self, mock_process_file: Mock, mock_find_files: Mock
+    ) -> None:
         mock_find_files.return_value = [Path("/test/file1.jsonl")]
 
         sample_entry = UsageEntry(
@@ -97,7 +101,9 @@ class TestLoadUsageEntries:
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
     @patch("claude_monitor.data.reader._process_single_file")
-    def test_load_usage_entries_sorting(self, mock_process_file: Mock, mock_find_files: Mock) -> None:
+    def test_load_usage_entries_sorting(
+        self, mock_process_file: Mock, mock_find_files: Mock
+    ) -> None:
         """Test that entries are sorted by timestamp."""
         mock_find_files.return_value = [Path("/test/file1.jsonl")]
 
@@ -187,7 +193,9 @@ class TestLoadAllRawEntries:
         assert result[1] == {"more": "data"}
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
-    def test_load_all_raw_entries_with_invalid_json(self, mock_find_files: Mock) -> None:
+    def test_load_all_raw_entries_with_invalid_json(
+        self, mock_find_files: Mock
+    ) -> None:
         test_file = Path("/test/file.jsonl")
         mock_find_files.return_value = [test_file]
 
@@ -264,7 +272,9 @@ class TestProcessSingleFile:
         pricing_calculator = Mock(spec=PricingCalculator)
         return timezone_handler, pricing_calculator
 
-    def test_process_single_file_valid_data(self, mock_components: Tuple[Mock, Mock]) -> None:
+    def test_process_single_file_valid_data(
+        self, mock_components: Tuple[Mock, Mock]
+    ) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         sample_data = [
@@ -313,7 +323,9 @@ class TestProcessSingleFile:
         assert len(raw_data) == 1
         assert raw_data[0] == sample_data[0]
 
-    def test_process_single_file_without_raw(self, mock_components: Tuple[Mock, Mock]) -> None:
+    def test_process_single_file_without_raw(
+        self, mock_components: Tuple[Mock, Mock]
+    ) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         sample_data = [{"timestamp": "2024-01-01T12:00:00Z", "input_tokens": 100}]
@@ -458,7 +470,9 @@ class TestShouldProcessEntry:
     def timezone_handler(self) -> Mock:
         return Mock(spec=TimezoneHandler)
 
-    def test_should_process_entry_no_cutoff_no_hash(self, timezone_handler: Mock) -> None:
+    def test_should_process_entry_no_cutoff_no_hash(
+        self, timezone_handler: Mock
+    ) -> None:
         data = {"timestamp": "2024-01-01T12:00:00Z", "message_id": "msg_1"}
 
         with patch(
@@ -468,7 +482,9 @@ class TestShouldProcessEntry:
 
         assert result is True
 
-    def test_should_process_entry_with_time_filter_pass(self, timezone_handler: Mock) -> None:
+    def test_should_process_entry_with_time_filter_pass(
+        self, timezone_handler: Mock
+    ) -> None:
         data = {"timestamp": "2024-01-01T12:00:00Z"}
         cutoff_time = datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc)
 
@@ -626,7 +642,9 @@ class TestMapToUsageEntry:
         pricing_calculator = Mock(spec=PricingCalculator)
         return timezone_handler, pricing_calculator
 
-    def test_map_to_usage_entry_valid_data(self, mock_components: Tuple[Mock, Mock]) -> None:
+    def test_map_to_usage_entry_valid_data(
+        self, mock_components: Tuple[Mock, Mock]
+    ) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         data = {
@@ -689,7 +707,9 @@ class TestMapToUsageEntry:
         assert result.message_id == "msg_123"
         assert result.request_id == "req_456"
 
-    def test_map_to_usage_entry_no_timestamp(self, mock_components: Tuple[Mock, Mock]) -> None:
+    def test_map_to_usage_entry_no_timestamp(
+        self, mock_components: Tuple[Mock, Mock]
+    ) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         data = {"input_tokens": 100, "output_tokens": 50}
@@ -1094,14 +1114,18 @@ class TestUsageEntryMapper:
 
         return mapper, timezone_handler, pricing_calculator
 
-    def test_usage_entry_mapper_init(self, mapper_components: Tuple[Any, Mock, Mock]) -> None:
+    def test_usage_entry_mapper_init(
+        self, mapper_components: Tuple[Any, Mock, Mock]
+    ) -> None:
         """Test UsageEntryMapper initialization."""
         mapper, timezone_handler, pricing_calculator = mapper_components
 
         assert mapper.pricing_calculator == pricing_calculator
         assert mapper.timezone_handler == timezone_handler
 
-    def test_usage_entry_mapper_map_success(self, mapper_components: Tuple[Any, Mock, Mock]) -> None:
+    def test_usage_entry_mapper_map_success(
+        self, mapper_components: Tuple[Any, Mock, Mock]
+    ) -> None:
         """Test UsageEntryMapper.map with valid data."""
         mapper, timezone_handler, pricing_calculator = mapper_components
 

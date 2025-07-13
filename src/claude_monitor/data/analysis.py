@@ -5,7 +5,7 @@ Contains the main analyze_usage function and related analysis components.
 
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 from claude_monitor.core.calculations import BurnRateCalculator
 from claude_monitor.core.models import CostMode, SessionBlock, UsageEntry
@@ -100,7 +100,9 @@ def analyze_usage(
     return result
 
 
-def _process_burn_rates(blocks: List[SessionBlock], calculator: BurnRateCalculator) -> None:
+def _process_burn_rates(
+    blocks: List[SessionBlock], calculator: BurnRateCalculator
+) -> None:
     """Process burn rate data for active blocks."""
     for block in blocks:
         if block.is_active:
@@ -116,7 +118,9 @@ def _process_burn_rates(blocks: List[SessionBlock], calculator: BurnRateCalculat
                     }
 
 
-def _create_result(blocks: List[SessionBlock], entries: List[UsageEntry], metadata: Dict[str, Any]) -> Dict[str, Any]:
+def _create_result(
+    blocks: List[SessionBlock], entries: List[UsageEntry], metadata: Dict[str, Any]
+) -> Dict[str, Any]:
     """Create the final result dictionary."""
     blocks_data = _convert_blocks_to_dict_format(blocks)
 
@@ -132,7 +136,9 @@ def _create_result(blocks: List[SessionBlock], entries: List[UsageEntry], metada
     }
 
 
-def _is_limit_in_block_timerange(limit_info: Dict[str, Any], block: SessionBlock) -> bool:
+def _is_limit_in_block_timerange(
+    limit_info: Dict[str, Any], block: SessionBlock
+) -> bool:
     """Check if limit timestamp falls within block's time range."""
     limit_timestamp = limit_info["timestamp"]
 

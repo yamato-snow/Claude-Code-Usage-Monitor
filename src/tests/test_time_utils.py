@@ -3,7 +3,7 @@
 import locale
 import platform
 from datetime import datetime
-from typing import Any, List, Optional, Tuple, Union
+from typing import List
 from unittest.mock import Mock, patch
 
 import pytest
@@ -82,7 +82,9 @@ class TestTimeFormatDetector:
 
     @patch("claude_monitor.utils.time_utils.HAS_BABEL", True)
     @patch("claude_monitor.utils.time_utils.get_timezone_location")
-    def test_detect_from_timezone_with_babel_exception(self, mock_get_location: Mock) -> None:
+    def test_detect_from_timezone_with_babel_exception(
+        self, mock_get_location: Mock
+    ) -> None:
         """Test timezone detection with Babel when exception occurs."""
         mock_get_location.side_effect = Exception("Test error")
 
@@ -97,7 +99,9 @@ class TestTimeFormatDetector:
 
     @patch("locale.setlocale")
     @patch("locale.nl_langinfo")
-    def test_detect_from_locale_12h_ampm(self, mock_langinfo: Mock, mock_setlocale: Mock) -> None:
+    def test_detect_from_locale_12h_ampm(
+        self, mock_langinfo: Mock, mock_setlocale: Mock
+    ) -> None:
         """Test locale detection for 12h format with AM/PM."""
         mock_langinfo.side_effect = (
             lambda x: "%I:%M:%S %p" if x == locale.T_FMT_AMPM else ""
@@ -108,7 +112,9 @@ class TestTimeFormatDetector:
 
     @patch("locale.setlocale")
     @patch("locale.nl_langinfo")
-    def test_detect_from_locale_12h_dt_fmt(self, mock_langinfo: Mock, mock_setlocale: Mock) -> None:
+    def test_detect_from_locale_12h_dt_fmt(
+        self, mock_langinfo: Mock, mock_setlocale: Mock
+    ) -> None:
         """Test locale detection for 12h format with %p in D_T_FMT."""
         mock_langinfo.side_effect = (
             lambda x: "%m/%d/%Y %I:%M:%S %p" if x == locale.D_T_FMT else ""
@@ -119,7 +125,9 @@ class TestTimeFormatDetector:
 
     @patch("locale.setlocale")
     @patch("locale.nl_langinfo")
-    def test_detect_from_locale_24h(self, mock_langinfo: Mock, mock_setlocale: Mock) -> None:
+    def test_detect_from_locale_24h(
+        self, mock_langinfo: Mock, mock_setlocale: Mock
+    ) -> None:
         """Test locale detection for 24h format."""
         mock_langinfo.side_effect = lambda x: "%H:%M:%S" if x == locale.D_T_FMT else ""
 
@@ -136,7 +144,9 @@ class TestTimeFormatDetector:
 
     @patch("platform.system")
     @patch("subprocess.run")
-    def test_detect_from_system_macos_12h(self, mock_run: Mock, mock_system: Mock) -> None:
+    def test_detect_from_system_macos_12h(
+        self, mock_run: Mock, mock_system: Mock
+    ) -> None:
         """Test macOS system detection for 12h format."""
         mock_system.return_value = "Darwin"
 
@@ -157,7 +167,9 @@ class TestTimeFormatDetector:
     @patch("platform.system")
     @patch("subprocess.run")
     @patch.object(TimeFormatDetector, "detect_from_locale")
-    def test_detect_from_system_macos_24h(self, mock_locale: Mock, mock_run: Mock, mock_system: Mock) -> None:
+    def test_detect_from_system_macos_24h(
+        self, mock_locale: Mock, mock_run: Mock, mock_system: Mock
+    ) -> None:
         """Test macOS system detection for 24h format."""
         mock_system.return_value = "Darwin"
         mock_locale.return_value = False  # 24h format
@@ -178,7 +190,9 @@ class TestTimeFormatDetector:
 
     @patch("platform.system")
     @patch("subprocess.run")
-    def test_detect_from_system_linux_12h(self, mock_run: Mock, mock_system: Mock) -> None:
+    def test_detect_from_system_linux_12h(
+        self, mock_run: Mock, mock_system: Mock
+    ) -> None:
         """Test Linux system detection for 12h format."""
         mock_system.return_value = "Linux"
 
@@ -192,7 +206,9 @@ class TestTimeFormatDetector:
     @patch("platform.system")
     @patch("subprocess.run")
     @patch.object(TimeFormatDetector, "detect_from_locale")
-    def test_detect_from_system_linux_24h(self, mock_locale: Mock, mock_run: Mock, mock_system: Mock) -> None:
+    def test_detect_from_system_linux_24h(
+        self, mock_locale: Mock, mock_run: Mock, mock_system: Mock
+    ) -> None:
         """Test Linux system detection for 24h format."""
         mock_system.return_value = "Linux"
         mock_locale.return_value = False  # 24h format

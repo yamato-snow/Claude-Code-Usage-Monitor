@@ -1,10 +1,7 @@
 """Tests for data/analysis.py module."""
 
 from datetime import datetime, timezone
-from typing import Any, Dict, List
 from unittest.mock import Mock, patch
-
-import pytest
 
 from claude_monitor.core.models import (
     BurnRate,
@@ -34,10 +31,7 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_basic(
-        self, 
-        mock_calc_class: Mock, 
-        mock_analyzer_class: Mock, 
-        mock_load: Mock
+        self, mock_calc_class: Mock, mock_analyzer_class: Mock, mock_load: Mock
     ) -> None:
         """Test basic analyze_usage functionality."""
         sample_entry = UsageEntry(
@@ -84,10 +78,7 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_quick_start_no_hours(
-        self, 
-        mock_calc_class: Mock, 
-        mock_analyzer_class: Mock, 
-        mock_load: Mock
+        self, mock_calc_class: Mock, mock_analyzer_class: Mock, mock_load: Mock
     ) -> None:
         """Test analyze_usage with quick_start=True and hours_back=None."""
         mock_load.return_value = ([], [])
@@ -109,10 +100,7 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_quick_start_with_hours(
-        self, 
-        mock_calc_class: Mock, 
-        mock_analyzer_class: Mock, 
-        mock_load: Mock
+        self, mock_calc_class: Mock, mock_analyzer_class: Mock, mock_load: Mock
     ) -> None:
         """Test analyze_usage with quick_start=True and specific hours_back."""
         mock_load.return_value = ([], [])
@@ -134,10 +122,7 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_with_limits(
-        self, 
-        mock_calc_class: Mock, 
-        mock_analyzer_class: Mock, 
-        mock_load: Mock
+        self, mock_calc_class: Mock, mock_analyzer_class: Mock, mock_load: Mock
     ) -> None:
         """Test analyze_usage with limit detection."""
         sample_entry = UsageEntry(
@@ -182,10 +167,7 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_no_raw_entries(
-        self, 
-        mock_calc_class: Mock, 
-        mock_analyzer_class: Mock, 
-        mock_load: Mock
+        self, mock_calc_class: Mock, mock_analyzer_class: Mock, mock_load: Mock
     ) -> None:
         """Test analyze_usage when no raw entries are provided."""
         sample_entry = UsageEntry(
@@ -576,9 +558,7 @@ class TestBlockConversion:
     @patch("claude_monitor.data.analysis._create_base_block_dict")
     @patch("claude_monitor.data.analysis._add_optional_block_data")
     def test_convert_blocks_to_dict_format(
-        self, 
-        mock_add_optional: Mock, 
-        mock_create_base: Mock
+        self, mock_add_optional: Mock, mock_create_base: Mock
     ) -> None:
         """Test _convert_blocks_to_dict_format function."""
         block1 = Mock()

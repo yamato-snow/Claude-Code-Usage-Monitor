@@ -122,7 +122,7 @@ def report_file_error(
 
 def get_error_context() -> Dict[str, Any]:
     """Get standard error context information.
-    
+
     Returns:
         Dictionary containing system and application context
     """
@@ -141,17 +141,17 @@ def report_application_startup_error(
     additional_context: Optional[Dict[str, Any]] = None,
 ) -> None:
     """Report application startup-related errors with system context.
-    
+
     Args:
         exception: The startup exception
         component: Component where startup failed
         additional_context: Additional context data
     """
     context_data = get_error_context()
-    
+
     if additional_context:
         context_data.update(additional_context)
-    
+
     report_error(
         exception=exception,
         component=component,
@@ -168,7 +168,7 @@ def report_configuration_error(
     additional_context: Optional[Dict[str, Any]] = None,
 ) -> None:
     """Report configuration-related errors.
-    
+
     Args:
         exception: The configuration exception
         config_file: Path to the configuration file
@@ -179,10 +179,10 @@ def report_configuration_error(
         "config_file": str(config_file) if config_file else None,
         "config_section": config_section,
     }
-    
+
     if additional_context:
         context_data.update(additional_context)
-    
+
     report_error(
         exception=exception,
         component="configuration",

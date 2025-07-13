@@ -67,7 +67,9 @@ class P90Calculator:
         self._cfg: P90Config = config
 
     @lru_cache(maxsize=1)
-    def _cached_calc(self, key: int, blocks_tuple: Tuple[Tuple[bool, bool, int], ...]) -> int:
+    def _cached_calc(
+        self, key: int, blocks_tuple: Tuple[Tuple[bool, bool, int], ...]
+    ) -> int:
         blocks: List[Dict[str, Any]] = [
             {"isGap": g, "isActive": a, "totalTokens": t} for g, a, t in blocks_tuple
         ]

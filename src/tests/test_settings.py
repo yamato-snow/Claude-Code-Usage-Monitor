@@ -4,7 +4,7 @@ import argparse
 import json
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Union
 from unittest.mock import Mock, patch
 
 import pytest
@@ -361,7 +361,9 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_version_flag(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
+    def test_load_with_last_used_version_flag(
+        self, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test version flag handling."""
         with patch("builtins.print") as mock_print:
             with patch("sys.exit") as mock_exit:
@@ -372,7 +374,9 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_clear_flag(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
+    def test_load_with_last_used_clear_flag(
+        self, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test clear flag handling."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
@@ -398,7 +402,9 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_merge_params(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
+    def test_load_with_last_used_merge_params(
+        self, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test merging with last used parameters."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
@@ -429,13 +435,19 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_cli_priority(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
+    def test_load_with_last_used_cli_priority(
+        self, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test CLI arguments take priority over last used params."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
 
         # Mock last used params
-        test_params: Dict[str, Union[str, int]] = {"theme": "dark", "timezone": "Europe/Warsaw", "refresh_rate": 15}
+        test_params: Dict[str, Union[str, int]] = {
+            "theme": "dark",
+            "timezone": "Europe/Warsaw",
+            "refresh_rate": 15,
+        }
 
         with patch("claude_monitor.core.settings.LastUsedParams") as MockLastUsed:
             mock_instance = Mock()
@@ -453,7 +465,9 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_auto_timezone(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
+    def test_load_with_last_used_auto_timezone(
+        self, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test auto timezone detection."""
         mock_timezone.return_value = "America/New_York"
         mock_time_format.return_value = "12h"
@@ -470,7 +484,9 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_debug_flag(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
+    def test_load_with_last_used_debug_flag(
+        self, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test debug flag overrides log level."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
