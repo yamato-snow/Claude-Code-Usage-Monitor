@@ -8,6 +8,7 @@ import sys
 from claude_monitor.error_handling import report_error
 from claude_monitor.terminal.themes import print_themed
 
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -59,7 +60,7 @@ def handle_cleanup_and_exit(old_terminal_settings, message="Monitoring stopped."
 def handle_error_and_exit(old_terminal_settings, error):
     """Handle error cleanup and exit."""
     restore_terminal(old_terminal_settings)
-    logger.error(f"Terminal error: {error}", exc_info=True)
+    logger.error(f"Terminal error: {error}")
     sys.stderr.write(f"\n\nError: {error}\n")
 
     report_error(

@@ -1,27 +1,25 @@
 """Tests for data/analysis.py module."""
 
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch
+from datetime import datetime
+from datetime import timezone
+from unittest.mock import Mock
+from unittest.mock import patch
 
-from claude_monitor.core.models import (
-    BurnRate,
-    CostMode,
-    SessionBlock,
-    TokenCounts,
-    UsageEntry,
-    UsageProjection,
-)
-from claude_monitor.data.analysis import (
-    _add_optional_block_data,
-    _convert_blocks_to_dict_format,
-    _create_base_block_dict,
-    _create_result,
-    _format_block_entries,
-    _format_limit_info,
-    _is_limit_in_block_timerange,
-    _process_burn_rates,
-    analyze_usage,
-)
+from claude_monitor.core.models import BurnRate
+from claude_monitor.core.models import CostMode
+from claude_monitor.core.models import SessionBlock
+from claude_monitor.core.models import TokenCounts
+from claude_monitor.core.models import UsageEntry
+from claude_monitor.core.models import UsageProjection
+from claude_monitor.data.analysis import _add_optional_block_data
+from claude_monitor.data.analysis import _convert_blocks_to_dict_format
+from claude_monitor.data.analysis import _create_base_block_dict
+from claude_monitor.data.analysis import _create_result
+from claude_monitor.data.analysis import _format_block_entries
+from claude_monitor.data.analysis import _format_limit_info
+from claude_monitor.data.analysis import _is_limit_in_block_timerange
+from claude_monitor.data.analysis import _process_burn_rates
+from claude_monitor.data.analysis import analyze_usage
 
 
 class TestAnalyzeUsage:

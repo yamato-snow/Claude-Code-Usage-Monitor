@@ -4,32 +4,34 @@ Orchestrates UI components and coordinates display updates.
 """
 
 import logging
-from datetime import datetime, timedelta, timezone
+
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Optional
 
 import pytz
-from rich.console import Console, Group
+
+from rich.console import Console
+from rich.console import Group
 from rich.live import Live
 from rich.text import Text
 
 from claude_monitor.core.calculations import calculate_hourly_burn_rate
 from claude_monitor.core.models import normalize_model_name
 from claude_monitor.core.plans import Plans
-from claude_monitor.ui.components import (
-    AdvancedCustomLimitDisplay,
-    ErrorDisplayComponent,
-    LoadingScreenComponent,
-)
+from claude_monitor.ui.components import AdvancedCustomLimitDisplay
+from claude_monitor.ui.components import ErrorDisplayComponent
+from claude_monitor.ui.components import LoadingScreenComponent
 from claude_monitor.ui.layouts import ScreenManager
 from claude_monitor.ui.session_display import SessionDisplayComponent
 from claude_monitor.utils.notifications import NotificationManager
-from claude_monitor.utils.time_utils import (
-    TimezoneHandler,
-    format_display_time,
-    get_time_format_preference,
-    percentage,
-)
+from claude_monitor.utils.time_utils import TimezoneHandler
+from claude_monitor.utils.time_utils import format_display_time
+from claude_monitor.utils.time_utils import get_time_format_preference
+from claude_monitor.utils.time_utils import percentage
 
 
 class DisplayController:
@@ -190,7 +192,7 @@ class DisplayController:
         }
 
     def create_data_display(
-        self, data: Dict[str, Any], args: Any, token_limit: int
+        self, data: dict[str, Any], args: Any, token_limit: int
     ) -> Any:
         """Create display renderable from data.
 
@@ -270,24 +272,24 @@ class DisplayController:
             # Log the error with more details
             logger = logging.getLogger(__name__)
             logger.error(f"Error in format_active_session_screen: {e}", exc_info=True)
-            logger.error(f"processed_data type: {type(processed_data)}")
+            logger.exception(f"processed_data type: {type(processed_data)}")
             if isinstance(processed_data, dict):
                 for key, value in processed_data.items():
                     if key == "per_model_stats":
-                        logger.error(f"  {key}: {type(value).__name__}")
+                        logger.exception(f"  {key}: {type(value).__name__}")
                         if isinstance(value, dict):
                             for model, stats in value.items():
-                                logger.error(
+                                logger.exception(
                                     f"    {model}: {type(stats).__name__} = {stats}"
                                 )
                         else:
-                            logger.error(f"    value = {value}")
+                            logger.exception(f"    value = {value}")
                     elif key == "entries":
-                        logger.error(
+                        logger.exception(
                             f"  {key}: {type(value).__name__} with {len(value) if isinstance(value, list) else 'N/A'} items"
                         )
                     else:
-                        logger.error(f"  {key}: {type(value).__name__} = {value}")
+                        logger.exception(f"  {key}: {type(value).__name__} = {value}")
             screen_buffer = self.error_display.format_error_screen(
                 args.plan, args.timezone
             )
@@ -297,13 +299,13 @@ class DisplayController:
 
     def _process_active_session_data(
         self,
-        active_block: Dict[str, Any],
-        data: Dict[str, Any],
+        active_block: dict[str, Any],
+        data: dict[str, Any],
         args: Any,
         token_limit: int,
         current_time: datetime,
         cost_limit_p90: Optional[float] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Process active session data for display.
 
         Args:
@@ -387,8 +389,8 @@ class DisplayController:
         }
 
     def _calculate_model_distribution(
-        self, raw_per_model_stats: Dict[str, Any]
-    ) -> Dict[str, float]:
+        self, raw_per_model_stats: dict[str, Any]
+    ) -> dict[str, float]:
         """Calculate model distribution percentages from current active session only.
 
         Args:
@@ -433,7 +435,7 @@ class DisplayController:
         self,
         plan: str = "pro",
         timezone: str = "Europe/Warsaw",
-        custom_message: str = None,
+        custom_message: Optional[str] = None,
     ) -> Any:
         """Create loading screen display.
 
@@ -529,7 +531,7 @@ class ScreenBufferManager:
         """Initialize screen buffer manager."""
         self.console = None
 
-    def create_screen_renderable(self, screen_buffer: List[str]):
+    def create_screen_renderable(self, screen_buffer: list[str]):
         """Create Rich renderable from screen buffer.
 
         Args:
@@ -556,7 +558,7 @@ class ScreenBufferManager:
 
 
 # Legacy functions for backward compatibility
-def create_screen_renderable(screen_buffer: List[str]):
+def create_screen_renderable(screen_buffer: list[str]):
     """Legacy function - create screen renderable.
 
     Maintained for backward compatibility.

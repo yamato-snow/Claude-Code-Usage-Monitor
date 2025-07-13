@@ -1,9 +1,9 @@
 """Notification management utilities."""
 
 import json
+
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
 
 
 class NotificationManager:
@@ -19,7 +19,7 @@ class NotificationManager:
             "tokens_will_run_out": {"triggered": False, "timestamp": None},
         }
 
-    def _load_states(self) -> Dict[str, Dict]:
+    def _load_states(self) -> dict[str, dict]:
         """Load notification states from file."""
         if not self.notification_file.exists():
             return {
@@ -81,7 +81,7 @@ class NotificationManager:
         self.states[key] = {"triggered": True, "timestamp": datetime.now()}
         self._save_states()
 
-    def get_notification_state(self, key: str) -> Dict:
+    def get_notification_state(self, key: str) -> dict:
         """Get current notification state."""
         return self.states.get(key, {"triggered": False, "timestamp": None})
 

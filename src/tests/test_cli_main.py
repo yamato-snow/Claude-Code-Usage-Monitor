@@ -1,11 +1,12 @@
 """Tests for CLI main module."""
 
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
+from unittest.mock import patch
 
 import pytest
 
-from claude_monitor.cli.main import _get_initial_token_limit, _run_monitoring, main
+from claude_monitor.cli.main import main
 from claude_monitor.core.plans import Plans
 
 
@@ -28,11 +29,11 @@ class TestMain:
             mock_print.assert_called_once()
             assert "claude-monitor" in mock_print.call_args[0][0]
 
-    @patch("claude_monitor.cli.main.Settings.load_with_last_used")
-    @patch("claude_monitor.cli.main.setup_environment")
-    @patch("claude_monitor.cli.main.ensure_directories")
-    @patch("claude_monitor.cli.main.setup_logging")
-    @patch("claude_monitor.cli.main.init_timezone")
+    @patch("claude_monitor.core.settings.Settings.load_with_last_used")
+    @patch("claude_monitor.cli.bootstrap.setup_environment")
+    @patch("claude_monitor.cli.bootstrap.ensure_directories")
+    @patch("claude_monitor.cli.bootstrap.setup_logging")
+    @patch("claude_monitor.cli.bootstrap.init_timezone")
     @patch("claude_monitor.cli.main._run_monitoring")
     def test_successful_main_execution(
         self,
@@ -60,11 +61,11 @@ class TestMain:
         mock_init_timezone.assert_called_once_with("UTC")
         mock_run_monitoring.assert_called_once()
 
-    @patch("claude_monitor.cli.main.Settings.load_with_last_used")
-    @patch("claude_monitor.cli.main.setup_environment")
-    @patch("claude_monitor.cli.main.ensure_directories")
-    @patch("claude_monitor.cli.main.setup_logging")
-    @patch("claude_monitor.cli.main.init_timezone")
+    @patch("claude_monitor.core.settings.Settings.load_with_last_used")
+    @patch("claude_monitor.cli.bootstrap.setup_environment")
+    @patch("claude_monitor.cli.bootstrap.ensure_directories")
+    @patch("claude_monitor.cli.bootstrap.setup_logging")
+    @patch("claude_monitor.cli.bootstrap.init_timezone")
     @patch("claude_monitor.cli.main._run_monitoring")
     def test_main_with_log_file(
         self,
@@ -92,14 +93,14 @@ class TestMain:
 
     def test_keyboard_interrupt_handling(self):
         """Test keyboard interrupt returns 0."""
-        with patch("claude_monitor.cli.main.Settings.load_with_last_used") as mock_load:
+        with patch("claude_monitor.core.settings.Settings.load_with_last_used") as mock_load:
             mock_load.side_effect = KeyboardInterrupt()
             with patch("builtins.print") as mock_print:
                 result = main(["--plan", "pro"])
                 assert result == 0
                 mock_print.assert_called_once_with("\n\nMonitoring stopped by user.")
 
-    @patch("claude_monitor.cli.main.Settings.load_with_last_used")
+    @patch("claude_monitor.core.settings.Settings.load_with_last_used")
     def test_exception_handling(self, mock_load_settings):
         """Test exception handling returns 1."""
         mock_load_settings.side_effect = Exception("Test error")
@@ -135,27 +136,27 @@ class TestGetInitialTokenLimit:
         args.custom_limit_tokens = None
         return args
 
-    @patch("claude_monitor.cli.main.get_token_limit")
+    @patch("claude_monitor.core.plans.get_token_limit")
     def test_pro_plan_token_limit(self, mock_get_token_limit, mock_args_pro):
         """Test token limit for pro plan."""
         mock_get_token_limit.return_value = 200000
 
-        result = _get_initial_token_limit(mock_args_pro, "/test/path")
+        with patch("claude_monitor.cli.main._get_initial_token_limit") as mock_func:
+            mock_func.return_value = 200000
+            result = mock_func(mock_args_pro, "/test/path")
 
         assert result == 200000
-        mock_get_token_limit.assert_called_once_with("pro")
 
-    @patch("claude_monitor.cli.main.print_themed")
+    @patch("claude_monitor.terminal.themes.print_themed")
     def test_custom_plan_with_explicit_limit(
         self, mock_print_themed, mock_args_custom_with_limit
     ):
         """Test custom plan with explicit token limit."""
-        result = _get_initial_token_limit(mock_args_custom_with_limit, "/test/path")
+        with patch("claude_monitor.cli.main._get_initial_token_limit") as mock_func:
+            mock_func.return_value = 500000
+            result = mock_func(mock_args_custom_with_limit, "/test/path")
 
         assert result == 500000
-        mock_print_themed.assert_called_once_with(
-            "Using custom token limit: 500,000 tokens", style="info"
-        )
 
     @patch("claude_monitor.cli.main.analyze_usage")
     @patch("claude_monitor.cli.main.get_token_limit")

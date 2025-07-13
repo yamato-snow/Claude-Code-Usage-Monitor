@@ -1,15 +1,15 @@
 """Comprehensive tests for TimezoneHandler class."""
 
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch
+from datetime import datetime
+from datetime import timezone
+from unittest.mock import Mock
+from unittest.mock import patch
 
 import pytest
 import pytz
 
-from claude_monitor.utils.timezone import (
-    TimezoneHandler,
-    _detect_timezone_time_preference,
-)
+from claude_monitor.utils.timezone import TimezoneHandler
+from claude_monitor.utils.timezone import _detect_timezone_time_preference
 
 
 class TestTimezoneHandler:
@@ -215,7 +215,7 @@ class TestTimezoneHandler:
         # Should assume America/New_York and convert to UTC
         # During standard time (EST), this would be +5 hours
         expected_hour = 10  # 5 AM EST = 10 AM UTC (standard time)
-        assert result.hour == expected_hour or result.hour == 9  # Account for DST
+        assert result.hour in (expected_hour, 9)  # Account for DST
 
     def test_to_timezone_conversion(self, handler):
         """Test to_timezone conversion."""
@@ -232,7 +232,7 @@ class TestTimezoneHandler:
 
         # Should use default timezone (America/New_York)
         expected_hour = 5  # 10 AM UTC = 5 AM EST (standard time)
-        assert result.hour == expected_hour or result.hour == 6  # Account for DST
+        assert result.hour in (expected_hour, 6)  # Account for DST
 
     def test_error_handling_integration(self, handler):
         """Test error handling integration."""

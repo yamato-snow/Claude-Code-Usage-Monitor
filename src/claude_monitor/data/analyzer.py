@@ -5,16 +5,19 @@ Combines session block creation and limit detection functionality.
 
 import logging
 import re
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Tuple
 
-from claude_monitor.core.models import (
-    SessionBlock,
-    TokenCounts,
-    UsageEntry,
-    normalize_model_name,
-)
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+from typing import Any
+from typing import Optional
+
+from claude_monitor.core.models import SessionBlock
+from claude_monitor.core.models import TokenCounts
+from claude_monitor.core.models import UsageEntry
+from claude_monitor.core.models import normalize_model_name
 from claude_monitor.utils.time_utils import TimezoneHandler
+
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +35,7 @@ class SessionAnalyzer:
         self.session_duration = timedelta(hours=session_duration_hours)
         self.timezone_handler = TimezoneHandler()
 
-    def transform_to_blocks(self, entries: List[UsageEntry]) -> List[SessionBlock]:
+    def transform_to_blocks(self, entries: list[UsageEntry]) -> list[SessionBlock]:
         """Process entries and create session blocks.
 
         Args:
@@ -78,7 +81,7 @@ class SessionAnalyzer:
 
         return blocks
 
-    def detect_limits(self, raw_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def detect_limits(self, raw_entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Detect token limit messages from raw JSONL entries.
 
         Args:
@@ -206,7 +209,7 @@ class SessionAnalyzer:
 
         return None
 
-    def _mark_active_blocks(self, blocks: List[SessionBlock]) -> None:
+    def _mark_active_blocks(self, blocks: list[SessionBlock]) -> None:
         """Mark blocks as active if they're still ongoing."""
         current_time = datetime.now(timezone.utc)
 
@@ -217,8 +220,8 @@ class SessionAnalyzer:
     # Limit detection methods
 
     def _detect_single_limit(
-        self, raw_data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, raw_data: dict[str, Any]
+    ) -> Optional[dict[str, Any]]:
         """Detect token limit messages from a single JSONL entry."""
         entry_type = raw_data.get("type")
 
@@ -230,8 +233,8 @@ class SessionAnalyzer:
         return None
 
     def _process_system_message(
-        self, raw_data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, raw_data: dict[str, Any]
+    ) -> Optional[dict[str, Any]]:
         """Process system messages for limit detection."""
         content = raw_data.get("content", "")
         if not isinstance(content, str):
@@ -276,8 +279,8 @@ class SessionAnalyzer:
             return None
 
     def _process_user_message(
-        self, raw_data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, raw_data: dict[str, Any]
+    ) -> Optional[dict[str, Any]]:
         """Process user messages for tool result limit detection."""
         message = raw_data.get("message", {})
         content_list = message.get("content", [])
@@ -294,8 +297,8 @@ class SessionAnalyzer:
         return None
 
     def _process_tool_result(
-        self, item: Dict[str, Any], raw_data: Dict[str, Any], message: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, item: dict[str, Any], raw_data: dict[str, Any], message: dict[str, Any]
+    ) -> Optional[dict[str, Any]]:
         """Process a single tool result item for limit detection."""
         tool_content = item.get("content", [])
         if not isinstance(tool_content, list):
@@ -329,8 +332,8 @@ class SessionAnalyzer:
         return None
 
     def _extract_block_context(
-        self, raw_data: Dict[str, Any], message: Optional[Dict] = None
-    ) -> Dict[str, Any]:
+        self, raw_data: dict[str, Any], message: Optional[dict] = None
+    ) -> dict[str, Any]:
         """Extract block context from raw data."""
         context = {
             "message_id": raw_data.get("messageId") or raw_data.get("message_id"),
@@ -361,7 +364,7 @@ class SessionAnalyzer:
 
     def _extract_wait_time(
         self, content: str, timestamp: datetime
-    ) -> Tuple[Optional[datetime], Optional[int]]:
+    ) -> tuple[Optional[datetime], Optional[int]]:
         """Extract wait time and calculate reset time from content."""
         wait_match = re.search(r"wait\s+(\d+)\s+minutes?", content.lower())
         if wait_match:

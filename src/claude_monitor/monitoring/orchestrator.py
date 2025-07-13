@@ -3,12 +3,17 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, List, Optional
 
-from claude_monitor.core.plans import DEFAULT_TOKEN_LIMIT, get_token_limit
+from typing import Any
+from typing import Callable
+from typing import Optional
+
+from claude_monitor.core.plans import DEFAULT_TOKEN_LIMIT
+from claude_monitor.core.plans import get_token_limit
 from claude_monitor.error_handling import report_error
 from claude_monitor.monitoring.data_manager import DataManager
 from claude_monitor.monitoring.session_monitor import SessionMonitor
+
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +36,8 @@ class MonitoringOrchestrator:
         self._monitoring = False
         self._monitor_thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()
-        self._update_callbacks: List[Callable] = []
-        self._last_valid_data: Optional[Dict[str, Any]] = None
+        self._update_callbacks: list[Callable] = []
+        self._last_valid_data: Optional[dict[str, Any]] = None
         self._args = None
         self._first_data_event = threading.Event()
 
@@ -93,7 +98,7 @@ class MonitoringOrchestrator:
         """
         self.session_monitor.register_callback(callback)
 
-    def force_refresh(self) -> Optional[Dict[str, Any]]:
+    def force_refresh(self) -> Optional[dict[str, Any]]:
         """Force immediate data refresh.
 
         Returns:
@@ -132,7 +137,7 @@ class MonitoringOrchestrator:
 
     def _fetch_and_process_data(
         self, force_refresh: bool = False
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Fetch data and notify callbacks.
 
         Args:
@@ -199,7 +204,7 @@ class MonitoringOrchestrator:
             )
             return None
 
-    def _calculate_token_limit(self, data: Dict[str, Any]) -> int:
+    def _calculate_token_limit(self, data: dict[str, Any]) -> int:
         """Calculate token limit based on plan and data.
 
         Args:
@@ -218,5 +223,5 @@ class MonitoringOrchestrator:
                 return get_token_limit(plan, data.get("blocks", []))
             return get_token_limit(plan)
         except Exception as e:
-            logger.error(f"Error calculating token limit: {e}")
+            logger.exception(f"Error calculating token limit: {e}")
             return DEFAULT_TOKEN_LIMIT

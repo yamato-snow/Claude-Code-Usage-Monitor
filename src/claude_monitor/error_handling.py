@@ -5,8 +5,11 @@ Sentry error handling patterns throughout the codebase.
 """
 
 import logging
+
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any
+from typing import Optional
+
 
 try:
     import sentry_sdk
@@ -30,8 +33,8 @@ def report_error(
     exception: Exception,
     component: str,
     context_name: Optional[str] = None,
-    context_data: Optional[Dict[str, Any]] = None,
-    tags: Optional[Dict[str, str]] = None,
+    context_data: Optional[dict[str, Any]] = None,
+    tags: Optional[dict[str, str]] = None,
     level: ErrorLevel = ErrorLevel.ERROR,
 ) -> None:
     """Report an exception to Sentry with standardized context and tagging.
@@ -87,7 +90,7 @@ def report_file_error(
     exception: Exception,
     file_path: str,
     operation: str = "read",
-    additional_context: Optional[Dict[str, Any]] = None,
+    additional_context: Optional[dict[str, Any]] = None,
 ) -> None:
     """Report file-related errors with standardized context.
 

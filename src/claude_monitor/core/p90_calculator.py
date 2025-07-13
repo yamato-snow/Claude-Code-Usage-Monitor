@@ -1,8 +1,12 @@
 import time
+
+from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from statistics import quantiles
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any
+from typing import Callable
+from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -18,8 +22,8 @@ def _did_hit_limit(tokens: int, common_limits: Sequence[int], threshold: float) 
 
 
 def _extract_sessions(
-    blocks: Sequence[Dict[str, Any]], filter_fn: Callable[[Dict[str, Any]], bool]
-) -> List[int]:
+    blocks: Sequence[dict[str, Any]], filter_fn: Callable[[dict[str, Any]], bool]
+) -> list[int]:
     return [
         block["totalTokens"]
         for block in blocks
@@ -27,7 +31,7 @@ def _extract_sessions(
     ]
 
 
-def _calculate_p90_from_blocks(blocks: Sequence[Dict[str, Any]], cfg: P90Config) -> int:
+def _calculate_p90_from_blocks(blocks: Sequence[dict[str, Any]], cfg: P90Config) -> int:
     hits = _extract_sessions(
         blocks,
         lambda b: (
@@ -51,11 +55,9 @@ def _calculate_p90_from_blocks(blocks: Sequence[Dict[str, Any]], cfg: P90Config)
 class P90Calculator:
     def __init__(self, config: Optional[P90Config] = None):
         if config is None:
-            from claude_monitor.core.plans import (
-                COMMON_TOKEN_LIMITS,
-                DEFAULT_TOKEN_LIMIT,
-                LIMIT_DETECTION_THRESHOLD,
-            )
+            from claude_monitor.core.plans import COMMON_TOKEN_LIMITS
+            from claude_monitor.core.plans import DEFAULT_TOKEN_LIMIT
+            from claude_monitor.core.plans import LIMIT_DETECTION_THRESHOLD
 
             config = P90Config(
                 common_limits=COMMON_TOKEN_LIMITS,
@@ -74,7 +76,7 @@ class P90Calculator:
 
     def calculate_p90_limit(
         self,
-        blocks: Optional[List[Dict[str, Any]]] = None,
+        blocks: Optional[list[dict[str, Any]]] = None,
         use_cache: bool = True,
     ) -> Optional[int]:
         if not blocks:

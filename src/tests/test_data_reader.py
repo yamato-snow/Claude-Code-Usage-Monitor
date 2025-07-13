@@ -7,24 +7,28 @@ Covers file reading, data filtering, mapping, and error handling scenarios.
 
 import json
 import tempfile
-from datetime import datetime, timedelta, timezone
+
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
 from pathlib import Path
-from unittest.mock import Mock, mock_open, patch
+from unittest.mock import Mock
+from unittest.mock import mock_open
+from unittest.mock import patch
 
 import pytest
 
-from claude_monitor.core.models import CostMode, UsageEntry
+from claude_monitor.core.models import CostMode
+from claude_monitor.core.models import UsageEntry
 from claude_monitor.core.pricing import PricingCalculator
-from claude_monitor.data.reader import (
-    _create_unique_hash,
-    _find_jsonl_files,
-    _map_to_usage_entry,
-    _process_single_file,
-    _should_process_entry,
-    _update_processed_hashes,
-    load_all_raw_entries,
-    load_usage_entries,
-)
+from claude_monitor.data.reader import _create_unique_hash
+from claude_monitor.data.reader import _find_jsonl_files
+from claude_monitor.data.reader import _map_to_usage_entry
+from claude_monitor.data.reader import _process_single_file
+from claude_monitor.data.reader import _should_process_entry
+from claude_monitor.data.reader import _update_processed_hashes
+from claude_monitor.data.reader import load_all_raw_entries
+from claude_monitor.data.reader import load_usage_entries
 from claude_monitor.utils.time_utils import TimezoneHandler
 
 
@@ -204,7 +208,7 @@ class TestLoadAllRawEntries:
         test_file = Path("/test/file.jsonl")
         mock_find_files.return_value = [test_file]
 
-        with patch("builtins.open", side_effect=IOError("File not found")):
+        with patch("builtins.open", side_effect=OSError("File not found")):
             with patch("claude_monitor.data.reader.logger") as mock_logger:
                 result = load_all_raw_entries("/test/path")
 
@@ -286,24 +290,21 @@ class TestProcessSingleFile:
             model="claude-3-haiku",
         )
 
-        with patch("builtins.open", mock_open(read_data=jsonl_content)):
-            with patch(
-                "claude_monitor.data.reader._should_process_entry", return_value=True
-            ):
-                with patch(
-                    "claude_monitor.data.reader._map_to_usage_entry",
-                    return_value=sample_entry,
-                ):
-                    with patch("claude_monitor.data.reader._update_processed_hashes"):
-                        entries, raw_data = _process_single_file(
-                            test_file,
-                            CostMode.AUTO,
-                            None,  # cutoff_time
-                            set(),  # processed_hashes
-                            True,  # include_raw
-                            timezone_handler,
-                            pricing_calculator,
-                        )
+        with patch("builtins.open", mock_open(read_data=jsonl_content)), patch(
+            "claude_monitor.data.reader._should_process_entry", return_value=True
+        ), patch(
+            "claude_monitor.data.reader._map_to_usage_entry",
+            return_value=sample_entry,
+        ), patch("claude_monitor.data.reader._update_processed_hashes"):
+            entries, raw_data = _process_single_file(
+                test_file,
+                CostMode.AUTO,
+                None,  # cutoff_time
+                set(),  # processed_hashes
+                True,  # include_raw
+                timezone_handler,
+                pricing_calculator,
+            )
 
         assert len(entries) == 1
         assert entries[0] == sample_entry
@@ -324,24 +325,21 @@ class TestProcessSingleFile:
             model="claude-3-haiku",
         )
 
-        with patch("builtins.open", mock_open(read_data=jsonl_content)):
-            with patch(
-                "claude_monitor.data.reader._should_process_entry", return_value=True
-            ):
-                with patch(
-                    "claude_monitor.data.reader._map_to_usage_entry",
-                    return_value=sample_entry,
-                ):
-                    with patch("claude_monitor.data.reader._update_processed_hashes"):
-                        entries, raw_data = _process_single_file(
-                            test_file,
-                            CostMode.AUTO,
-                            None,
-                            set(),
-                            False,
-                            timezone_handler,
-                            pricing_calculator,
-                        )
+        with patch("builtins.open", mock_open(read_data=jsonl_content)), patch(
+            "claude_monitor.data.reader._should_process_entry", return_value=True
+        ), patch(
+            "claude_monitor.data.reader._map_to_usage_entry",
+            return_value=sample_entry,
+        ), patch("claude_monitor.data.reader._update_processed_hashes"):
+            entries, raw_data = _process_single_file(
+                test_file,
+                CostMode.AUTO,
+                None,
+                set(),
+                False,
+                timezone_handler,
+                pricing_calculator,
+            )
 
         assert len(entries) == 1
         assert raw_data is None
@@ -353,19 +351,18 @@ class TestProcessSingleFile:
         jsonl_content = json.dumps(sample_data[0])
         test_file = Path("/test/file.jsonl")
 
-        with patch("builtins.open", mock_open(read_data=jsonl_content)):
-            with patch(
-                "claude_monitor.data.reader._should_process_entry", return_value=False
-            ):
-                entries, raw_data = _process_single_file(
-                    test_file,
-                    CostMode.AUTO,
-                    None,
-                    set(),
-                    True,
-                    timezone_handler,
-                    pricing_calculator,
-                )
+        with patch("builtins.open", mock_open(read_data=jsonl_content)), patch(
+            "claude_monitor.data.reader._should_process_entry", return_value=False
+        ):
+            entries, raw_data = _process_single_file(
+                test_file,
+                CostMode.AUTO,
+                None,
+                set(),
+                True,
+                timezone_handler,
+                pricing_calculator,
+            )
 
         assert len(entries) == 0
         assert len(raw_data) == 0
@@ -376,22 +373,20 @@ class TestProcessSingleFile:
         jsonl_content = 'invalid json\n{"valid": "data"}'
         test_file = Path("/test/file.jsonl")
 
-        with patch("builtins.open", mock_open(read_data=jsonl_content)):
-            with patch(
-                "claude_monitor.data.reader._should_process_entry", return_value=True
-            ):
-                with patch(
-                    "claude_monitor.data.reader._map_to_usage_entry", return_value=None
-                ):
-                    entries, raw_data = _process_single_file(
-                        test_file,
-                        CostMode.AUTO,
-                        None,
-                        set(),
-                        True,
-                        timezone_handler,
-                        pricing_calculator,
-                    )
+        with patch("builtins.open", mock_open(read_data=jsonl_content)), patch(
+            "claude_monitor.data.reader._should_process_entry", return_value=True
+        ), patch(
+            "claude_monitor.data.reader._map_to_usage_entry", return_value=None
+        ):
+            entries, raw_data = _process_single_file(
+                test_file,
+                CostMode.AUTO,
+                None,
+                set(),
+                True,
+                timezone_handler,
+                pricing_calculator,
+            )
 
         assert len(entries) == 0
         assert len(raw_data) == 1
@@ -400,7 +395,7 @@ class TestProcessSingleFile:
         timezone_handler, pricing_calculator = mock_components
         test_file = Path("/test/nonexistent.jsonl")
 
-        with patch("builtins.open", side_effect=IOError("File not found")):
+        with patch("builtins.open", side_effect=OSError("File not found")):
             with patch("claude_monitor.data.reader.report_file_error") as mock_report:
                 entries, raw_data = _process_single_file(
                     test_file,
@@ -423,22 +418,20 @@ class TestProcessSingleFile:
         jsonl_content = json.dumps(sample_data[0])
         test_file = Path("/test/file.jsonl")
 
-        with patch("builtins.open", mock_open(read_data=jsonl_content)):
-            with patch(
-                "claude_monitor.data.reader._should_process_entry", return_value=True
-            ):
-                with patch(
-                    "claude_monitor.data.reader._map_to_usage_entry", return_value=None
-                ):
-                    entries, raw_data = _process_single_file(
-                        test_file,
-                        CostMode.AUTO,
-                        None,
-                        set(),
-                        True,
-                        timezone_handler,
-                        pricing_calculator,
-                    )
+        with patch("builtins.open", mock_open(read_data=jsonl_content)), patch(
+            "claude_monitor.data.reader._should_process_entry", return_value=True
+        ), patch(
+            "claude_monitor.data.reader._map_to_usage_entry", return_value=None
+        ):
+            entries, raw_data = _process_single_file(
+                test_file,
+                CostMode.AUTO,
+                None,
+                set(),
+                True,
+                timezone_handler,
+                pricing_calculator,
+            )
 
         assert len(entries) == 0
         assert len(raw_data) == 1
@@ -826,8 +819,7 @@ class TestIntegration:
             ]
 
             with open(test_file, "w") as f:
-                for item in test_data:
-                    f.write(json.dumps(item) + "\n")
+                f.writelines(json.dumps(item) + "\n" for item in test_data)
 
             # Mock the data processors since they're external dependencies
             with patch(
@@ -1334,8 +1326,7 @@ class TestAdditionalEdgeCases:
             ]
 
             with open(test_file, "w") as f:
-                for item in test_data:
-                    f.write(json.dumps(item) + "\n")
+                f.writelines(json.dumps(item) + "\n" for item in test_data)
 
             with patch(
                 "claude_monitor.core.data_processors.TimestampProcessor"
@@ -1425,8 +1416,7 @@ class TestAdditionalEdgeCases:
             ]
 
             with open(test_file, "w") as f:
-                for item in test_data:
-                    f.write(json.dumps(item) + "\n")
+                f.writelines(json.dumps(item) + "\n" for item in test_data)
 
             for mode in [CostMode.AUTO, CostMode.CALCULATED, CostMode.CACHED]:
                 with patch(

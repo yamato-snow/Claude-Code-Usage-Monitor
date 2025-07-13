@@ -2,7 +2,8 @@
 
 import pytest
 
-from claude_monitor.core.models import CostMode, TokenCounts
+from claude_monitor.core.models import CostMode
+from claude_monitor.core.models import TokenCounts
 from claude_monitor.core.pricing import PricingCalculator
 
 
@@ -341,7 +342,7 @@ class TestPricingCalculator:
             ("claude-3-5-sonnet-20241022", "claude-3-5-sonnet"),
         ]
 
-        for input_model, expected_normalized in test_cases:
+        for input_model, _expected_normalized in test_cases:
             try:
                 cost = calculator.calculate_cost(
                     model=input_model, input_tokens=100, output_tokens=50

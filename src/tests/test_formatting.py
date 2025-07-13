@@ -1,20 +1,18 @@
 """Tests for formatting utilities."""
 
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch
+from datetime import datetime
+from datetime import timezone
+from unittest.mock import Mock
+from unittest.mock import patch
 
-from claude_monitor.utils.formatting import (
-    format_currency,
-    format_display_time,
-    format_time,
-    get_time_format_preference,
-)
-from claude_monitor.utils.model_utils import (
-    get_model_display_name,
-    get_model_generation,
-    is_claude_model,
-    normalize_model_name,
-)
+from claude_monitor.utils.formatting import format_currency
+from claude_monitor.utils.formatting import format_display_time
+from claude_monitor.utils.formatting import format_time
+from claude_monitor.utils.formatting import get_time_format_preference
+from claude_monitor.utils.model_utils import get_model_display_name
+from claude_monitor.utils.model_utils import get_model_generation
+from claude_monitor.utils.model_utils import is_claude_model
+from claude_monitor.utils.model_utils import normalize_model_name
 
 
 class TestFormatTime:
@@ -135,7 +133,7 @@ class TestFormatDisplayTime:
         dt = datetime(2024, 1, 1, 15, 30, 45, tzinfo=timezone.utc)
         result = format_display_time(dt, use_12h_format=True, include_seconds=True)
         # Should be either "3:30:45 PM" (Unix) or "03:30:45 PM" (Windows fallback)
-        assert "3:30:45 PM" in result or "03:30:45 PM" == result
+        assert "3:30:45 PM" in result or result == "03:30:45 PM"
 
     @patch("claude_monitor.utils.time_utils.get_time_format_preference")
     def test_format_display_time_12h_without_seconds(self, mock_pref):
@@ -144,7 +142,7 @@ class TestFormatDisplayTime:
         dt = datetime(2024, 1, 1, 15, 30, 45, tzinfo=timezone.utc)
         result = format_display_time(dt, use_12h_format=True, include_seconds=False)
         # Should be either "3:30 PM" (Unix) or "03:30 PM" (Windows fallback)
-        assert "3:30 PM" in result or "03:30 PM" == result
+        assert "3:30 PM" in result or result == "03:30 PM"
 
     @patch("claude_monitor.utils.time_utils.get_time_format_preference")
     def test_format_display_time_auto_preference(self, mock_pref):
@@ -162,13 +160,13 @@ class TestFormatDisplayTime:
 
         # Test 12-hour format - should work on both Unix and Windows
         result_12h = format_display_time(dt, use_12h_format=True, include_seconds=True)
-        assert "3:30:45 AM" in result_12h or "03:30:45 AM" == result_12h
+        assert "3:30:45 AM" in result_12h or result_12h == "03:30:45 AM"
 
         # Test 12-hour format without seconds
         result_12h_no_sec = format_display_time(
             dt, use_12h_format=True, include_seconds=False
         )
-        assert "3:30 AM" in result_12h_no_sec or "03:30 AM" == result_12h_no_sec
+        assert "3:30 AM" in result_12h_no_sec or result_12h_no_sec == "03:30 AM"
 
     def test_format_display_time_edge_cases(self):
         """Test edge cases for format_display_time."""
@@ -399,7 +397,7 @@ class TestFormattingPerformance:
         import time
 
         # Test formatting many time values
-        values = list(range(0, 10000))  # 0 to 9999 minutes
+        values = list(range(10000))  # 0 to 9999 minutes
 
         start_time = time.time()
         results = [format_time(value) for value in values]

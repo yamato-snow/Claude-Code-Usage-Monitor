@@ -5,7 +5,8 @@ code duplication across different components.
 """
 
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
+from typing import Optional
 
 from claude_monitor.utils.time_utils import TimezoneHandler
 
@@ -64,7 +65,7 @@ class TokenExtractor:
     """Unified token extraction utilities."""
 
     @staticmethod
-    def extract_tokens(data: Dict[str, Any]) -> Dict[str, int]:
+    def extract_tokens(data: dict[str, Any]) -> dict[str, int]:
         """Extract token counts from data in standardized format.
 
         Args:
@@ -171,7 +172,7 @@ class DataConverter:
     """Unified data conversion utilities."""
 
     @staticmethod
-    def flatten_nested_dict(data: Dict[str, Any], prefix: str = "") -> Dict[str, Any]:
+    def flatten_nested_dict(data: dict[str, Any], prefix: str = "") -> dict[str, Any]:
         """Flatten nested dictionary structure.
 
         Args:
@@ -195,7 +196,7 @@ class DataConverter:
 
     @staticmethod
     def extract_model_name(
-        data: Dict[str, Any], default: str = "claude-3-5-sonnet"
+        data: dict[str, Any], default: str = "claude-3-5-sonnet"
     ) -> str:
         """Extract model name from various data sources.
 
