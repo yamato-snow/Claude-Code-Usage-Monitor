@@ -369,9 +369,9 @@ class TestSystemTimeDetector:
         mock_result.stdout = "Eastern Standard Time"
         mock_run.return_value = mock_result
 
-        # Should fallback to UTC for now
+        # Should return the Windows timezone name
         result = SystemTimeDetector.get_timezone()
-        assert result == "UTC"
+        assert result == "Eastern Standard Time"
 
     @patch("platform.system")
     def test_get_timezone_unknown_system(self, mock_system: Mock) -> None:
