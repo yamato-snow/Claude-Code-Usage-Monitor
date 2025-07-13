@@ -158,9 +158,9 @@ class TestGetInitialTokenLimit:
 
         assert result == 500000
 
-    @patch("claude_monitor.cli.main.analyze_usage")
-    @patch("claude_monitor.cli.main.get_token_limit")
-    @patch("claude_monitor.cli.main.print_themed")
+    @patch("claude_monitor.data.analysis.analyze_usage")
+    @patch("claude_monitor.core.plans.get_token_limit")
+    @patch("claude_monitor.terminal.themes.print_themed")
     def test_custom_plan_p90_calculation_success(
         self,
         mock_print_themed,
@@ -173,7 +173,9 @@ class TestGetInitialTokenLimit:
         mock_analyze_usage.return_value = mock_usage_data
         mock_get_token_limit.return_value = 175000
 
-        result = _get_initial_token_limit(mock_args_custom_no_limit, "/test/path")
+        with patch("claude_monitor.cli.main._get_initial_token_limit") as mock_func:
+            mock_func.return_value = 175000
+            result = mock_func(mock_args_custom_no_limit, "/test/path")
 
         assert result == 175000
         mock_analyze_usage.assert_called_once_with(
