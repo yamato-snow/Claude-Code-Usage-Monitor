@@ -5,14 +5,23 @@ This module consolidates layout management functionality including:
 - Screen layout and organization
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, Sequence
+
 
 class HeaderManager:
     """Manager for header layout and formatting."""
+    
+    # Type constants for header configuration
+    DEFAULT_SEPARATOR_CHAR: Final[str] = "="
+    DEFAULT_SEPARATOR_LENGTH: Final[int] = 60
+    DEFAULT_SPARKLES: Final[str] = "✦ ✧ ✦ ✧"
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize header manager."""
-        self.separator_char = "="
-        self.separator_length = 60
+        self.separator_char: str = self.DEFAULT_SEPARATOR_CHAR
+        self.separator_length: int = self.DEFAULT_SEPARATOR_LENGTH
 
     def create_header(
         self, plan: str = "pro", timezone: str = "Europe/Warsaw"
@@ -26,9 +35,9 @@ class HeaderManager:
         Returns:
             List of formatted header lines
         """
-        sparkles = "✦ ✧ ✦ ✧"
-        title = "CLAUDE CODE USAGE MONITOR"
-        separator = self.separator_char * self.separator_length
+        sparkles: str = self.DEFAULT_SPARKLES
+        title: str = "CLAUDE CODE USAGE MONITOR"
+        separator: str = self.separator_char * self.separator_length
 
         return [
             f"[header]{sparkles}[/] [header]{title}[/] [header]{sparkles}[/]",
@@ -40,15 +49,20 @@ class HeaderManager:
 
 class ScreenManager:
     """Manager for overall screen layout and organization."""
+    
+    # Type constants for screen configuration
+    DEFAULT_SCREEN_WIDTH: Final[int] = 80
+    DEFAULT_SCREEN_HEIGHT: Final[int] = 24
+    DEFAULT_MARGIN: Final[int] = 0
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize screen manager."""
-        self.screen_width = 80
-        self.screen_height = 24
-        self.margin_left = 0
-        self.margin_right = 0
-        self.margin_top = 0
-        self.margin_bottom = 0
+        self.screen_width: int = self.DEFAULT_SCREEN_WIDTH
+        self.screen_height: int = self.DEFAULT_SCREEN_HEIGHT
+        self.margin_left: int = self.DEFAULT_MARGIN
+        self.margin_right: int = self.DEFAULT_MARGIN
+        self.margin_top: int = self.DEFAULT_MARGIN
+        self.margin_bottom: int = self.DEFAULT_MARGIN
 
     def set_screen_dimensions(self, width: int, height: int) -> None:
         """Set screen dimensions for layout calculations.
@@ -76,7 +90,7 @@ class ScreenManager:
         self.margin_top = top
         self.margin_bottom = bottom
 
-    def create_full_screen_layout(self, content_sections: list[list[str]]) -> list[str]:
+    def create_full_screen_layout(self, content_sections: Sequence[Sequence[str]]) -> list[str]:
         """Create full screen layout with multiple content sections.
 
         Args:
@@ -85,7 +99,7 @@ class ScreenManager:
         Returns:
             Combined screen layout as list of lines
         """
-        screen_buffer = []
+        screen_buffer: list[str] = []
 
         screen_buffer.extend([""] * self.margin_top)
 
@@ -94,7 +108,7 @@ class ScreenManager:
                 screen_buffer.append("")
 
             for line in section:
-                padded_line = " " * self.margin_left + line
+                padded_line: str = " " * self.margin_left + line
                 screen_buffer.append(padded_line)
 
         screen_buffer.extend([""] * self.margin_bottom)

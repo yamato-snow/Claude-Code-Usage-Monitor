@@ -6,9 +6,9 @@ based on token usage and model pricing. It supports all Claude model types
 with caching.
 """
 
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Union
 
-from claude_monitor.core.models import TokenCounts, normalize_model_name
+from claude_monitor.core.models import TokenCounts, normalize_model_name, CostMode
 
 
 class PricingCalculator:
@@ -26,7 +26,7 @@ class PricingCalculator:
     - Backward compatible with both APIs
     """
 
-    FALLBACK_PRICING = {
+    FALLBACK_PRICING: Dict[str, Dict[str, float]] = {
         "opus": {
             "input": 15.0,
             "output": 75.0,
@@ -47,7 +47,7 @@ class PricingCalculator:
         },
     }
 
-    def __init__(self, custom_pricing: Optional[dict[str, dict[str, float]]] = None):
+    def __init__(self, custom_pricing: Optional[Dict[str, Dict[str, float]]] = None) -> None:
         """Initialize with optional custom pricing.
 
         Args:
@@ -55,7 +55,7 @@ class PricingCalculator:
                           Should follow same structure as MODEL_PRICING.
         """
         # Use fallback pricing if no custom pricing provided
-        self.pricing = custom_pricing or {
+        self.pricing: Dict[str, Dict[str, float]] = custom_pricing or {
             "claude-3-opus": self.FALLBACK_PRICING["opus"],
             "claude-3-sonnet": self.FALLBACK_PRICING["sonnet"],
             "claude-3-haiku": self.FALLBACK_PRICING["haiku"],
@@ -64,7 +64,7 @@ class PricingCalculator:
             "claude-sonnet-4-20250514": self.FALLBACK_PRICING["sonnet"],
             "claude-opus-4-20250514": self.FALLBACK_PRICING["opus"],
         }
-        self._cost_cache: dict[str, float] = {}
+        self._cost_cache: Dict[str, float] = {}
 
     def calculate_cost(
         self,
@@ -132,7 +132,7 @@ class PricingCalculator:
 
     def _get_pricing_for_model(
         self, model: str, strict: bool = False
-    ) -> dict[str, float]:
+    ) -> Dict[str, float]:
         """Get pricing for a model with optional fallback logic.
 
         Args:
@@ -180,7 +180,7 @@ class PricingCalculator:
         # Default to Sonnet pricing
         return self.FALLBACK_PRICING["sonnet"]
 
-    def calculate_cost_for_entry(self, entry_data: dict[str, Any], mode: Any) -> float:
+    def calculate_cost_for_entry(self, entry_data: Dict[str, Any], mode: CostMode) -> float:
         """Calculate cost for a single entry (backward compatibility).
 
         Args:
@@ -194,7 +194,7 @@ class PricingCalculator:
         if mode.value == "cached":
             cost_value = entry_data.get("costUSD") or entry_data.get("cost_usd")
             if cost_value is not None:
-                return cost_value
+                return float(cost_value)
 
         # Otherwise calculate from tokens
         model = entry_data.get("model") or entry_data.get("Model")

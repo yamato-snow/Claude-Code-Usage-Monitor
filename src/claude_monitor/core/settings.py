@@ -5,7 +5,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import pytz
 from pydantic import Field, field_validator
@@ -19,12 +19,12 @@ logger = logging.getLogger(__name__)
 class LastUsedParams:
     """Manages last used parameters persistence (moved from last_used.py)."""
 
-    def __init__(self, config_dir: Optional[Path] = None):
+    def __init__(self, config_dir: Optional[Path] = None) -> None:
         """Initialize with config directory."""
         self.config_dir = config_dir or Path.home() / ".claude-monitor"
         self.params_file = self.config_dir / "last_used.json"
 
-    def save(self, settings) -> None:
+    def save(self, settings: "Settings") -> None:
         """Save current settings as last used."""
         try:
             params = {
@@ -51,7 +51,7 @@ class LastUsedParams:
         except Exception as e:
             logger.warning(f"Failed to save last used params: {e}")
 
-    def load(self) -> dict[str, Any]:
+    def load(self) -> Dict[str, Any]:
         """Load last used parameters."""
         if not self.params_file.exists():
             return {}
@@ -104,14 +104,14 @@ class Settings(BaseSettings):
     )
 
     @staticmethod
-    def _get_system_timezone():
+    def _get_system_timezone() -> str:
         """Lazy import to avoid circular dependencies."""
         from claude_monitor.utils.time_utils import get_system_timezone
 
         return get_system_timezone()
 
     @staticmethod
-    def _get_system_time_format():
+    def _get_system_time_format() -> str:
         """Lazy import to avoid circular dependencies."""
         from claude_monitor.utils.time_utils import get_system_time_format
 
@@ -166,7 +166,7 @@ class Settings(BaseSettings):
 
     @field_validator("plan", mode="before")
     @classmethod
-    def validate_plan(cls, v):
+    def validate_plan(cls, v: Any) -> str:
         """Validate and normalize plan value."""
         if isinstance(v, str):
             v_lower = v.lower()
@@ -180,7 +180,7 @@ class Settings(BaseSettings):
 
     @field_validator("theme", mode="before")
     @classmethod
-    def validate_theme(cls, v):
+    def validate_theme(cls, v: Any) -> str:
         """Validate and normalize theme value."""
         if isinstance(v, str):
             v_lower = v.lower()
@@ -223,12 +223,12 @@ class Settings(BaseSettings):
     @classmethod
     def settings_customise_sources(
         cls,
-        settings_cls,
-        init_settings,
-        env_settings,
-        dotenv_settings,
-        file_secret_settings,
-    ):
+        settings_cls: Any,
+        init_settings: Any,
+        env_settings: Any,
+        dotenv_settings: Any,
+        file_secret_settings: Any,
+    ) -> Tuple[Any, ...]:
         """Custom sources - only init and last used."""
         _ = (
             settings_cls,
@@ -239,7 +239,7 @@ class Settings(BaseSettings):
         return (init_settings,)
 
     @classmethod
-    def load_with_last_used(cls, argv: Optional[list[str]] = None) -> "Settings":
+    def load_with_last_used(cls, argv: Optional[List[str]] = None) -> "Settings":
         """Load settings with last used params support (default behavior)."""
         if argv and "--version" in argv:
             print(f"claude-monitor {__version__}")
@@ -314,7 +314,7 @@ class Settings(BaseSettings):
 
         return settings
 
-    def to_namespace(self):
+    def to_namespace(self) -> argparse.Namespace:
         """Convert to argparse.Namespace for compatibility."""
         args = argparse.Namespace()
 

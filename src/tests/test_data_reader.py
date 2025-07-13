@@ -9,6 +9,7 @@ import json
 import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 from unittest.mock import Mock, mock_open, patch
 
 import pytest
@@ -33,7 +34,7 @@ class TestLoadUsageEntries:
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
     @patch("claude_monitor.data.reader._process_single_file")
-    def test_load_usage_entries_basic(self, mock_process_file, mock_find_files):
+    def test_load_usage_entries_basic(self, mock_process_file: Mock, mock_find_files: Mock) -> None:
         mock_find_files.return_value = [
             Path("/test/file1.jsonl"),
             Path("/test/file2.jsonl"),
@@ -67,7 +68,7 @@ class TestLoadUsageEntries:
         assert mock_process_file.call_count == 2
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
-    def test_load_usage_entries_no_files(self, mock_find_files):
+    def test_load_usage_entries_no_files(self, mock_find_files: Mock) -> None:
         mock_find_files.return_value = []
 
         entries, raw_data = load_usage_entries(include_raw=True)
@@ -77,7 +78,7 @@ class TestLoadUsageEntries:
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
     @patch("claude_monitor.data.reader._process_single_file")
-    def test_load_usage_entries_without_raw(self, mock_process_file, mock_find_files):
+    def test_load_usage_entries_without_raw(self, mock_process_file: Mock, mock_find_files: Mock) -> None:
         mock_find_files.return_value = [Path("/test/file1.jsonl")]
 
         sample_entry = UsageEntry(
@@ -96,7 +97,7 @@ class TestLoadUsageEntries:
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
     @patch("claude_monitor.data.reader._process_single_file")
-    def test_load_usage_entries_sorting(self, mock_process_file, mock_find_files):
+    def test_load_usage_entries_sorting(self, mock_process_file: Mock, mock_find_files: Mock) -> None:
         """Test that entries are sorted by timestamp."""
         mock_find_files.return_value = [Path("/test/file1.jsonl")]
 
@@ -123,8 +124,8 @@ class TestLoadUsageEntries:
     @patch("claude_monitor.data.reader._find_jsonl_files")
     @patch("claude_monitor.data.reader._process_single_file")
     def test_load_usage_entries_with_cutoff_time(
-        self, mock_process_file, mock_find_files
-    ):
+        self, mock_process_file: Mock, mock_find_files: Mock
+    ) -> None:
         mock_find_files.return_value = [Path("/test/file1.jsonl")]
         mock_process_file.return_value = ([], None)
 
@@ -139,7 +140,7 @@ class TestLoadUsageEntries:
             call_args = mock_process_file.call_args[0]
             assert call_args[2] == expected_cutoff
 
-    def test_load_usage_entries_default_path(self):
+    def test_load_usage_entries_default_path(self) -> None:
         with patch("claude_monitor.data.reader._find_jsonl_files") as mock_find:
             mock_find.return_value = []
 
@@ -154,7 +155,7 @@ class TestLoadAllRawEntries:
     """Test the load_all_raw_entries function."""
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
-    def test_load_all_raw_entries_basic(self, mock_find_files):
+    def test_load_all_raw_entries_basic(self, mock_find_files: Mock) -> None:
         test_file = Path("/test/file.jsonl")
         mock_find_files.return_value = [test_file]
 
@@ -172,7 +173,7 @@ class TestLoadAllRawEntries:
         assert result == raw_data
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
-    def test_load_all_raw_entries_with_empty_lines(self, mock_find_files):
+    def test_load_all_raw_entries_with_empty_lines(self, mock_find_files: Mock) -> None:
         test_file = Path("/test/file.jsonl")
         mock_find_files.return_value = [test_file]
 
@@ -186,7 +187,7 @@ class TestLoadAllRawEntries:
         assert result[1] == {"more": "data"}
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
-    def test_load_all_raw_entries_with_invalid_json(self, mock_find_files):
+    def test_load_all_raw_entries_with_invalid_json(self, mock_find_files: Mock) -> None:
         test_file = Path("/test/file.jsonl")
         mock_find_files.return_value = [test_file]
 
@@ -200,7 +201,7 @@ class TestLoadAllRawEntries:
         assert result[1] == {"more": "data"}
 
     @patch("claude_monitor.data.reader._find_jsonl_files")
-    def test_load_all_raw_entries_file_error(self, mock_find_files):
+    def test_load_all_raw_entries_file_error(self, mock_find_files: Mock) -> None:
         test_file = Path("/test/file.jsonl")
         mock_find_files.return_value = [test_file]
 
@@ -211,7 +212,7 @@ class TestLoadAllRawEntries:
         assert result == []
         mock_logger.exception.assert_called()
 
-    def test_load_all_raw_entries_default_path(self):
+    def test_load_all_raw_entries_default_path(self) -> None:
         with patch("claude_monitor.data.reader._find_jsonl_files") as mock_find:
             mock_find.return_value = []
 
@@ -225,14 +226,14 @@ class TestLoadAllRawEntries:
 class TestFindJsonlFiles:
     """Test the _find_jsonl_files function."""
 
-    def test_find_jsonl_files_nonexistent_path(self):
+    def test_find_jsonl_files_nonexistent_path(self) -> None:
         with patch("claude_monitor.data.reader.logger") as mock_logger:
             result = _find_jsonl_files(Path("/nonexistent/path"))
 
         assert result == []
         mock_logger.warning.assert_called()
 
-    def test_find_jsonl_files_existing_path(self):
+    def test_find_jsonl_files_existing_path(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
 
@@ -258,12 +259,12 @@ class TestProcessSingleFile:
     """Test the _process_single_file function."""
 
     @pytest.fixture
-    def mock_components(self):
+    def mock_components(self) -> Tuple[Mock, Mock]:
         timezone_handler = Mock(spec=TimezoneHandler)
         pricing_calculator = Mock(spec=PricingCalculator)
         return timezone_handler, pricing_calculator
 
-    def test_process_single_file_valid_data(self, mock_components):
+    def test_process_single_file_valid_data(self, mock_components: Tuple[Mock, Mock]) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         sample_data = [
@@ -312,7 +313,7 @@ class TestProcessSingleFile:
         assert len(raw_data) == 1
         assert raw_data[0] == sample_data[0]
 
-    def test_process_single_file_without_raw(self, mock_components):
+    def test_process_single_file_without_raw(self, mock_components: Tuple[Mock, Mock]) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         sample_data = [{"timestamp": "2024-01-01T12:00:00Z", "input_tokens": 100}]
@@ -454,10 +455,10 @@ class TestShouldProcessEntry:
     """Test the _should_process_entry function."""
 
     @pytest.fixture
-    def timezone_handler(self):
+    def timezone_handler(self) -> Mock:
         return Mock(spec=TimezoneHandler)
 
-    def test_should_process_entry_no_cutoff_no_hash(self, timezone_handler):
+    def test_should_process_entry_no_cutoff_no_hash(self, timezone_handler: Mock) -> None:
         data = {"timestamp": "2024-01-01T12:00:00Z", "message_id": "msg_1"}
 
         with patch(
@@ -467,7 +468,7 @@ class TestShouldProcessEntry:
 
         assert result is True
 
-    def test_should_process_entry_with_time_filter_pass(self, timezone_handler):
+    def test_should_process_entry_with_time_filter_pass(self, timezone_handler: Mock) -> None:
         data = {"timestamp": "2024-01-01T12:00:00Z"}
         cutoff_time = datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc)
 
@@ -554,37 +555,37 @@ class TestShouldProcessEntry:
 class TestCreateUniqueHash:
     """Test the _create_unique_hash function."""
 
-    def test_create_unique_hash_with_message_id_and_request_id(self):
+    def test_create_unique_hash_with_message_id_and_request_id(self) -> None:
         data = {"message_id": "msg_123", "request_id": "req_456"}
 
         result = _create_unique_hash(data)
         assert result == "msg_123:req_456"
 
-    def test_create_unique_hash_with_nested_message_id(self):
+    def test_create_unique_hash_with_nested_message_id(self) -> None:
         data = {"message": {"id": "msg_123"}, "requestId": "req_456"}
 
         result = _create_unique_hash(data)
         assert result == "msg_123:req_456"
 
-    def test_create_unique_hash_missing_message_id(self):
+    def test_create_unique_hash_missing_message_id(self) -> None:
         data = {"request_id": "req_456"}
 
         result = _create_unique_hash(data)
         assert result is None
 
-    def test_create_unique_hash_missing_request_id(self):
+    def test_create_unique_hash_missing_request_id(self) -> None:
         data = {"message_id": "msg_123"}
 
         result = _create_unique_hash(data)
         assert result is None
 
-    def test_create_unique_hash_invalid_message_structure(self):
+    def test_create_unique_hash_invalid_message_structure(self) -> None:
         data = {"message": "not_a_dict", "request_id": "req_456"}
 
         result = _create_unique_hash(data)
         assert result is None
 
-    def test_create_unique_hash_empty_data(self):
+    def test_create_unique_hash_empty_data(self) -> None:
         data = {}
 
         result = _create_unique_hash(data)
@@ -594,7 +595,7 @@ class TestCreateUniqueHash:
 class TestUpdateProcessedHashes:
     """Test the _update_processed_hashes function."""
 
-    def test_update_processed_hashes_valid_hash(self):
+    def test_update_processed_hashes_valid_hash(self) -> None:
         data = {"message_id": "msg_123", "request_id": "req_456"}
         processed_hashes = set()
 
@@ -606,7 +607,7 @@ class TestUpdateProcessedHashes:
 
         assert "msg_123:req_456" in processed_hashes
 
-    def test_update_processed_hashes_no_hash(self):
+    def test_update_processed_hashes_no_hash(self) -> None:
         data = {"some": "data"}
         processed_hashes = set()
 
@@ -620,12 +621,12 @@ class TestMapToUsageEntry:
     """Test the _map_to_usage_entry function."""
 
     @pytest.fixture
-    def mock_components(self):
+    def mock_components(self) -> Tuple[Mock, Mock]:
         timezone_handler = Mock(spec=TimezoneHandler)
         pricing_calculator = Mock(spec=PricingCalculator)
         return timezone_handler, pricing_calculator
 
-    def test_map_to_usage_entry_valid_data(self, mock_components):
+    def test_map_to_usage_entry_valid_data(self, mock_components: Tuple[Mock, Mock]) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         data = {
@@ -688,7 +689,7 @@ class TestMapToUsageEntry:
         assert result.message_id == "msg_123"
         assert result.request_id == "req_456"
 
-    def test_map_to_usage_entry_no_timestamp(self, mock_components):
+    def test_map_to_usage_entry_no_timestamp(self, mock_components: Tuple[Mock, Mock]) -> None:
         timezone_handler, pricing_calculator = mock_components
 
         data = {"input_tokens": 100, "output_tokens": 50}
@@ -803,7 +804,7 @@ class TestMapToUsageEntry:
 class TestIntegration:
     """Integration tests for data reader functionality."""
 
-    def test_full_workflow_integration(self):
+    def test_full_workflow_integration(self) -> None:
         """Test full workflow from file loading to entry creation."""
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
@@ -902,7 +903,7 @@ class TestIntegration:
             assert entries[1].model == "claude-3-sonnet"
             assert entries[1].message_id == "msg_2"
 
-    def test_error_handling_integration(self):
+    def test_error_handling_integration(self) -> None:
         """Test error handling in full workflow."""
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
@@ -977,7 +978,7 @@ class TestIntegration:
 class TestPerformanceAndEdgeCases:
     """Test performance scenarios and edge cases."""
 
-    def test_large_file_processing(self):
+    def test_large_file_processing(self) -> None:
         """Test processing of large files."""
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
@@ -1039,7 +1040,7 @@ class TestPerformanceAndEdgeCases:
             # Should be sorted by timestamp
             assert entries[0].input_tokens <= entries[-1].input_tokens
 
-    def test_empty_directory(self):
+    def test_empty_directory(self) -> None:
         """Test behavior with empty directory."""
         with tempfile.TemporaryDirectory() as temp_dir:
             entries, raw_data = load_usage_entries(data_path=temp_dir, include_raw=True)
@@ -1047,7 +1048,7 @@ class TestPerformanceAndEdgeCases:
             assert entries == []
             assert raw_data is None
 
-    def test_memory_efficiency(self):
+    def test_memory_efficiency(self) -> None:
         """Test that raw data is not loaded unnecessarily."""
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
@@ -1081,7 +1082,7 @@ class TestUsageEntryMapper:
     """Test the UsageEntryMapper compatibility wrapper."""
 
     @pytest.fixture
-    def mapper_components(self):
+    def mapper_components(self) -> Tuple[Any, Mock, Mock]:
         """Setup mapper components."""
         timezone_handler = Mock(spec=TimezoneHandler)
         pricing_calculator = Mock(spec=PricingCalculator)
@@ -1093,14 +1094,14 @@ class TestUsageEntryMapper:
 
         return mapper, timezone_handler, pricing_calculator
 
-    def test_usage_entry_mapper_init(self, mapper_components):
+    def test_usage_entry_mapper_init(self, mapper_components: Tuple[Any, Mock, Mock]) -> None:
         """Test UsageEntryMapper initialization."""
         mapper, timezone_handler, pricing_calculator = mapper_components
 
         assert mapper.pricing_calculator == pricing_calculator
         assert mapper.timezone_handler == timezone_handler
 
-    def test_usage_entry_mapper_map_success(self, mapper_components):
+    def test_usage_entry_mapper_map_success(self, mapper_components: Tuple[Any, Mock, Mock]) -> None:
         """Test UsageEntryMapper.map with valid data."""
         mapper, timezone_handler, pricing_calculator = mapper_components
 

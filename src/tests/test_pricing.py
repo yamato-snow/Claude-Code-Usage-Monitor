@@ -1,5 +1,7 @@
 """Comprehensive tests for PricingCalculator class."""
 
+from typing import Any, Dict, List, Optional, Union
+
 import pytest
 
 from claude_monitor.core.models import CostMode, TokenCounts
@@ -10,12 +12,12 @@ class TestPricingCalculator:
     """Test suite for PricingCalculator class."""
 
     @pytest.fixture
-    def calculator(self):
+    def calculator(self) -> PricingCalculator:
         """Create a PricingCalculator with default pricing."""
         return PricingCalculator()
 
     @pytest.fixture
-    def custom_pricing(self):
+    def custom_pricing(self) -> Dict[str, Dict[str, float]]:
         """Custom pricing configuration for testing."""
         return {
             "test-model": {
@@ -27,12 +29,12 @@ class TestPricingCalculator:
         }
 
     @pytest.fixture
-    def custom_calculator(self, custom_pricing):
+    def custom_calculator(self, custom_pricing: Dict[str, Dict[str, float]]) -> PricingCalculator:
         """Create a PricingCalculator with custom pricing."""
         return PricingCalculator(custom_pricing)
 
     @pytest.fixture
-    def sample_entry_data(self):
+    def sample_entry_data(self) -> Dict[str, Union[str, int, None]]:
         """Sample entry data for testing."""
         return {
             "model": "claude-3-haiku",
@@ -44,7 +46,7 @@ class TestPricingCalculator:
         }
 
     @pytest.fixture
-    def token_counts(self):
+    def token_counts(self) -> TokenCounts:
         """Sample TokenCounts object."""
         return TokenCounts(
             input_tokens=1000,
@@ -53,7 +55,7 @@ class TestPricingCalculator:
             cache_read_tokens=50,
         )
 
-    def test_init_default_pricing(self, calculator):
+    def test_init_default_pricing(self, calculator: PricingCalculator) -> None:
         """Test initialization with default pricing."""
         assert calculator.pricing is not None
         assert "claude-3-opus" in calculator.pricing
@@ -62,12 +64,12 @@ class TestPricingCalculator:
         assert "claude-3-5-sonnet" in calculator.pricing
         assert calculator._cost_cache == {}
 
-    def test_init_custom_pricing(self, custom_calculator, custom_pricing):
+    def test_init_custom_pricing(self, custom_calculator: PricingCalculator, custom_pricing: Dict[str, Dict[str, float]]) -> None:
         """Test initialization with custom pricing."""
         assert custom_calculator.pricing == custom_pricing
         assert custom_calculator._cost_cache == {}
 
-    def test_fallback_pricing_structure(self, calculator):
+    def test_fallback_pricing_structure(self, calculator: PricingCalculator) -> None:
         """Test that fallback pricing has correct structure."""
         fallback = PricingCalculator.FALLBACK_PRICING
 
@@ -87,7 +89,7 @@ class TestPricingCalculator:
             )  # Cache creation costs more
             assert pricing["cache_read"] < pricing["input"]  # Cache read costs less
 
-    def test_calculate_cost_claude_3_haiku_basic(self, calculator):
+    def test_calculate_cost_claude_3_haiku_basic(self, calculator: PricingCalculator) -> None:
         """Test cost calculation for Claude 3 Haiku with basic tokens."""
         cost = calculator.calculate_cost(
             model="claude-3-haiku", input_tokens=1000, output_tokens=500
@@ -97,7 +99,7 @@ class TestPricingCalculator:
         expected = (1000 * 0.25 + 500 * 1.25) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_claude_3_opus_with_cache(self, calculator):
+    def test_calculate_cost_claude_3_opus_with_cache(self, calculator: PricingCalculator) -> None:
         """Test cost calculation for Claude 3 Opus with cache tokens."""
         cost = calculator.calculate_cost(
             model="claude-3-opus",
@@ -116,7 +118,7 @@ class TestPricingCalculator:
         ) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_claude_3_sonnet(self, calculator):
+    def test_calculate_cost_claude_3_sonnet(self, calculator: PricingCalculator) -> None:
         """Test cost calculation for Claude 3 Sonnet."""
         cost = calculator.calculate_cost(
             model="claude-3-sonnet", input_tokens=2000, output_tokens=1000
@@ -125,7 +127,7 @@ class TestPricingCalculator:
         expected = (2000 * 3.0 + 1000 * 15.0) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_claude_3_5_sonnet(self, calculator):
+    def test_calculate_cost_claude_3_5_sonnet(self, calculator: PricingCalculator) -> None:
         """Test cost calculation for Claude 3.5 Sonnet (should use sonnet pricing)."""
         cost = calculator.calculate_cost(
             model="claude-3-5-sonnet", input_tokens=1000, output_tokens=500
@@ -134,7 +136,7 @@ class TestPricingCalculator:
         expected = (1000 * 3.0 + 500 * 15.0) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_with_token_counts_object(self, calculator, token_counts):
+    def test_calculate_cost_with_token_counts_object(self, calculator: PricingCalculator, token_counts: TokenCounts) -> None:
         """Test cost calculation using TokenCounts object."""
         cost = calculator.calculate_cost(model="claude-3-haiku", tokens=token_counts)
 
@@ -147,8 +149,8 @@ class TestPricingCalculator:
         assert abs(cost - expected) < 1e-6
 
     def test_calculate_cost_token_counts_overrides_individual_params(
-        self, calculator, token_counts
-    ):
+        self, calculator: PricingCalculator, token_counts: TokenCounts
+    ) -> None:
         """Test that TokenCounts object takes precedence over individual parameters."""
         cost = calculator.calculate_cost(
             model="claude-3-haiku",
@@ -166,28 +168,28 @@ class TestPricingCalculator:
         ) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_synthetic_model(self, calculator):
+    def test_calculate_cost_synthetic_model(self, calculator: PricingCalculator) -> None:
         """Test that synthetic model returns zero cost."""
         cost = calculator.calculate_cost(
             model="<synthetic>", input_tokens=1000, output_tokens=500
         )
         assert cost == 0.0
 
-    def test_calculate_cost_unknown_model(self, calculator):
+    def test_calculate_cost_unknown_model(self, calculator: PricingCalculator) -> None:
         """Test cost calculation for unknown model (should raise KeyError in strict mode)."""
         with pytest.raises(KeyError):
             calculator.calculate_cost(
                 model="unknown-model", input_tokens=1000, output_tokens=500, strict=True
             )
 
-    def test_calculate_cost_zero_tokens(self, calculator):
+    def test_calculate_cost_zero_tokens(self, calculator: PricingCalculator) -> None:
         """Test cost calculation with zero tokens."""
         cost = calculator.calculate_cost(
             model="claude-3-haiku", input_tokens=0, output_tokens=0
         )
         assert cost == 0.0
 
-    def test_calculate_cost_for_entry_auto_mode(self, calculator, sample_entry_data):
+    def test_calculate_cost_for_entry_auto_mode(self, calculator: PricingCalculator, sample_entry_data: Dict[str, Union[str, int, None]]) -> None:
         """Test calculate_cost_for_entry with AUTO mode."""
         cost = calculator.calculate_cost_for_entry(sample_entry_data, CostMode.AUTO)
 
@@ -199,9 +201,9 @@ class TestPricingCalculator:
         ) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_for_entry_cached_mode_with_existing_cost(self, calculator):
+    def test_calculate_cost_for_entry_cached_mode_with_existing_cost(self, calculator: PricingCalculator) -> None:
         """Test calculate_cost_for_entry with CACHED mode and existing cost."""
-        entry_data = {
+        entry_data: Dict[str, Union[str, int, float]] = {
             "model": "claude-3-haiku",
             "input_tokens": 1000,
             "output_tokens": 500,
@@ -212,8 +214,8 @@ class TestPricingCalculator:
         assert cost == 0.123
 
     def test_calculate_cost_for_entry_cached_mode_without_existing_cost(
-        self, calculator, sample_entry_data
-    ):
+        self, calculator: PricingCalculator, sample_entry_data: Dict[str, Union[str, int, None]]
+    ) -> None:
         """Test calculate_cost_for_entry with CACHED mode but no existing cost."""
         cost = calculator.calculate_cost_for_entry(sample_entry_data, CostMode.CACHED)
 
@@ -221,9 +223,9 @@ class TestPricingCalculator:
         expected = (1000 * 0.25 + 500 * 1.25 + 100 * 0.3 + 50 * 0.03) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_for_entry_calculated_mode(self, calculator):
+    def test_calculate_cost_for_entry_calculated_mode(self, calculator: PricingCalculator) -> None:
         """Test calculate_cost_for_entry with CALCULATED mode."""
-        entry_data = {
+        entry_data: Dict[str, Union[str, int, float]] = {
             "model": "claude-3-opus",
             "input_tokens": 500,
             "output_tokens": 250,
@@ -236,9 +238,9 @@ class TestPricingCalculator:
         expected = (500 * 15.0 + 250 * 75.0) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_calculate_cost_for_entry_missing_model(self, calculator):
+    def test_calculate_cost_for_entry_missing_model(self, calculator: PricingCalculator) -> None:
         """Test calculate_cost_for_entry with missing model."""
-        entry_data = {
+        entry_data: Dict[str, int] = {
             "input_tokens": 1000,
             "output_tokens": 500,
             # Missing "model" key
@@ -247,9 +249,9 @@ class TestPricingCalculator:
         with pytest.raises(KeyError):
             calculator.calculate_cost_for_entry(entry_data, CostMode.AUTO)
 
-    def test_calculate_cost_for_entry_with_defaults(self, calculator):
+    def test_calculate_cost_for_entry_with_defaults(self, calculator: PricingCalculator) -> None:
         """Test calculate_cost_for_entry with minimal data (should use defaults)."""
-        entry_data = {
+        entry_data: Dict[str, str] = {
             "model": "claude-3-haiku"
             # Missing token counts - should default to 0
         }
@@ -257,7 +259,7 @@ class TestPricingCalculator:
         cost = calculator.calculate_cost_for_entry(entry_data, CostMode.AUTO)
         assert cost == 0.0
 
-    def test_custom_pricing_calculator(self, custom_calculator):
+    def test_custom_pricing_calculator(self, custom_calculator: PricingCalculator) -> None:
         """Test calculator with custom pricing."""
         cost = custom_calculator.calculate_cost(
             model="test-model", input_tokens=1000, output_tokens=500
@@ -266,7 +268,7 @@ class TestPricingCalculator:
         expected = (1000 * 1.0 + 500 * 2.0) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_cost_calculation_precision(self, calculator):
+    def test_cost_calculation_precision(self, calculator: PricingCalculator) -> None:
         """Test that cost calculations maintain proper precision."""
         # Test with very small token counts
         cost = calculator.calculate_cost(
@@ -276,7 +278,7 @@ class TestPricingCalculator:
         expected = (1 * 0.25 + 1 * 1.25) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_cost_calculation_large_numbers(self, calculator):
+    def test_cost_calculation_large_numbers(self, calculator: PricingCalculator) -> None:
         """Test cost calculation with large token counts."""
         cost = calculator.calculate_cost(
             model="claude-3-opus",
@@ -287,9 +289,9 @@ class TestPricingCalculator:
         expected = (1000000 * 15.0 + 500000 * 75.0) / 1000000
         assert abs(cost - expected) < 1e-6
 
-    def test_all_supported_models(self, calculator):
+    def test_all_supported_models(self, calculator: PricingCalculator) -> None:
         """Test that all supported models can calculate costs."""
-        supported_models = [
+        supported_models: List[str] = [
             "claude-3-opus",
             "claude-3-sonnet",
             "claude-3-haiku",
@@ -306,7 +308,7 @@ class TestPricingCalculator:
             assert cost > 0
             assert isinstance(cost, float)
 
-    def test_cache_token_costs(self, calculator):
+    def test_cache_token_costs(self, calculator: PricingCalculator) -> None:
         """Test that cache tokens are properly calculated."""
         model = "claude-3-haiku"
 
@@ -332,10 +334,10 @@ class TestPricingCalculator:
         expected_total = cost_without_cache + cache_cost
         assert abs(cost_with_cache - expected_total) < 1e-6
 
-    def test_model_name_normalization_integration(self, calculator):
+    def test_model_name_normalization_integration(self, calculator: PricingCalculator) -> None:
         """Test integration with model name normalization."""
         # Test with various model name formats that should normalize
-        test_cases = [
+        test_cases: List[tuple[str, str]] = [
             ("claude-3-haiku-20240307", "claude-3-haiku"),
             ("claude-3-opus-20240229", "claude-3-opus"),
             ("claude-3-5-sonnet-20241022", "claude-3-5-sonnet"),

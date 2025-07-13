@@ -5,7 +5,7 @@ Core data structures for usage tracking, session management, and token calculati
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 
 class CostMode(Enum):
@@ -75,18 +75,18 @@ class SessionBlock:
     id: str
     start_time: datetime
     end_time: datetime
-    entries: list[UsageEntry] = field(default_factory=list)
+    entries: List[UsageEntry] = field(default_factory=list)
     token_counts: TokenCounts = field(default_factory=TokenCounts)
     is_active: bool = False
     is_gap: bool = False
     burn_rate: Optional[BurnRate] = None
     actual_end_time: Optional[datetime] = None
-    per_model_stats: dict[str, dict[str, Any]] = field(default_factory=dict)
-    models: list[str] = field(default_factory=list)
+    per_model_stats: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    models: List[str] = field(default_factory=list)
     sent_messages_count: int = 0
     cost_usd: float = 0.0
-    limit_messages: list[dict[str, Any]] = field(default_factory=list)
-    projection_data: Optional[dict[str, Any]] = None
+    limit_messages: List[Dict[str, Any]] = field(default_factory=list)
+    projection_data: Optional[Dict[str, Any]] = None
     burn_rate_snapshot: Optional[BurnRate] = None
 
     @property

@@ -1,6 +1,7 @@
 """Shared pytest fixtures for Claude Monitor tests."""
 
 from datetime import datetime, timezone
+from typing import Any, Dict, Generator, List, Set
 from unittest.mock import Mock
 
 import pytest
@@ -9,7 +10,7 @@ from claude_monitor.core.models import CostMode, UsageEntry
 
 
 @pytest.fixture
-def mock_pricing_calculator():
+def mock_pricing_calculator() -> Mock:
     """Mock PricingCalculator for testing."""
     mock = Mock()
     mock.calculate_cost_for_entry.return_value = 0.001
@@ -17,7 +18,7 @@ def mock_pricing_calculator():
 
 
 @pytest.fixture
-def mock_timezone_handler():
+def mock_timezone_handler() -> Mock:
     """Mock TimezoneHandler for testing."""
     mock = Mock()
     mock.parse_timestamp.return_value = datetime(
@@ -28,7 +29,7 @@ def mock_timezone_handler():
 
 
 @pytest.fixture
-def sample_usage_entry():
+def sample_usage_entry() -> UsageEntry:
     """Sample UsageEntry for testing."""
     return UsageEntry(
         timestamp=datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
@@ -44,7 +45,7 @@ def sample_usage_entry():
 
 
 @pytest.fixture
-def sample_valid_data():
+def sample_valid_data() -> Dict[str, Any]:
     """Sample valid data structure for testing."""
     return {
         "timestamp": "2024-01-01T12:00:00Z",
@@ -64,7 +65,7 @@ def sample_valid_data():
 
 
 @pytest.fixture
-def sample_assistant_data():
+def sample_assistant_data() -> Dict[str, Any]:
     """Sample assistant-type data for testing."""
     return {
         "timestamp": "2024-01-01T12:00:00Z",
@@ -84,7 +85,7 @@ def sample_assistant_data():
 
 
 @pytest.fixture
-def sample_user_data():
+def sample_user_data() -> Dict[str, Any]:
     """Sample user-type data for testing."""
     return {
         "timestamp": "2024-01-01T12:00:00Z",
@@ -102,7 +103,7 @@ def sample_user_data():
 
 
 @pytest.fixture
-def sample_malformed_data():
+def sample_malformed_data() -> Dict[str, Any]:
     """Sample malformed data for testing error handling."""
     return {
         "timestamp": "invalid_timestamp",
@@ -112,7 +113,7 @@ def sample_malformed_data():
 
 
 @pytest.fixture
-def sample_minimal_data():
+def sample_minimal_data() -> Dict[str, Any]:
     """Sample minimal valid data for testing."""
     return {
         "timestamp": "2024-01-01T12:00:00Z",
@@ -122,7 +123,7 @@ def sample_minimal_data():
 
 
 @pytest.fixture
-def sample_empty_tokens_data():
+def sample_empty_tokens_data() -> Dict[str, Any]:
     """Sample data with empty/zero tokens for testing."""
     return {
         "timestamp": "2024-01-01T12:00:00Z",
@@ -137,7 +138,7 @@ def sample_empty_tokens_data():
 
 
 @pytest.fixture
-def sample_duplicate_data():
+def sample_duplicate_data() -> List[Dict[str, Any]]:
     """Sample data for testing duplicate detection."""
     return [
         {
@@ -162,25 +163,25 @@ def sample_duplicate_data():
 
 
 @pytest.fixture
-def all_cost_modes():
+def all_cost_modes() -> List[CostMode]:
     """All available cost modes for testing."""
     return [CostMode.AUTO]
 
 
 @pytest.fixture
-def sample_cutoff_time():
+def sample_cutoff_time() -> datetime:
     """Sample cutoff time for testing."""
     return datetime(2024, 1, 1, 10, 0, 0, tzinfo=timezone.utc)
 
 
 @pytest.fixture
-def sample_processed_hashes():
+def sample_processed_hashes() -> Set[str]:
     """Sample processed hashes set for testing."""
     return {"msg_existing:req_existing", "msg_old:req_old"}
 
 
 @pytest.fixture
-def mock_file_reader():
+def mock_file_reader() -> Mock:
     """Mock JsonlFileReader for testing."""
     mock = Mock()
     mock.read_jsonl_file.return_value = [
@@ -203,7 +204,7 @@ def mock_file_reader():
 
 
 @pytest.fixture
-def mock_data_filter():
+def mock_data_filter() -> Mock:
     """Mock DataFilter for testing."""
     mock = Mock()
     mock.calculate_cutoff_time.return_value = datetime(
@@ -215,7 +216,7 @@ def mock_data_filter():
 
 
 @pytest.fixture
-def mock_usage_entry_mapper():
+def mock_usage_entry_mapper() -> Mock:
     """Mock UsageEntryMapper for testing."""
     mock = Mock()
     mock.map.return_value = UsageEntry(
@@ -233,7 +234,7 @@ def mock_usage_entry_mapper():
 
 
 @pytest.fixture
-def mock_data_processor():
+def mock_data_processor() -> Mock:
     """Mock DataProcessor for testing."""
     mock = Mock()
     mock.process_files.return_value = (
@@ -260,7 +261,7 @@ def mock_data_processor():
 
 
 @pytest.fixture
-def mock_data_manager():
+def mock_data_manager() -> Mock:
     """Mock DataManager for monitoring tests."""
     mock = Mock()
     mock.get_data.return_value = {
@@ -281,7 +282,7 @@ def mock_data_manager():
 
 
 @pytest.fixture
-def mock_session_monitor():
+def mock_session_monitor() -> Mock:
     """Mock SessionMonitor for monitoring tests."""
     mock = Mock()
     mock.update.return_value = (True, [])
@@ -299,7 +300,7 @@ def mock_session_monitor():
 
 
 @pytest.fixture
-def sample_monitoring_data():
+def sample_monitoring_data() -> Dict[str, Any]:
     """Sample monitoring data structure for testing."""
     return {
         "blocks": [
@@ -322,7 +323,7 @@ def sample_monitoring_data():
 
 
 @pytest.fixture
-def sample_session_data():
+def sample_session_data() -> Dict[str, Any]:
     """Sample session data for testing."""
     return {
         "id": "session_1",
@@ -334,7 +335,7 @@ def sample_session_data():
 
 
 @pytest.fixture
-def sample_invalid_monitoring_data():
+def sample_invalid_monitoring_data() -> Dict[str, Any]:
     """Sample invalid monitoring data for testing."""
     return {
         "blocks": [
@@ -349,7 +350,7 @@ def sample_invalid_monitoring_data():
 
 
 @pytest.fixture
-def mock_orchestrator_args():
+def mock_orchestrator_args() -> Mock:
     """Mock command line arguments for orchestrator testing."""
     args = Mock()
     args.plan = "pro"

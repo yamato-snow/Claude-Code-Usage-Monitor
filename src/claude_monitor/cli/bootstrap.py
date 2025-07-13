@@ -4,7 +4,8 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
+from logging import Handler
 
 from claude_monitor.utils.time_utils import TimezoneHandler
 
@@ -21,7 +22,7 @@ def setup_logging(
     """
     log_level = getattr(logging, level.upper(), logging.INFO)
 
-    handlers = []
+    handlers: List[Handler] = []
     if not disable_console:
         handlers.append(logging.StreamHandler(sys.stdout))
     if log_file:
@@ -40,7 +41,8 @@ def setup_logging(
 def setup_environment() -> None:
     """Initialize environment variables and system settings."""
     if sys.stdout.encoding != "utf-8":
-        sys.stdout.reconfigure(encoding="utf-8")
+        if hasattr(sys.stdout, 'reconfigure'):
+            sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
 
     os.environ.setdefault(
         "CLAUDE_MONITOR_CONFIG", str(Path.home() / ".claude-monitor" / "config.yaml")

@@ -4,6 +4,7 @@ import argparse
 import json
 import tempfile
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 from unittest.mock import Mock, patch
 
 import pytest
@@ -14,32 +15,32 @@ from claude_monitor.core.settings import LastUsedParams, Settings
 class TestLastUsedParams:
     """Test suite for LastUsedParams class."""
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         """Set up test environment."""
         self.temp_dir = Path(tempfile.mkdtemp())
         self.last_used = LastUsedParams(self.temp_dir)
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         """Clean up test environment."""
         import shutil
 
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
-    def test_init_default_config_dir(self):
+    def test_init_default_config_dir(self) -> None:
         """Test initialization with default config directory."""
         last_used = LastUsedParams()
         expected_dir = Path.home() / ".claude-monitor"
         assert last_used.config_dir == expected_dir
         assert last_used.params_file == expected_dir / "last_used.json"
 
-    def test_init_custom_config_dir(self):
+    def test_init_custom_config_dir(self) -> None:
         """Test initialization with custom config directory."""
         custom_dir = Path("/tmp/custom-config")
         last_used = LastUsedParams(custom_dir)
         assert last_used.config_dir == custom_dir
         assert last_used.params_file == custom_dir / "last_used.json"
 
-    def test_save_success(self):
+    def test_save_success(self) -> None:
         """Test successful saving of parameters."""
         # Create mock settings
         mock_settings = Mock()
@@ -70,7 +71,7 @@ class TestLastUsedParams:
         assert data["custom_limit_tokens"] == 1000
         assert "timestamp" in data
 
-    def test_save_without_custom_limit(self):
+    def test_save_without_custom_limit(self) -> None:
         """Test saving without custom limit tokens."""
         mock_settings = Mock()
         mock_settings.plan = "pro"
@@ -89,7 +90,7 @@ class TestLastUsedParams:
         assert "custom_limit_tokens" not in data
         assert data["theme"] == "light"
 
-    def test_save_creates_directory(self):
+    def test_save_creates_directory(self) -> None:
         """Test that save creates directory if it doesn't exist."""
         # Use non-existent directory
         non_existent_dir = self.temp_dir / "non-existent"
@@ -110,7 +111,7 @@ class TestLastUsedParams:
         assert last_used.params_file.exists()
 
     @patch("claude_monitor.core.settings.logger")
-    def test_save_error_handling(self, mock_logger):
+    def test_save_error_handling(self, mock_logger: Mock) -> None:
         """Test error handling during save operation."""
         # Mock file operations to raise exception
         with patch("builtins.open", side_effect=PermissionError("Access denied")):
@@ -129,10 +130,10 @@ class TestLastUsedParams:
             # Should log warning
             mock_logger.warning.assert_called_once()
 
-    def test_load_success(self):
+    def test_load_success(self) -> None:
         """Test successful loading of parameters."""
         # Create test data
-        test_data = {
+        test_data: Dict[str, Union[str, int]] = {
             "theme": "dark",
             "timezone": "Europe/Warsaw",
             "time_format": "24h",
@@ -157,13 +158,13 @@ class TestLastUsedParams:
         assert result["reset_hour"] == 8
         assert result["custom_limit_tokens"] == 2000
 
-    def test_load_file_not_exists(self):
+    def test_load_file_not_exists(self) -> None:
         """Test loading when file doesn't exist."""
         result = self.last_used.load()
         assert result == {}
 
     @patch("claude_monitor.core.settings.logger")
-    def test_load_error_handling(self, mock_logger):
+    def test_load_error_handling(self, mock_logger: Mock) -> None:
         """Test error handling during load operation."""
         # Create invalid JSON file
         with open(self.last_used.params_file, "w") as f:
@@ -174,10 +175,10 @@ class TestLastUsedParams:
         assert result == {}
         mock_logger.warning.assert_called_once()
 
-    def test_clear_success(self):
+    def test_clear_success(self) -> None:
         """Test successful clearing of parameters."""
         # Create file first
-        test_data = {"theme": "dark"}
+        test_data: Dict[str, str] = {"theme": "dark"}
         with open(self.last_used.params_file, "w") as f:
             json.dump(test_data, f)
 
@@ -188,13 +189,13 @@ class TestLastUsedParams:
 
         assert not self.last_used.params_file.exists()
 
-    def test_clear_file_not_exists(self):
+    def test_clear_file_not_exists(self) -> None:
         """Test clearing when file doesn't exist."""
         # Should not raise exception
         self.last_used.clear()
 
     @patch("claude_monitor.core.settings.logger")
-    def test_clear_error_handling(self, mock_logger):
+    def test_clear_error_handling(self, mock_logger: Mock) -> None:
         """Test error handling during clear operation."""
         # Create file but mock unlink to raise exception
         with open(self.last_used.params_file, "w") as f:
@@ -204,14 +205,14 @@ class TestLastUsedParams:
             self.last_used.clear()
             mock_logger.warning.assert_called_once()
 
-    def test_exists_true(self):
+    def test_exists_true(self) -> None:
         """Test exists method when file exists."""
         with open(self.last_used.params_file, "w") as f:
             f.write("{}")
 
         assert self.last_used.exists() is True
 
-    def test_exists_false(self):
+    def test_exists_false(self) -> None:
         """Test exists method when file doesn't exist."""
         assert self.last_used.exists() is False
 
@@ -219,7 +220,7 @@ class TestLastUsedParams:
 class TestSettings:
     """Test suite for Settings class."""
 
-    def test_default_values(self):
+    def test_default_values(self) -> None:
         """Test default settings values."""
         settings = Settings(_cli_parse_args=[])
 
@@ -237,15 +238,15 @@ class TestSettings:
         assert settings.version is False
         assert settings.clear is False
 
-    def test_plan_validator_valid_values(self):
+    def test_plan_validator_valid_values(self) -> None:
         """Test plan validator with valid values."""
-        valid_plans = ["pro", "max5", "max20", "custom"]
+        valid_plans: List[str] = ["pro", "max5", "max20", "custom"]
 
         for plan in valid_plans:
             settings = Settings(plan=plan, _cli_parse_args=[])
             assert settings.plan == plan.lower()
 
-    def test_plan_validator_case_insensitive(self):
+    def test_plan_validator_case_insensitive(self) -> None:
         """Test plan validator is case insensitive."""
         settings = Settings(plan="PRO", _cli_parse_args=[])
         assert settings.plan == "pro"
@@ -253,20 +254,20 @@ class TestSettings:
         settings = Settings(plan="Max5", _cli_parse_args=[])
         assert settings.plan == "max5"
 
-    def test_plan_validator_invalid_value(self):
+    def test_plan_validator_invalid_value(self) -> None:
         """Test plan validator with invalid value."""
         with pytest.raises(ValueError, match="Invalid plan: invalid"):
             Settings(plan="invalid", _cli_parse_args=[])
 
-    def test_theme_validator_valid_values(self):
+    def test_theme_validator_valid_values(self) -> None:
         """Test theme validator with valid values."""
-        valid_themes = ["light", "dark", "classic", "auto"]
+        valid_themes: List[str] = ["light", "dark", "classic", "auto"]
 
         for theme in valid_themes:
             settings = Settings(theme=theme, _cli_parse_args=[])
             assert settings.theme == theme.lower()
 
-    def test_theme_validator_case_insensitive(self):
+    def test_theme_validator_case_insensitive(self) -> None:
         """Test theme validator is case insensitive."""
         settings = Settings(theme="LIGHT", _cli_parse_args=[])
         assert settings.theme == "light"
@@ -274,12 +275,12 @@ class TestSettings:
         settings = Settings(theme="Dark", _cli_parse_args=[])
         assert settings.theme == "dark"
 
-    def test_theme_validator_invalid_value(self):
+    def test_theme_validator_invalid_value(self) -> None:
         """Test theme validator with invalid value."""
         with pytest.raises(ValueError, match="Invalid theme: invalid"):
             Settings(theme="invalid", _cli_parse_args=[])
 
-    def test_timezone_validator_valid_values(self):
+    def test_timezone_validator_valid_values(self) -> None:
         """Test timezone validator with valid values."""
         # Test auto/local values
         settings = Settings(timezone="auto", _cli_parse_args=[])
@@ -295,27 +296,27 @@ class TestSettings:
         settings = Settings(timezone="Europe/Warsaw", _cli_parse_args=[])
         assert settings.timezone == "Europe/Warsaw"
 
-    def test_timezone_validator_invalid_value(self):
+    def test_timezone_validator_invalid_value(self) -> None:
         """Test timezone validator with invalid value."""
         with pytest.raises(ValueError, match="Invalid timezone: Invalid/Timezone"):
             Settings(timezone="Invalid/Timezone", _cli_parse_args=[])
 
-    def test_time_format_validator_valid_values(self):
+    def test_time_format_validator_valid_values(self) -> None:
         """Test time format validator with valid values."""
-        valid_formats = ["12h", "24h", "auto"]
+        valid_formats: List[str] = ["12h", "24h", "auto"]
 
         for fmt in valid_formats:
             settings = Settings(time_format=fmt, _cli_parse_args=[])
             assert settings.time_format == fmt
 
-    def test_time_format_validator_invalid_value(self):
+    def test_time_format_validator_invalid_value(self) -> None:
         """Test time format validator with invalid value."""
         with pytest.raises(ValueError, match="Invalid time format: invalid"):
             Settings(time_format="invalid", _cli_parse_args=[])
 
-    def test_log_level_validator_valid_values(self):
+    def test_log_level_validator_valid_values(self) -> None:
         """Test log level validator with valid values."""
-        valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+        valid_levels: List[str] = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
         for level in valid_levels:
             settings = Settings(log_level=level, _cli_parse_args=[])
@@ -325,12 +326,12 @@ class TestSettings:
             settings = Settings(log_level=level.lower(), _cli_parse_args=[])
             assert settings.log_level == level
 
-    def test_log_level_validator_invalid_value(self):
+    def test_log_level_validator_invalid_value(self) -> None:
         """Test log level validator with invalid value."""
         with pytest.raises(ValueError, match="Invalid log level: invalid"):
             Settings(log_level="invalid", _cli_parse_args=[])
 
-    def test_field_constraints(self):
+    def test_field_constraints(self) -> None:
         """Test field constraints and validation."""
         # Test positive constraints
         with pytest.raises(ValueError):
@@ -360,7 +361,7 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_version_flag(self, mock_time_format, mock_timezone):
+    def test_load_with_last_used_version_flag(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
         """Test version flag handling."""
         with patch("builtins.print") as mock_print:
             with patch("sys.exit") as mock_exit:
@@ -371,7 +372,7 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_clear_flag(self, mock_time_format, mock_timezone):
+    def test_load_with_last_used_clear_flag(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
         """Test clear flag handling."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
@@ -382,7 +383,7 @@ class TestSettings:
             params_file = config_dir / "last_used.json"
             params_file.parent.mkdir(parents=True, exist_ok=True)
 
-            test_data = {"theme": "dark", "timezone": "Europe/Warsaw"}
+            test_data: Dict[str, str] = {"theme": "dark", "timezone": "Europe/Warsaw"}
             with open(params_file, "w") as f:
                 json.dump(test_data, f)
 
@@ -397,13 +398,13 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_merge_params(self, mock_time_format, mock_timezone):
+    def test_load_with_last_used_merge_params(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
         """Test merging with last used parameters."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
 
         # Mock last used params
-        test_params = {
+        test_params: Dict[str, Union[str, int]] = {
             "theme": "dark",
             "timezone": "Europe/Warsaw",
             "refresh_rate": 15,
@@ -428,13 +429,13 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_cli_priority(self, mock_time_format, mock_timezone):
+    def test_load_with_last_used_cli_priority(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
         """Test CLI arguments take priority over last used params."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
 
         # Mock last used params
-        test_params = {"theme": "dark", "timezone": "Europe/Warsaw", "refresh_rate": 15}
+        test_params: Dict[str, Union[str, int]] = {"theme": "dark", "timezone": "Europe/Warsaw", "refresh_rate": 15}
 
         with patch("claude_monitor.core.settings.LastUsedParams") as MockLastUsed:
             mock_instance = Mock()
@@ -452,7 +453,7 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_auto_timezone(self, mock_time_format, mock_timezone):
+    def test_load_with_last_used_auto_timezone(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
         """Test auto timezone detection."""
         mock_timezone.return_value = "America/New_York"
         mock_time_format.return_value = "12h"
@@ -469,7 +470,7 @@ class TestSettings:
 
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
-    def test_load_with_last_used_debug_flag(self, mock_time_format, mock_timezone):
+    def test_load_with_last_used_debug_flag(self, mock_time_format: Mock, mock_timezone: Mock) -> None:
         """Test debug flag overrides log level."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
@@ -488,8 +489,8 @@ class TestSettings:
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
     @patch("claude_monitor.terminal.themes.BackgroundDetector")
     def test_load_with_last_used_theme_detection(
-        self, MockDetector, mock_time_format, mock_timezone
-    ):
+        self, MockDetector: Mock, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test theme auto-detection."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
@@ -514,13 +515,13 @@ class TestSettings:
     @patch("claude_monitor.core.settings.Settings._get_system_timezone")
     @patch("claude_monitor.core.settings.Settings._get_system_time_format")
     def test_load_with_last_used_custom_plan_reset(
-        self, mock_time_format, mock_timezone
-    ):
+        self, mock_time_format: Mock, mock_timezone: Mock
+    ) -> None:
         """Test custom plan resets custom_limit_tokens if not provided via CLI."""
         mock_timezone.return_value = "UTC"
         mock_time_format.return_value = "24h"
 
-        test_params = {"custom_limit_tokens": 5000}
+        test_params: Dict[str, int] = {"custom_limit_tokens": 5000}
 
         with patch("claude_monitor.core.settings.LastUsedParams") as MockLastUsed:
             mock_instance = Mock()
@@ -533,7 +534,7 @@ class TestSettings:
             assert settings.plan == "custom"
             assert settings.custom_limit_tokens is None  # Should be reset
 
-    def test_to_namespace(self):
+    def test_to_namespace(self) -> None:
         """Test conversion to argparse.Namespace."""
         settings = Settings(
             plan="pro",
@@ -565,7 +566,7 @@ class TestSettings:
         assert namespace.log_file == "/tmp/test.log"
         assert namespace.version is True
 
-    def test_to_namespace_none_values(self):
+    def test_to_namespace_none_values(self) -> None:
         """Test conversion to namespace with None values."""
         settings = Settings(_cli_parse_args=[])
         namespace = settings.to_namespace()
@@ -578,7 +579,7 @@ class TestSettings:
 class TestSettingsIntegration:
     """Integration tests for Settings class."""
 
-    def test_complete_workflow(self):
+    def test_complete_workflow(self) -> None:
         """Test complete workflow with real file operations."""
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = Path(temp_dir)
@@ -614,7 +615,7 @@ class TestSettingsIntegration:
                     assert settings2.refresh_rate == 5  # From last used
                     assert settings2.plan == "pro"  # From CLI
 
-    def test_settings_customise_sources(self):
+    def test_settings_customise_sources(self) -> None:
         """Test settings source customization."""
         sources = Settings.settings_customise_sources(
             Settings,

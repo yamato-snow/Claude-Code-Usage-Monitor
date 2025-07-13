@@ -1,11 +1,16 @@
 """Simplified CLI entry point using pydantic-settings."""
 
+import argparse
 import contextlib
 import logging
 import sys
 import traceback
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict, Any, Callable
+
+# Type aliases for CLI callbacks
+DataUpdateCallback = Callable[[Dict[str, Any]], None]
+SessionChangeCallback = Callable[[str, str, Optional[Dict[str, Any]]], None]
 
 from claude_monitor import __version__
 from claude_monitor.cli.bootstrap import (
@@ -30,12 +35,12 @@ from claude_monitor.terminal.themes import get_themed_console, print_themed
 from claude_monitor.ui.display_controller import DisplayController
 
 
-def get_standard_claude_paths() -> list[str]:
+def get_standard_claude_paths() -> List[str]:
     """Get list of standard Claude data directory paths to check."""
     return ["~/.claude/projects", "~/.config/claude/projects"]
 
 
-def discover_claude_data_paths(custom_paths: Optional[list[str]] = None) -> list[Path]:
+def discover_claude_data_paths(custom_paths: Optional[List[str]] = None) -> List[Path]:
     """Discover all available Claude data directories.
 
     Args:
@@ -44,9 +49,11 @@ def discover_claude_data_paths(custom_paths: Optional[list[str]] = None) -> list
     Returns:
         List of Path objects for existing Claude data directories
     """
-    paths_to_check = custom_paths or get_standard_claude_paths()
+    paths_to_check: List[str] = (
+        [str(p) for p in custom_paths] if custom_paths else get_standard_claude_paths()
+    )
 
-    discovered_paths = []
+    discovered_paths: List[Path] = []
 
     for path_str in paths_to_check:
         path = Path(path_str).expanduser().resolve()
@@ -56,7 +63,7 @@ def discover_claude_data_paths(custom_paths: Optional[list[str]] = None) -> list
     return discovered_paths
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     """Main entry point with direct pydantic-settings integration."""
     if argv is None:
         argv = sys.argv[1:]
@@ -94,7 +101,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         return 1
 
 
-def _run_monitoring(args):
+def _run_monitoring(args: argparse.Namespace) -> None:
     """Main monitoring implementation without facade."""
     if hasattr(args, "theme") and args.theme:
         console = get_themed_console(force_theme=args.theme.lower())
@@ -102,24 +109,24 @@ def _run_monitoring(args):
         console = get_themed_console()
 
     old_terminal_settings = setup_terminal()
-    live_display_active = False
+    live_display_active: bool = False
 
     try:
-        data_paths = discover_claude_data_paths()
+        data_paths: List[Path] = discover_claude_data_paths()
         if not data_paths:
             print_themed("No Claude data directory found", style="error")
             return
 
-        data_path = data_paths[0]
+        data_path: Path = data_paths[0]
         logger = logging.getLogger(__name__)
         logger.info(f"Using data path: {data_path}")
 
-        token_limit = _get_initial_token_limit(args, data_path)
+        token_limit: int = _get_initial_token_limit(args, str(data_path))
 
         display_controller = DisplayController()
         display_controller.live_manager._console = console
 
-        refresh_per_second = getattr(args, "refresh_per_second", 0.75)
+        refresh_per_second: float = getattr(args, "refresh_per_second", 0.75)
         logger.info(
             f"Display refresh rate: {refresh_per_second} Hz ({1000 / refresh_per_second:.0f}ms)"
         )
@@ -152,21 +159,21 @@ def _run_monitoring(args):
             orchestrator.set_args(args)
 
             # Setup monitoring callback
-            def on_data_update(monitoring_data):
+            def on_data_update(monitoring_data: Dict[str, Any]) -> None:
                 """Handle data updates from orchestrator."""
                 try:
-                    data = monitoring_data.get("data", {})
+                    data: Dict[str, Any] = monitoring_data.get("data", {})
+                    blocks: List[Dict[str, Any]] = data.get("blocks", [])
 
-                    logger.debug(
-                        f"Display data has {len(data.get('blocks', []))} blocks"
-                    )
-                    if data.get("blocks"):
-                        active_blocks = [b for b in data["blocks"] if b.get("isActive")]
+                    logger.debug(f"Display data has {len(blocks)} blocks")
+                    if blocks:
+                        active_blocks: List[Dict[str, Any]] = [
+                            b for b in blocks if b.get("isActive")
+                        ]
                         logger.debug(f"Active blocks: {len(active_blocks)}")
                         if active_blocks:
-                            logger.debug(
-                                f"Active block tokens: {active_blocks[0].get('totalTokens', 0)}"
-                            )
+                            total_tokens: int = active_blocks[0].get("totalTokens", 0)
+                            logger.debug(f"Active block tokens: {total_tokens}")
 
                     renderable = display_controller.create_data_display(
                         data, args, monitoring_data.get("token_limit", token_limit)
@@ -187,7 +194,7 @@ def _run_monitoring(args):
             orchestrator.register_update_callback(on_data_update)
 
             # Optional: Register session change callback
-            def on_session_change(event_type, session_id, session_data):
+            def on_session_change(event_type: str, session_id: str, session_data: Optional[Dict[str, Any]]) -> None:
                 """Handle session changes."""
                 if event_type == "session_start":
                     logger.info(f"New session detected: {session_id}")
@@ -235,27 +242,28 @@ def _run_monitoring(args):
         restore_terminal(old_terminal_settings)
 
 
-def _get_initial_token_limit(args, data_path: str) -> int:
+def _get_initial_token_limit(args: argparse.Namespace, data_path: Union[str, Path]) -> int:
     """Get initial token limit for the plan."""
     logger = logging.getLogger(__name__)
-    plan = getattr(args, "plan", PlanType.PRO.value)
+    plan: str = getattr(args, "plan", PlanType.PRO.value)
 
     # For custom plans, check if custom_limit_tokens is provided first
     if plan == "custom":
         # If custom_limit_tokens is explicitly set, use it
         if hasattr(args, "custom_limit_tokens") and args.custom_limit_tokens:
+            custom_limit = int(args.custom_limit_tokens)
             print_themed(
-                f"Using custom token limit: {args.custom_limit_tokens:,} tokens",
+                f"Using custom token limit: {custom_limit:,} tokens",
                 style="info",
             )
-            return args.custom_limit_tokens
+            return custom_limit
 
         # Otherwise, analyze usage data to calculate P90
         print_themed("Analyzing usage data to determine cost limits...", style="info")
 
         try:
             # Use quick start mode for faster initial load
-            usage_data = analyze_usage(
+            usage_data: Optional[Dict[str, Any]] = analyze_usage(
                 hours_back=24,
                 quick_start=True,
                 use_cache=False,
@@ -263,7 +271,8 @@ def _get_initial_token_limit(args, data_path: str) -> int:
             )
 
             if usage_data and "blocks" in usage_data:
-                token_limit = get_token_limit(plan, usage_data["blocks"])
+                blocks: List[Dict[str, Any]] = usage_data["blocks"]
+                token_limit: int = get_token_limit(plan, blocks)
 
                 print_themed(
                     f"P90 session limit calculated: {token_limit:,} tokens",
@@ -281,6 +290,72 @@ def _get_initial_token_limit(args, data_path: str) -> int:
 
     # For standard plans, just get the limit
     return get_token_limit(plan)
+
+
+def handle_application_error(
+    exception: Exception,
+    component: str = "cli_main",
+    exit_code: int = 1,
+) -> NoReturn:
+    """Handle application-level errors with proper logging and exit.
+    
+    Args:
+        exception: The exception that occurred
+        component: Component where the error occurred
+        exit_code: Exit code to use when terminating
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Log the error with traceback
+    logger.error(f"Application error in {component}: {exception}", exc_info=True)
+    
+    # Report to error handling system
+    from claude_monitor.error_handling import report_application_startup_error
+    
+    report_application_startup_error(
+        exception=exception,
+        component=component,
+        additional_context={
+            "exit_code": exit_code,
+            "args": sys.argv,
+        }
+    )
+    
+    # Print user-friendly error message
+    print(f"\nError: {exception}", file=sys.stderr)
+    print("For more details, check the log files.", file=sys.stderr)
+    
+    sys.exit(exit_code)
+
+
+def validate_cli_environment() -> Optional[str]:
+    """Validate the CLI environment and return error message if invalid.
+    
+    Returns:
+        Error message if validation fails, None if successful
+    """
+    try:
+        # Check Python version compatibility
+        if sys.version_info < (3, 8):
+            return f"Python 3.8+ required, found {sys.version_info.major}.{sys.version_info.minor}"
+        
+        # Check for required dependencies
+        required_modules = ["rich", "pydantic", "watchdog"]
+        missing_modules: List[str] = []
+        
+        for module in required_modules:
+            try:
+                __import__(module)
+            except ImportError:
+                missing_modules.append(module)
+        
+        if missing_modules:
+            return f"Missing required modules: {', '.join(missing_modules)}"
+        
+        return None
+        
+    except Exception as e:
+        return f"Environment validation failed: {e}"
 
 
 if __name__ == "__main__":

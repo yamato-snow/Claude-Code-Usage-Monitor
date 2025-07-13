@@ -1,7 +1,10 @@
 """Tests for data/analysis.py module."""
 
 from datetime import datetime, timezone
+from typing import Any, Dict, List
 from unittest.mock import Mock, patch
+
+import pytest
 
 from claude_monitor.core.models import (
     BurnRate,
@@ -30,7 +33,12 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.load_usage_entries")
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
-    def test_analyze_usage_basic(self, mock_calc_class, mock_analyzer_class, mock_load):
+    def test_analyze_usage_basic(
+        self, 
+        mock_calc_class: Mock, 
+        mock_analyzer_class: Mock, 
+        mock_load: Mock
+    ) -> None:
         """Test basic analyze_usage functionality."""
         sample_entry = UsageEntry(
             timestamp=datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
@@ -76,8 +84,11 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_quick_start_no_hours(
-        self, mock_calc_class, mock_analyzer_class, mock_load
-    ):
+        self, 
+        mock_calc_class: Mock, 
+        mock_analyzer_class: Mock, 
+        mock_load: Mock
+    ) -> None:
         """Test analyze_usage with quick_start=True and hours_back=None."""
         mock_load.return_value = ([], [])
         mock_analyzer = Mock()
@@ -98,8 +109,11 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_quick_start_with_hours(
-        self, mock_calc_class, mock_analyzer_class, mock_load
-    ):
+        self, 
+        mock_calc_class: Mock, 
+        mock_analyzer_class: Mock, 
+        mock_load: Mock
+    ) -> None:
         """Test analyze_usage with quick_start=True and specific hours_back."""
         mock_load.return_value = ([], [])
         mock_analyzer = Mock()
@@ -120,8 +134,11 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_with_limits(
-        self, mock_calc_class, mock_analyzer_class, mock_load
-    ):
+        self, 
+        mock_calc_class: Mock, 
+        mock_analyzer_class: Mock, 
+        mock_load: Mock
+    ) -> None:
         """Test analyze_usage with limit detection."""
         sample_entry = UsageEntry(
             timestamp=datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
@@ -165,8 +182,11 @@ class TestAnalyzeUsage:
     @patch("claude_monitor.data.analysis.SessionAnalyzer")
     @patch("claude_monitor.data.analysis.BurnRateCalculator")
     def test_analyze_usage_no_raw_entries(
-        self, mock_calc_class, mock_analyzer_class, mock_load
-    ):
+        self, 
+        mock_calc_class: Mock, 
+        mock_analyzer_class: Mock, 
+        mock_load: Mock
+    ) -> None:
         """Test analyze_usage when no raw entries are provided."""
         sample_entry = UsageEntry(
             timestamp=datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
@@ -202,7 +222,7 @@ class TestAnalyzeUsage:
 class TestProcessBurnRates:
     """Test the _process_burn_rates function."""
 
-    def test_process_burn_rates_active_block(self):
+    def test_process_burn_rates_active_block(self) -> None:
         """Test burn rate processing for active blocks."""
         active_block = SessionBlock(
             id="active_block",
@@ -243,7 +263,7 @@ class TestProcessBurnRates:
         }
         assert inactive_block.burn_rate_snapshot is None
 
-    def test_process_burn_rates_no_burn_rate(self):
+    def test_process_burn_rates_no_burn_rate(self) -> None:
         """Test burn rate processing when calculator returns None."""
         active_block = SessionBlock(
             id="active_block",
@@ -261,7 +281,7 @@ class TestProcessBurnRates:
         assert active_block.burn_rate_snapshot is None
         assert active_block.projection_data is None
 
-    def test_process_burn_rates_no_projection(self):
+    def test_process_burn_rates_no_projection(self) -> None:
         """Test burn rate processing when projection returns None."""
         active_block = SessionBlock(
             id="active_block",
@@ -286,7 +306,7 @@ class TestCreateResult:
     """Test the _create_result function."""
 
     @patch("claude_monitor.data.analysis._convert_blocks_to_dict_format")
-    def test_create_result_basic(self, mock_convert):
+    def test_create_result_basic(self, mock_convert: Mock) -> None:
         """Test basic _create_result functionality."""
         # Create test blocks
         block1 = Mock()
@@ -315,7 +335,7 @@ class TestCreateResult:
 
         mock_convert.assert_called_once_with(blocks)
 
-    def test_create_result_empty(self):
+    def test_create_result_empty(self) -> None:
         """Test _create_result with empty data."""
         result = _create_result([], [], {})
 
@@ -331,7 +351,7 @@ class TestCreateResult:
 class TestLimitFunctions:
     """Test limit-related functions."""
 
-    def test_is_limit_in_block_timerange_within_range(self):
+    def test_is_limit_in_block_timerange_within_range(self) -> None:
         """Test _is_limit_in_block_timerange when limit is within block."""
         block = SessionBlock(
             id="test_block",
@@ -343,7 +363,7 @@ class TestLimitFunctions:
 
         assert _is_limit_in_block_timerange(limit_info, block) is True
 
-    def test_is_limit_in_block_timerange_outside_range(self):
+    def test_is_limit_in_block_timerange_outside_range(self) -> None:
         """Test _is_limit_in_block_timerange when limit is outside block."""
         block = SessionBlock(
             id="test_block",
@@ -355,7 +375,7 @@ class TestLimitFunctions:
 
         assert _is_limit_in_block_timerange(limit_info, block) is False
 
-    def test_is_limit_in_block_timerange_no_timezone(self):
+    def test_is_limit_in_block_timerange_no_timezone(self) -> None:
         """Test _is_limit_in_block_timerange with naive datetime."""
         block = SessionBlock(
             id="test_block",
@@ -367,7 +387,7 @@ class TestLimitFunctions:
 
         assert _is_limit_in_block_timerange(limit_info, block) is True
 
-    def test_format_limit_info_complete(self):
+    def test_format_limit_info_complete(self) -> None:
         """Test _format_limit_info with all fields."""
         limit_info = {
             "type": "rate_limit",
@@ -385,7 +405,7 @@ class TestLimitFunctions:
             "reset_time": "2024-01-01T13:00:00+00:00",
         }
 
-    def test_format_limit_info_no_reset_time(self):
+    def test_format_limit_info_no_reset_time(self) -> None:
         """Test _format_limit_info without reset_time."""
         limit_info = {
             "type": "general_limit",
@@ -406,7 +426,7 @@ class TestLimitFunctions:
 class TestBlockConversion:
     """Test block conversion functions."""
 
-    def test_format_block_entries(self):
+    def test_format_block_entries(self) -> None:
         """Test _format_block_entries function."""
         entry1 = UsageEntry(
             timestamp=datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
@@ -447,7 +467,7 @@ class TestBlockConversion:
             "requestId": "req_1",
         }
 
-    def test_create_base_block_dict(self):
+    def test_create_base_block_dict(self) -> None:
         """Test _create_base_block_dict function."""
         entry = UsageEntry(
             timestamp=datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
@@ -506,7 +526,7 @@ class TestBlockConversion:
         assert result["totalTokens"] == 150
         assert result["entries_count"] == 1
 
-    def test_add_optional_block_data_all_fields(self):
+    def test_add_optional_block_data_all_fields(self) -> None:
         """Test _add_optional_block_data with all optional fields."""
         block = Mock()
         block.burn_rate_snapshot = BurnRate(tokens_per_minute=5.0, cost_per_hour=1.0)
@@ -535,7 +555,7 @@ class TestBlockConversion:
             {"type": "rate_limit", "content": "Limit reached"}
         ]
 
-    def test_add_optional_block_data_no_fields(self):
+    def test_add_optional_block_data_no_fields(self) -> None:
         """Test _add_optional_block_data with no optional fields."""
         block = Mock()
         # Remove all optional attributes
@@ -555,7 +575,11 @@ class TestBlockConversion:
 
     @patch("claude_monitor.data.analysis._create_base_block_dict")
     @patch("claude_monitor.data.analysis._add_optional_block_data")
-    def test_convert_blocks_to_dict_format(self, mock_add_optional, mock_create_base):
+    def test_convert_blocks_to_dict_format(
+        self, 
+        mock_add_optional: Mock, 
+        mock_create_base: Mock
+    ) -> None:
         """Test _convert_blocks_to_dict_format function."""
         block1 = Mock()
         block2 = Mock()

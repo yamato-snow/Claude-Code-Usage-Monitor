@@ -3,9 +3,10 @@
 Consolidates display indicators, error/loading screens, and advanced custom display.
 """
 
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional, Union
 
-from rich.console import Console
+from rich.console import Console, RenderableType
+from rich.text import Text
 
 from claude_monitor.terminal.themes import get_cost_style, get_velocity_indicator
 from claude_monitor.ui.layouts import HeaderManager
@@ -80,12 +81,12 @@ class CostIndicator:
 class ErrorDisplayComponent:
     """Error display component for handling error states."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize error display component."""
 
     def format_error_screen(
         self, plan: str = "pro", timezone: str = "Europe/Warsaw"
-    ) -> list[str]:
+    ) -> List[str]:
         """Format error screen for failed data fetch.
 
         Args:
@@ -114,7 +115,7 @@ class ErrorDisplayComponent:
 class LoadingScreenComponent:
     """Loading screen component for displaying loading states."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize loading screen component."""
 
     def create_loading_screen(
@@ -122,7 +123,7 @@ class LoadingScreenComponent:
         plan: str = "pro",
         timezone: str = "Europe/Warsaw",
         custom_message: Optional[str] = None,
-    ) -> list[str]:
+    ) -> List[str]:
         """Create loading screen content.
 
         Args:
@@ -163,7 +164,7 @@ class LoadingScreenComponent:
         plan: str = "pro",
         timezone: str = "Europe/Warsaw",
         custom_message: Optional[str] = None,
-    ):
+    ) -> RenderableType:
         """Create Rich renderable for loading screen.
 
         Args:
@@ -184,12 +185,12 @@ class LoadingScreenComponent:
 class AdvancedCustomLimitDisplay:
     """Display component for session-based P90 limits from general_limit sessions."""
 
-    def __init__(self, console: Console):
+    def __init__(self, console: Console) -> None:
         self.console = console
 
     def _collect_session_data(
-        self, blocks: Optional[list[dict[str, Any]]] = None
-    ) -> dict[str, Any]:
+        self, blocks: Optional[List[Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
         """Collect session data and identify limit sessions."""
         if not blocks:
             return {
@@ -232,7 +233,7 @@ class AdvancedCustomLimitDisplay:
             "active_sessions": active_sessions,
         }
 
-    def _is_limit_session(self, session: dict[str, Any]) -> bool:
+    def _is_limit_session(self, session: Dict[str, Any]) -> bool:
         """Check if session hit a general limit."""
         tokens = session["tokens"]
 
@@ -248,8 +249,8 @@ class AdvancedCustomLimitDisplay:
         return False
 
     def _calculate_session_percentiles(
-        self, sessions: list[dict[str, Any]]
-    ) -> dict[str, Any]:
+        self, sessions: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Calculate percentiles from session data."""
         if not sessions:
             return {
@@ -296,7 +297,7 @@ class AdvancedCustomLimitDisplay:
 
 def format_error_screen(
     plan: str = "pro", timezone: str = "Europe/Warsaw"
-) -> list[str]:
+) -> List[str]:
     """Legacy function - format error screen.
 
     Maintained for backward compatibility.

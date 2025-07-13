@@ -1,6 +1,7 @@
 """Tests for session analyzer module."""
 
 from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, List, Optional, Union
 
 from claude_monitor.core.models import SessionBlock, TokenCounts, UsageEntry
 from claude_monitor.data.analyzer import SessionAnalyzer
@@ -9,7 +10,7 @@ from claude_monitor.data.analyzer import SessionAnalyzer
 class TestSessionAnalyzer:
     """Test the SessionAnalyzer class."""
 
-    def test_session_analyzer_init(self):
+    def test_session_analyzer_init(self) -> None:
         """Test SessionAnalyzer initialization."""
         analyzer = SessionAnalyzer()
 
@@ -17,21 +18,21 @@ class TestSessionAnalyzer:
         assert analyzer.session_duration == timedelta(hours=5)
         assert analyzer.timezone_handler is not None
 
-    def test_session_analyzer_init_custom_duration(self):
+    def test_session_analyzer_init_custom_duration(self) -> None:
         """Test SessionAnalyzer with custom duration."""
         analyzer = SessionAnalyzer(session_duration_hours=3)
 
         assert analyzer.session_duration_hours == 3
         assert analyzer.session_duration == timedelta(hours=3)
 
-    def test_transform_to_blocks_empty_list(self):
+    def test_transform_to_blocks_empty_list(self) -> None:
         """Test transform_to_blocks with empty entries."""
         analyzer = SessionAnalyzer()
         result = analyzer.transform_to_blocks([])
 
         assert result == []
 
-    def test_transform_to_blocks_single_entry(self):
+    def test_transform_to_blocks_single_entry(self) -> None:
         """Test transform_to_blocks with single entry."""
         analyzer = SessionAnalyzer()
 
@@ -49,12 +50,12 @@ class TestSessionAnalyzer:
         assert len(blocks[0].entries) == 1
         assert blocks[0].entries[0] == entry
 
-    def test_transform_to_blocks_multiple_entries_same_block(self):
+    def test_transform_to_blocks_multiple_entries_same_block(self) -> None:
         """Test transform_to_blocks with entries in same block."""
         analyzer = SessionAnalyzer()
 
         base_time = datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc)
-        entries = [
+        entries: List[UsageEntry] = [
             UsageEntry(
                 timestamp=base_time,
                 input_tokens=100,
@@ -76,12 +77,12 @@ class TestSessionAnalyzer:
         assert len(blocks) == 1
         assert len(blocks[0].entries) == 2
 
-    def test_transform_to_blocks_multiple_blocks(self):
+    def test_transform_to_blocks_multiple_blocks(self) -> None:
         """Test transform_to_blocks creating multiple blocks."""
         analyzer = SessionAnalyzer()
 
         base_time = datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc)
-        entries = [
+        entries: List[UsageEntry] = [
             UsageEntry(
                 timestamp=base_time,
                 input_tokens=100,
@@ -104,7 +105,7 @@ class TestSessionAnalyzer:
         assert len(blocks) >= 2
         assert sum(len(block.entries) for block in blocks) == 2
 
-    def test_should_create_new_block_time_gap(self):
+    def test_should_create_new_block_time_gap(self) -> None:
         """Test _should_create_new_block with time gap."""
         analyzer = SessionAnalyzer()
 
@@ -136,12 +137,12 @@ class TestSessionAnalyzer:
         assert not analyzer._should_create_new_block(block, entry1)
         assert analyzer._should_create_new_block(block, entry2)
 
-    def test_round_to_hour(self):
+    def test_round_to_hour(self) -> None:
         """Test _round_to_hour functionality."""
         analyzer = SessionAnalyzer()
 
         # Test various timestamps
-        test_cases = [
+        test_cases: List[tuple[datetime, datetime]] = [
             (
                 datetime(2024, 1, 1, 12, 30, 45, tzinfo=timezone.utc),
                 datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
@@ -160,7 +161,7 @@ class TestSessionAnalyzer:
             result = analyzer._round_to_hour(input_time)
             assert result == expected
 
-    def test_create_new_block(self):
+    def test_create_new_block(self) -> None:
         """Test _create_new_block functionality."""
         analyzer = SessionAnalyzer()
 
@@ -178,7 +179,7 @@ class TestSessionAnalyzer:
         assert block.end_time == datetime(2024, 1, 1, 17, 0, tzinfo=timezone.utc)
         assert block.id == "2024-01-01T12:00:00+00:00"
 
-    def test_add_entry_to_block(self):
+    def test_add_entry_to_block(self) -> None:
         """Test _add_entry_to_block functionality."""
         analyzer = SessionAnalyzer()
 
@@ -212,7 +213,7 @@ class TestSessionAnalyzer:
         assert "claude-3-haiku" in block.models
         assert block.sent_messages_count == 1
 
-    def test_finalize_block(self):
+    def test_finalize_block(self) -> None:
         """Test _finalize_block functionality."""
         analyzer = SessionAnalyzer()
 
@@ -238,18 +239,18 @@ class TestSessionAnalyzer:
             2024, 1, 1, 12, 30, tzinfo=timezone.utc
         )
 
-    def test_detect_limits_empty_list(self):
+    def test_detect_limits_empty_list(self) -> None:
         """Test detect_limits with empty list."""
         analyzer = SessionAnalyzer()
         result = analyzer.detect_limits([])
 
         assert result == []
 
-    def test_detect_limits_no_limits(self):
+    def test_detect_limits_no_limits(self) -> None:
         """Test detect_limits with no limit messages."""
         analyzer = SessionAnalyzer()
 
-        raw_entries = [
+        raw_entries: List[Dict[str, str]] = [
             {
                 "timestamp": "2024-01-01T12:00:00Z",
                 "content": "Regular response content",
@@ -261,11 +262,11 @@ class TestSessionAnalyzer:
 
         assert result == []
 
-    def test_detect_single_limit_rate_limit(self):
+    def test_detect_single_limit_rate_limit(self) -> None:
         """Test _detect_single_limit with rate limit message."""
         analyzer = SessionAnalyzer()
 
-        raw_data = {
+        raw_data: Dict[str, Union[str, List[Dict[str, str]]]] = {
             "timestamp": "2024-01-01T12:00:00Z",
             "content": [
                 {
@@ -283,11 +284,11 @@ class TestSessionAnalyzer:
             assert "type" in result
             assert "message" in result
 
-    def test_detect_single_limit_opus_limit(self):
+    def test_detect_single_limit_opus_limit(self) -> None:
         """Test _detect_single_limit with Opus daily limit."""
         analyzer = SessionAnalyzer()
 
-        raw_data = {
+        raw_data: Dict[str, Union[str, List[Dict[str, str]]]] = {
             "timestamp": "2024-01-01T12:00:00Z",
             "content": [
                 {
@@ -305,19 +306,19 @@ class TestSessionAnalyzer:
             assert "type" in result
             assert "message" in result
 
-    def test_is_opus_limit(self):
+    def test_is_opus_limit(self) -> None:
         """Test _is_opus_limit detection."""
         analyzer = SessionAnalyzer()
 
         # Test cases that should be detected as Opus limits
-        opus_cases = [
+        opus_cases: List[str] = [
             "you've reached your daily limit for claude 3 opus",
             "daily opus limit reached",
             "claude 3 opus usage limit",
         ]
 
         # Test cases that should NOT be detected
-        non_opus_cases = [
+        non_opus_cases: List[str] = [
             "general rate limit message",
             "sonnet limit reached",
             "you've reached capacity",
@@ -329,11 +330,11 @@ class TestSessionAnalyzer:
         for case in non_opus_cases:
             assert analyzer._is_opus_limit(case) is False
 
-    def test_extract_wait_time(self):
+    def test_extract_wait_time(self) -> None:
         """Test _extract_wait_time functionality."""
         analyzer = SessionAnalyzer()
 
-        test_cases = [
+        test_cases: List[tuple[str, Optional[int]]] = [
             ("wait 5 minutes", 5),
             ("wait 30 minutes", 30),
             ("wait 60 minutes", 60),
@@ -348,12 +349,12 @@ class TestSessionAnalyzer:
             reset_time, wait_minutes = analyzer._extract_wait_time(text, timestamp)
             assert wait_minutes == expected_minutes
 
-    def test_parse_reset_timestamp(self):
+    def test_parse_reset_timestamp(self) -> None:
         """Test _parse_reset_timestamp functionality."""
         analyzer = SessionAnalyzer()
 
         # Test with various timestamp formats
-        test_cases = [
+        test_cases: List[str] = [
             "Resets at 2024-01-01T15:00:00Z",
             "Your limit resets on 2024-01-01 at 15:00",
             "Available again at 15:00 UTC",
@@ -364,12 +365,12 @@ class TestSessionAnalyzer:
             # Should either return a datetime or None
             assert result is None or isinstance(result, datetime)
 
-    def test_mark_active_blocks(self):
+    def test_mark_active_blocks(self) -> None:
         """Test _mark_active_blocks functionality."""
         analyzer = SessionAnalyzer()
 
         now = datetime.now(timezone.utc)
-        blocks = [
+        blocks: List[SessionBlock] = [
             SessionBlock(
                 id="old_block",
                 start_time=now - timedelta(hours=10),
@@ -395,13 +396,13 @@ class TestSessionAnalyzer:
 class TestSessionAnalyzerIntegration:
     """Integration tests for SessionAnalyzer."""
 
-    def test_full_analysis_workflow(self):
+    def test_full_analysis_workflow(self) -> None:
         """Test complete analysis workflow."""
         analyzer = SessionAnalyzer()
 
         # Create realistic usage entries
         base_time = datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc)
-        entries = [
+        entries: List[UsageEntry] = [
             UsageEntry(
                 timestamp=base_time,
                 input_tokens=100,
@@ -443,11 +444,11 @@ class TestSessionAnalyzerIntegration:
         assert total_output == 225  # 50 + 100 + 75
         assert abs(total_cost - 0.0045) < 0.0001  # 0.001 + 0.002 + 0.0015
 
-    def test_limit_detection_workflow(self):
+    def test_limit_detection_workflow(self) -> None:
         """Test limit detection workflow."""
         analyzer = SessionAnalyzer()
 
-        raw_entries = [
+        raw_entries: List[Dict[str, Union[str, List[Dict[str, str]]]]] = [
             {
                 "timestamp": "2024-01-01T12:00:00Z",
                 "content": [
@@ -483,7 +484,7 @@ class TestSessionAnalyzerIntegration:
 class TestSessionAnalyzerEdgeCases:
     """Test edge cases and error conditions."""
 
-    def test_malformed_entry_handling(self):
+    def test_malformed_entry_handling(self) -> None:
         """Test handling of malformed entries."""
         analyzer = SessionAnalyzer()
 
@@ -500,7 +501,7 @@ class TestSessionAnalyzerEdgeCases:
         blocks = analyzer.transform_to_blocks([entry])
         assert len(blocks) == 1
 
-    def test_negative_token_counts(self):
+    def test_negative_token_counts(self) -> None:
         """Test handling of negative token counts."""
         analyzer = SessionAnalyzer()
 
@@ -518,12 +519,12 @@ class TestSessionAnalyzerEdgeCases:
         assert len(blocks) == 1
         assert blocks[0].token_counts.input_tokens == -100
 
-    def test_very_large_time_gaps(self):
+    def test_very_large_time_gaps(self) -> None:
         """Test handling of very large time gaps."""
         analyzer = SessionAnalyzer()
 
         base_time = datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc)
-        entries = [
+        entries: List[UsageEntry] = [
             UsageEntry(
                 timestamp=base_time,
                 input_tokens=100,

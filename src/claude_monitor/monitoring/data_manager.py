@@ -2,7 +2,7 @@
 
 import logging
 import time
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Union
 
 from claude_monitor.data.analysis import analyze_usage
 from claude_monitor.error_handling import report_error
@@ -15,7 +15,7 @@ class DataManager:
 
     def __init__(
         self, cache_ttl: int = 30, hours_back: int = 96, data_path: Optional[str] = None
-    ):
+    ) -> None:
         """Initialize data manager with cache and fetch settings.
 
         Args:
@@ -23,16 +23,16 @@ class DataManager:
             hours_back: Hours of historical data to fetch
             data_path: Path to data directory
         """
-        self.cache_ttl = cache_ttl
-        self._cache: Optional[Any] = None
+        self.cache_ttl: int = cache_ttl
+        self._cache: Optional[Dict[str, Any]] = None
         self._cache_timestamp: Optional[float] = None
 
-        self.hours_back = hours_back
-        self.data_path = data_path
+        self.hours_back: int = hours_back
+        self.data_path: Optional[str] = data_path
         self._last_error: Optional[str] = None
         self._last_successful_fetch: Optional[float] = None
 
-    def get_data(self, force_refresh: bool = False) -> Optional[dict[str, Any]]:
+    def get_data(self, force_refresh: bool = False) -> Optional[Dict[str, Any]]:
         """Get monitoring data with caching and error handling.
 
         Args:
@@ -42,17 +42,17 @@ class DataManager:
             Usage data dictionary or None if fetch fails
         """
         if not force_refresh and self._is_cache_valid():
-            cache_age = time.time() - self._cache_timestamp
+            cache_age: float = time.time() - self._cache_timestamp  # type: ignore
             logger.debug(f"Using cached data (age: {cache_age:.1f}s)")
             return self._cache
 
-        max_retries = 3
+        max_retries: int = 3
         for attempt in range(max_retries):
             try:
                 logger.debug(
                     f"Fetching fresh usage data (attempt {attempt + 1}/{max_retries})"
                 )
-                data = analyze_usage(
+                data: Optional[Dict[str, Any]] = analyze_usage(
                     hours_back=self.hours_back,
                     quick_start=True,
                     use_cache=False,
@@ -120,7 +120,7 @@ class DataManager:
         cache_age = time.time() - self._cache_timestamp
         return cache_age <= self.cache_ttl
 
-    def _set_cache(self, data: Any) -> None:
+    def _set_cache(self, data: Dict[str, Any]) -> None:
         """Set cache with current timestamp."""
         self._cache = data
         self._cache_timestamp = time.time()

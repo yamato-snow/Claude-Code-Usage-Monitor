@@ -2,22 +2,31 @@
 
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional, Protocol, Union
 
-from claude_monitor.core.models import BurnRate, UsageProjection
+from claude_monitor.core.models import BurnRate, SessionBlock, TokenCounts, UsageProjection
 from claude_monitor.core.p90_calculator import P90Calculator
 from claude_monitor.error_handling import report_error
 from claude_monitor.utils.time_utils import TimezoneHandler
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
-_p90_calculator = P90Calculator()
+_p90_calculator: P90Calculator = P90Calculator()
+
+
+class BlockLike(Protocol):
+    """Protocol for objects that behave like session blocks."""
+    is_active: bool
+    duration_minutes: float
+    token_counts: TokenCounts
+    cost_usd: float
+    end_time: datetime
 
 
 class BurnRateCalculator:
     """Calculates burn rates and usage projections for session blocks."""
 
-    def calculate_burn_rate(self, block: Any) -> Optional["BurnRate"]:
+    def calculate_burn_rate(self, block: BlockLike) -> Optional[BurnRate]:
         """Calculate current consumption rate for active blocks."""
         if not block.is_active or block.duration_minutes < 1:
             return None
@@ -42,7 +51,7 @@ class BurnRateCalculator:
             tokens_per_minute=tokens_per_minute, cost_per_hour=cost_per_hour
         )
 
-    def project_block_usage(self, block: Any) -> Optional["UsageProjection"]:
+    def project_block_usage(self, block: BlockLike) -> Optional[UsageProjection]:
         """Project total usage if current rate continues."""
         burn_rate = self.calculate_burn_rate(block)
         if not burn_rate:
@@ -77,7 +86,7 @@ class BurnRateCalculator:
         )
 
 
-def calculate_hourly_burn_rate(blocks: Any, current_time: datetime) -> float:
+def calculate_hourly_burn_rate(blocks: List[Dict[str, Any]], current_time: datetime) -> float:
     """Calculate burn rate based on all sessions in the last hour."""
     if not blocks:
         return 0.0
@@ -89,7 +98,7 @@ def calculate_hourly_burn_rate(blocks: Any, current_time: datetime) -> float:
 
 
 def _calculate_total_tokens_in_hour(
-    blocks: Any, one_hour_ago: datetime, current_time: datetime
+    blocks: List[Dict[str, Any]], one_hour_ago: datetime, current_time: datetime
 ) -> float:
     """Calculate total tokens for all blocks in the last hour."""
     total_tokens = 0.0
@@ -99,7 +108,7 @@ def _calculate_total_tokens_in_hour(
 
 
 def _process_block_for_burn_rate(
-    block: Any, one_hour_ago: datetime, current_time: datetime
+    block: Dict[str, Any], one_hour_ago: datetime, current_time: datetime
 ) -> float:
     """Process a single block for burn rate calculation."""
     start_time = _parse_block_start_time(block)
@@ -115,7 +124,7 @@ def _process_block_for_burn_rate(
     )
 
 
-def _parse_block_start_time(block: Any) -> Optional[datetime]:
+def _parse_block_start_time(block: Dict[str, Any]) -> Optional[datetime]:
     """Parse start time from block with error handling."""
     start_time_str = block.get("startTime")
     if not start_time_str:
@@ -130,7 +139,7 @@ def _parse_block_start_time(block: Any) -> Optional[datetime]:
         return None
 
 
-def _determine_session_end_time(block: Any, current_time: datetime) -> datetime:
+def _determine_session_end_time(block: Dict[str, Any], current_time: datetime) -> datetime:
     """Determine session end time based on block status."""
     if block.get("isActive", False):
         return current_time
@@ -147,7 +156,7 @@ def _determine_session_end_time(block: Any, current_time: datetime) -> datetime:
 
 
 def _calculate_tokens_in_hour(
-    block: Any,
+    block: Dict[str, Any],
     start_time: datetime,
     session_actual_end: datetime,
     one_hour_ago: datetime,
@@ -170,7 +179,7 @@ def _calculate_tokens_in_hour(
 
 
 def _log_timestamp_error(
-    exception: Exception, timestamp_str: str, block_id: str, timestamp_type: str
+    exception: Exception, timestamp_str: str, block_id: Optional[str], timestamp_type: str
 ) -> None:
     """Log timestamp parsing errors with context."""
     logging.debug(f"Failed to parse {timestamp_type} '{timestamp_str}': {exception}")

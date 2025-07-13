@@ -6,14 +6,14 @@ for backward compatibility.
 
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from claude_monitor.utils.time_utils import TimezoneHandler, get_time_format_preference
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
-def _detect_timezone_time_preference(args=None) -> bool:
+def _detect_timezone_time_preference(args: Any = None) -> bool:
     """Detect timezone and time preference.
 
     This is a backward compatibility function that delegates to the new
@@ -38,7 +38,7 @@ def parse_timestamp(timestamp_str: str, default_tz: str = "UTC") -> Optional[dat
     Returns:
         Parsed datetime object or None if parsing fails
     """
-    handler = TimezoneHandler(default_tz)
+    handler: TimezoneHandler = TimezoneHandler(default_tz)
     return handler.parse_timestamp(timestamp_str)
 
 
@@ -52,7 +52,7 @@ def ensure_utc(dt: datetime, default_tz: str = "UTC") -> datetime:
     Returns:
         UTC datetime object
     """
-    handler = TimezoneHandler(default_tz)
+    handler: TimezoneHandler = TimezoneHandler(default_tz)
     return handler.ensure_utc(dt)
 
 
@@ -65,7 +65,7 @@ def validate_timezone(tz_name: str) -> bool:
     Returns:
         True if valid, False otherwise
     """
-    handler = TimezoneHandler()
+    handler: TimezoneHandler = TimezoneHandler()
     return handler.validate_timezone(tz_name)
 
 
@@ -82,5 +82,5 @@ def convert_to_timezone(
     Returns:
         Converted datetime object
     """
-    handler = TimezoneHandler(default_tz)
+    handler: TimezoneHandler = TimezoneHandler(default_tz)
     return handler.convert_to_timezone(dt, tz_name)

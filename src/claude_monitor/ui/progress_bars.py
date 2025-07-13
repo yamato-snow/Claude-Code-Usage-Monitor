@@ -3,30 +3,73 @@
 Provides token usage, time progress, and model usage progress bars.
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Final, Optional, Protocol, TypedDict
 
 from claude_monitor.utils.time_utils import percentage
 
 
+# Type definitions for progress bar components
+class ModelStatsDict(TypedDict, total=False):
+    """Type definition for model statistics dictionary."""
+    input_tokens: int
+    output_tokens: int
+    total_tokens: int
+    cost: float
+
+
+class ProgressBarStyleConfig(TypedDict, total=False):
+    """Configuration for progress bar styling."""
+    filled_char: str
+    empty_char: str
+    filled_style: str | None
+    empty_style: str | None
+
+
+class ThresholdConfig(TypedDict):
+    """Configuration for color thresholds."""
+    threshold: float
+    style: str
+
+
+class ProgressBarRenderer(Protocol):
+    """Protocol for progress bar rendering."""
+    
+    def render(self, *args: Any, **kwargs: Any) -> str:
+        """Render the progress bar."""
+        ...
+
+
 class BaseProgressBar(ABC):
     """Abstract base class for progress bar components."""
+    
+    # Type constants for validation
+    MIN_WIDTH: Final[int] = 10
+    MAX_WIDTH: Final[int] = 200
+    DEFAULT_WIDTH: Final[int] = 50
+    
+    # Default styling constants
+    DEFAULT_FILLED_CHAR: Final[str] = "█"
+    DEFAULT_EMPTY_CHAR: Final[str] = "░"
+    DEFAULT_MAX_PERCENTAGE: Final[float] = 100.0
 
-    def __init__(self, width: int = 50):
+    def __init__(self, width: int = 50) -> None:
         """Initialize base progress bar.
 
         Args:
             width: Width of the progress bar in characters
         """
-        self.width = width
+        self.width: int = width
         self._validate_width()
 
     def _validate_width(self) -> None:
         """Validate width parameter."""
-        if self.width < 10:
-            raise ValueError("Progress bar width must be at least 10 characters")
-        if self.width > 200:
-            raise ValueError("Progress bar width must not exceed 200 characters")
+        if self.width < self.MIN_WIDTH:
+            raise ValueError(f"Progress bar width must be at least {self.MIN_WIDTH} characters")
+        if self.width > self.MAX_WIDTH:
+            raise ValueError(f"Progress bar width must not exceed {self.MAX_WIDTH} characters")
 
     def _calculate_filled_segments(
         self, percentage: float, max_value: float = 100.0
@@ -40,7 +83,7 @@ class BaseProgressBar(ABC):
         Returns:
             Number of filled segments
         """
-        bounded_percentage = max(0, min(percentage, max_value))
+        bounded_percentage: float = max(0, min(percentage, max_value))
         return int(self.width * bounded_percentage / max_value)
 
     def _render_bar(
@@ -48,8 +91,8 @@ class BaseProgressBar(ABC):
         filled: int,
         filled_char: str = "█",
         empty_char: str = "░",
-        filled_style: Optional[str] = None,
-        empty_style: Optional[str] = None,
+        filled_style: str | None = None,
+        empty_style: str | None = None,
     ) -> str:
         """Render the actual progress bar.
 
@@ -63,8 +106,8 @@ class BaseProgressBar(ABC):
         Returns:
             Formatted bar string
         """
-        filled_bar = filled_char * filled
-        empty_bar = empty_char * (self.width - filled)
+        filled_bar: str = filled_char * filled
+        empty_bar: str = empty_char * (self.width - filled)
 
         if filled_style:
             filled_bar = f"[{filled_style}]{filled_bar}[/]"
@@ -115,6 +158,22 @@ class BaseProgressBar(ABC):
 
 class TokenProgressBar(BaseProgressBar):
     """Token usage progress bar component."""
+    
+    # Color threshold constants
+    HIGH_USAGE_THRESHOLD: Final[float] = 90.0
+    MEDIUM_USAGE_THRESHOLD: Final[float] = 50.0
+    LOW_USAGE_THRESHOLD: Final[float] = 0.0
+    
+    # Style constants
+    HIGH_USAGE_STYLE: Final[str] = "cost.high"
+    MEDIUM_USAGE_STYLE: Final[str] = "cost.medium"
+    LOW_USAGE_STYLE: Final[str] = "cost.low"
+    BORDER_STYLE: Final[str] = "table.border"
+    
+    # Icon constants
+    HIGH_USAGE_ICON: Final[str] = "🔴"
+    MEDIUM_USAGE_ICON: Final[str] = "🟡"
+    LOW_USAGE_ICON: Final[str] = "🟢"
 
     def render(self, percentage: float) -> str:
         """Render token usage progress bar.
@@ -125,25 +184,29 @@ class TokenProgressBar(BaseProgressBar):
         Returns:
             Formatted progress bar string
         """
-        filled = self._calculate_filled_segments(min(percentage, 100.0))
+        filled: int = self._calculate_filled_segments(min(percentage, 100.0))
 
-        color_thresholds = [(90, "cost.high"), (50, "cost.medium"), (0, "cost.low")]
+        color_thresholds: list[tuple[float, str]] = [
+            (self.HIGH_USAGE_THRESHOLD, self.HIGH_USAGE_STYLE),
+            (self.MEDIUM_USAGE_THRESHOLD, self.MEDIUM_USAGE_STYLE),
+            (self.LOW_USAGE_THRESHOLD, self.LOW_USAGE_STYLE)
+        ]
 
-        filled_style = self._get_color_style_by_threshold(percentage, color_thresholds)
-        bar = self._render_bar(
+        filled_style: str = self._get_color_style_by_threshold(percentage, color_thresholds)
+        bar: str = self._render_bar(
             filled,
             filled_style=filled_style,
-            empty_style="table.border" if percentage < 90 else "cost.medium",
+            empty_style=self.BORDER_STYLE if percentage < self.HIGH_USAGE_THRESHOLD else self.MEDIUM_USAGE_STYLE,
         )
 
-        if percentage >= 90:
-            icon = "🔴"
-        elif percentage >= 50:
-            icon = "🟡"
+        if percentage >= self.HIGH_USAGE_THRESHOLD:
+            icon: str = self.HIGH_USAGE_ICON
+        elif percentage >= self.MEDIUM_USAGE_THRESHOLD:
+            icon = self.MEDIUM_USAGE_ICON
         else:
-            icon = "🟢"
+            icon = self.LOW_USAGE_ICON
 
-        percentage_str = self._format_percentage(percentage)
+        percentage_str: str = self._format_percentage(percentage)
         return f"{icon} [{bar}] {percentage_str}"
 
 

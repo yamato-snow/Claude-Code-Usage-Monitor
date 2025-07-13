@@ -1,7 +1,10 @@
 """Simplified tests for CLI main module."""
 
 from pathlib import Path
+from typing import List
 from unittest.mock import Mock, patch
+
+import pytest
 
 from claude_monitor.cli.main import main
 
@@ -9,7 +12,7 @@ from claude_monitor.cli.main import main
 class TestMain:
     """Test cases for main function."""
 
-    def test_version_flag(self):
+    def test_version_flag(self) -> None:
         """Test --version flag returns 0 and prints version."""
         with patch("builtins.print") as mock_print:
             result = main(["--version"])
@@ -17,7 +20,7 @@ class TestMain:
             mock_print.assert_called_once()
             assert "claude-monitor" in mock_print.call_args[0][0]
 
-    def test_v_flag(self):
+    def test_v_flag(self) -> None:
         """Test -v flag returns 0 and prints version."""
         with patch("builtins.print") as mock_print:
             result = main(["-v"])
@@ -26,7 +29,7 @@ class TestMain:
             assert "claude-monitor" in mock_print.call_args[0][0]
 
     @patch("claude_monitor.core.settings.Settings.load_with_last_used")
-    def test_keyboard_interrupt_handling(self, mock_load):
+    def test_keyboard_interrupt_handling(self, mock_load: Mock) -> None:
         """Test keyboard interrupt returns 0."""
         mock_load.side_effect = KeyboardInterrupt()
         with patch("builtins.print") as mock_print:
@@ -35,7 +38,7 @@ class TestMain:
             mock_print.assert_called_once_with("\n\nMonitoring stopped by user.")
 
     @patch("claude_monitor.core.settings.Settings.load_with_last_used")
-    def test_exception_handling(self, mock_load_settings):
+    def test_exception_handling(self, mock_load_settings: Mock) -> None:
         """Test exception handling returns 1."""
         mock_load_settings.side_effect = Exception("Test error")
 
@@ -43,7 +46,7 @@ class TestMain:
             result = main(["--plan", "pro"])
             assert result == 1
 
-    def test_successful_main_execution(self):
+    def test_successful_main_execution(self) -> None:
         """Test successful main execution by mocking core components."""
         mock_args = Mock()
         mock_args.theme = None
@@ -81,7 +84,7 @@ class TestMain:
 class TestFunctions:
     """Test module functions."""
 
-    def test_get_standard_claude_paths(self):
+    def test_get_standard_claude_paths(self) -> None:
         """Test getting standard Claude paths."""
         from claude_monitor.cli.main import get_standard_claude_paths
 
@@ -90,7 +93,7 @@ class TestFunctions:
         assert len(paths) > 0
         assert "~/.claude/projects" in paths
 
-    def test_discover_claude_data_paths_no_paths(self):
+    def test_discover_claude_data_paths_no_paths(self) -> None:
         """Test discover with no existing paths."""
         from claude_monitor.cli.main import discover_claude_data_paths
 
@@ -98,7 +101,7 @@ class TestFunctions:
             paths = discover_claude_data_paths()
             assert paths == []
 
-    def test_discover_claude_data_paths_with_custom(self):
+    def test_discover_claude_data_paths_with_custom(self) -> None:
         """Test discover with custom paths."""
         from claude_monitor.cli.main import discover_claude_data_paths
 
