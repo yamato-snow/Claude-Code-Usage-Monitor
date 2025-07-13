@@ -44,9 +44,12 @@ class TestMain:
 
     def test_successful_main_execution(self):
         """Test successful main execution without deep internals."""
-        with patch("claude_monitor.core.settings.Settings.load_with_last_used") as mock_load_settings, \
-             patch("claude_monitor.cli.main._run_monitoring") as mock_run_monitoring:
-
+        with (
+            patch(
+                "claude_monitor.core.settings.Settings.load_with_last_used"
+            ) as mock_load_settings,
+            patch("claude_monitor.cli.main._run_monitoring") as mock_run_monitoring,
+        ):
             mock_settings = Mock()
             mock_settings.log_file = None
             mock_settings.log_level = "INFO"
