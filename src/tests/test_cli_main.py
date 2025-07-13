@@ -1,5 +1,6 @@
 """Simplified tests for CLI main module."""
 
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 from claude_monitor.cli.main import main
@@ -43,24 +44,31 @@ class TestMain:
             assert result == 1
 
     def test_successful_main_execution(self):
-        """Test successful main execution without deep internals."""
-        with (
-            patch(
-                "claude_monitor.core.settings.Settings.load_with_last_used"
-            ) as mock_load_settings,
-            patch("claude_monitor.cli.main._run_monitoring") as mock_run_monitoring,
-        ):
-            mock_settings = Mock()
-            mock_settings.log_file = None
-            mock_settings.log_level = "INFO"
-            mock_settings.timezone = "UTC"
-            mock_settings.to_namespace.return_value = Mock()
-            mock_load_settings.return_value = mock_settings
-
+        """Test successful main execution by mocking core components."""
+        mock_args = Mock()
+        mock_args.theme = None
+        mock_args.plan = "pro"
+        mock_args.timezone = "UTC"
+        mock_args.refresh_per_second = 1.0
+        mock_args.refresh_rate = 10
+        
+        mock_settings = Mock()
+        mock_settings.log_file = None
+        mock_settings.log_level = "INFO"
+        mock_settings.timezone = "UTC"
+        mock_settings.to_namespace.return_value = mock_args
+        
+        with patch("claude_monitor.core.settings.Settings.load_with_last_used", return_value=mock_settings), \
+             patch("claude_monitor.cli.main.discover_claude_data_paths", return_value=[Path("/test/path")]), \
+             patch("claude_monitor.terminal.manager.setup_terminal"), \
+             patch("claude_monitor.terminal.themes.get_themed_console"), \
+             patch("claude_monitor.ui.display_controller.DisplayController"), \
+             patch("claude_monitor.monitoring.orchestrator.MonitoringOrchestrator"), \
+             patch("time.sleep", side_effect=KeyboardInterrupt), \
+             patch("sys.exit") as mock_exit:  # Don't actually exit
+            
             result = main(["--plan", "pro"])
-
             assert result == 0
-            mock_run_monitoring.assert_called_once()
 
 
 class TestFunctions:
