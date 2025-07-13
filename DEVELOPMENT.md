@@ -55,49 +55,6 @@ Current implementation status and planned features for Claude Code Usage Monitor
 
 ---
 
-## 🔮 **Planned Future Features**
-
-### 🧠 **ML-Powered Auto Mode**
-**Status**: 🔶 Research Phase
-
-#### Overview
-Next-generation intelligent monitoring with machine learning capabilities for automatic plan detection and usage pattern analysis.
-
-#### Planned ML Features
-
-**📊 Advanced Analytics Pipeline**:
-- Local DuckDB integration for historical data storage
-- Pattern recognition for recurring usage behaviors
-- Anomaly detection for subscription tier changes
-- Automated plan classification without manual selection
-
-**🤖 Predictive Models**:
-- LSTM networks for sequential pattern recognition
-- Prophet for time series forecasting with seasonality
-- XGBoost for feature-based limit prediction
-- Isolation Forest for usage anomaly detection
-
-**🎯 Dynamic Adaptation**:
-- Real-time learning of actual token limits
-- Automatic adaptation to Claude API changes
-- Confidence-based predictions with uncertainty quantification
-- Historical trend analysis for usage optimization
-
-#### Research Questions
-- How accurately can we predict individual user token limits?
-- What patterns indicate subscription tier changes?
-- Can we detect Claude API limit changes automatically?
-- How much historical data provides reliable predictions?
-
-#### Development Tasks
-- [ ] **DuckDB Schema Design** - Design efficient data storage
-- [ ] **ML Pipeline Implementation** - Training and inference system
-- [ ] **Model Evaluation Framework** - Validation and benchmarking
-- [ ] **Real-time Inference** - Low-latency prediction system
-- [ ] **Privacy-First Design** - 100% local processing guarantee
-
----
-
 ### 🐳 **Docker Containerization**
 **Status**: 🔶 Planning Phase
 

@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-monitor"
-version = "3.0.0"
+version = "3.0.1"
 description = "A real-time terminal monitoring tool for Claude AI token usage with advanced analytics and Rich UI"
 readme = "README.md"
 license = { text = "MIT" }
@@ -44,7 +44,6 @@ dependencies = [
   "pyyaml>=6.0",
   "pytz>=2023.3",
   "rich>=13.7.0",
-  "sentry-sdk>=1.40.0",
   "tomli>=1.2.0; python_version < '3.11'",
   "tzdata; sys_platform == 'win32'"
 ]
@@ -99,7 +98,7 @@ claude_monitor = ["py.typed"]
 
 [tool.black]
 line-length = 88
-target-version = ["py38", "py39", "py310", "py311", "py312"]
+target-version = ["py39", "py310", "py311", "py312"]
 skip-string-normalization = false
 include = '\.pyi?$'
 extend-exclude = '''

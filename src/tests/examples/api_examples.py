@@ -298,7 +298,7 @@ def example_error_handling():
 
     except Exception as e:
         print(f"Handled error gracefully: {e}")
-        print("The API reports errors to logging and Sentry (if configured)")
+        print("The API reports errors to logging")
 
 
 def example_print_functions():

@@ -1,7 +1,6 @@
-"""Centralized error handling and Sentry reporting utilities for Claude Monitor.
+"""Centralized error handling utilities for Claude Monitor.
 
-This module provides a unified interface for error reporting, replacing duplicate
-Sentry error handling patterns throughout the codebase.
+This module provides a unified interface for error reporting and logging.
 """
 
 import logging
@@ -11,22 +10,9 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-try:
-    import sentry_sdk
-    from sentry_sdk.scope import Scope
-
-    SENTRY_AVAILABLE = True
-except ImportError:
-    SENTRY_AVAILABLE = False
-    sentry_sdk = None  # type: ignore[assignment]
-    Scope = None  # type: ignore[misc,assignment]
-    logging.warning(
-        "Sentry SDK not available - error reporting will be limited to logging"
-    )
-
 
 class ErrorLevel(str, Enum):
-    """Error severity levels matching Sentry's level system."""
+    """Error severity levels for logging."""
 
     INFO = "info"
     ERROR = "error"
@@ -40,53 +26,30 @@ def report_error(
     tags: Optional[Dict[str, str]] = None,
     level: ErrorLevel = ErrorLevel.ERROR,
 ) -> None:
-    """Report an exception to Sentry with standardized context and tagging.
-
-    This replaces the common pattern:
-    ```python
-    with sentry_sdk.configure_scope() as scope:
-        scope.set_tag("component", "component_name")
-        scope.set_context("context_name", {...})
-    sentry_sdk.capture_exception(exception)
-    ```
+    """Report an exception with standardized logging and context.
 
     Args:
         exception: The exception to report
-        component: Component name for tagging (e.g., "data_loader", "monitor_controller")
+        component: Component name for logging (e.g., "data_loader", "monitor_controller")
         context_name: Optional context name (e.g., "file_error", "parsing")
         context_data: Optional dictionary of context data
-        tags: Optional additional tags beyond the component tag
+        tags: Optional additional tags (for logging extra context)
         level: Error severity level
     """
     logger = logging.getLogger(component)
     log_method = getattr(logger, level.value, logger.error)
+    
+    extra_data = {
+        "context": context_name, 
+        "data": context_data,
+        "tags": tags
+    }
+    
     log_method(
         f"Error in {component}: {exception}",
         exc_info=True,
-        extra={"context": context_name, "data": context_data},
+        extra=extra_data,
     )
-
-    if not SENTRY_AVAILABLE:
-        return
-
-    try:
-        with sentry_sdk.configure_scope() as scope:
-            scope.set_tag("component", component)
-
-            if tags:
-                for tag_key, tag_value in tags.items():
-                    scope.set_tag(tag_key, str(tag_value))
-
-            if context_name and context_data:
-                scope.set_context(context_name, context_data)
-            elif context_data:
-                scope.set_context(component, context_data)
-
-            scope.level = level.value
-        sentry_sdk.capture_exception(exception)
-
-    except Exception as e:
-        logger.warning(f"Failed to report error to Sentry: {e}")
 
 
 def report_file_error(

@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from claude_monitor.error_handling import SENTRY_AVAILABLE, ErrorLevel, report_error
+from claude_monitor.error_handling import ErrorLevel, report_error
 
 
 class TestErrorLevel:
@@ -47,40 +47,31 @@ class TestReportError:
         """Sample tags for testing."""
         return {"environment": "test", "version": "1.0.0"}
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
-    def test_report_error_with_sentry_basic(
-        self, mock_sentry: Mock, sample_exception: ValueError
+    @patch("claude_monitor.error_handling.logging.getLogger")
+    def test_report_error_basic(
+        self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
-        """Test basic error reporting when Sentry is available."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        """Test basic error reporting."""
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         report_error(exception=sample_exception, component="test_component")
 
-        # Verify Sentry was called
-        mock_sentry.configure_scope.assert_called_once()
-        mock_scope.set_tag.assert_called_with("component", "test_component")
-        mock_sentry.capture_exception.assert_called_once_with(sample_exception)
+        # Verify logger was called
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.error.assert_called_once()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
-    def test_report_error_with_sentry_full_context(
+    @patch("claude_monitor.error_handling.logging.getLogger")
+    def test_report_error_with_full_context(
         self,
-        mock_sentry: Mock,
+        mock_get_logger: Mock,
         sample_exception: ValueError,
         sample_context_data: Dict[str, str],
         sample_tags: Dict[str, str],
     ) -> None:
-        """Test error reporting with full context when Sentry is available."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        """Test error reporting with full context."""
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         report_error(
             exception=sample_exception,
@@ -91,42 +82,23 @@ class TestReportError:
             level=ErrorLevel.ERROR,
         )
 
-        # Verify Sentry configuration
-        mock_sentry.configure_scope.assert_called_once()
+        # Verify logger configuration
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.error.assert_called_once()
+        
+        # Verify the extra data was passed correctly
+        call_args = mock_logger.error.call_args
+        assert call_args[1]['extra']['context'] == "test_context"
+        assert call_args[1]['extra']['data'] == sample_context_data
+        assert call_args[1]['extra']['tags'] == sample_tags
 
-        # Check that set_tag was called for component and custom tags
-        assert mock_scope.set_tag.call_count == 3
-
-        # Verify all expected tags were set
-        call_args = [call[0] for call in mock_scope.set_tag.call_args_list]
-        expected_tags = [
-            ("component", "test_component"),
-            ("environment", "test"),
-            ("version", "1.0.0"),
-        ]
-
-        for expected_tag in expected_tags:
-            assert expected_tag in call_args
-
-        # Verify context was set
-        mock_scope.set_context.assert_called_once_with(
-            "test_context", sample_context_data
-        )
-
-        # Verify exception was captured with correct level
-        mock_sentry.capture_exception.assert_called_once_with(sample_exception)
-
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
+    @patch("claude_monitor.error_handling.logging.getLogger")
     def test_report_error_with_info_level(
-        self, mock_sentry: Mock, sample_exception: ValueError
+        self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
         """Test error reporting with INFO level."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         report_error(
             exception=sample_exception,
@@ -134,16 +106,15 @@ class TestReportError:
             level=ErrorLevel.INFO,
         )
 
-        # Verify Sentry was called
-        mock_sentry.configure_scope.assert_called_once()
-        mock_sentry.capture_exception.assert_called_once_with(sample_exception)
+        # Verify logger was called with info level
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.info.assert_called_once()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", False)
     @patch("claude_monitor.error_handling.logging.getLogger")
-    def test_report_error_without_sentry(
+    def test_report_error_logging_only(
         self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
-        """Test error reporting when Sentry is not available."""
+        """Test error reporting with logging only."""
         mock_logger = Mock()
         mock_get_logger.return_value = mock_logger
 
@@ -155,15 +126,14 @@ class TestReportError:
         # Verify logging was called
         mock_logger.error.assert_called_once()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", False)
     @patch("claude_monitor.error_handling.logging.getLogger")
-    def test_report_error_without_sentry_with_context(
+    def test_report_error_with_context(
         self,
         mock_get_logger: Mock,
         sample_exception: ValueError,
         sample_context_data: Dict[str, str],
     ) -> None:
-        """Test error reporting without Sentry but with context data."""
+        """Test error reporting with context data."""
         mock_logger = Mock()
         mock_get_logger.return_value = mock_logger
 
@@ -178,26 +148,21 @@ class TestReportError:
         mock_get_logger.assert_called_once_with("test_component")
         mock_logger.error.assert_called_once()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
-    def test_report_error_sentry_exception_handling(
-        self, mock_sentry: Mock, sample_exception: ValueError
+    @patch("claude_monitor.error_handling.logging.getLogger")
+    def test_report_error_exception_handling(
+        self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
-        """Test that Sentry exceptions are handled gracefully."""
-        # Make Sentry raise an exception
-        mock_sentry.configure_scope.side_effect = Exception("Sentry failed")
+        """Test that logging exceptions are handled gracefully."""
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
+        # Make logger raise an exception
+        mock_logger.error.side_effect = Exception("Logging failed")
 
         # Should not raise exception
-        with patch(
-            "claude_monitor.error_handling.logging.getLogger"
-        ) as mock_get_logger:
-            mock_logger = Mock()
-            mock_get_logger.return_value = mock_logger
-
+        try:
             report_error(exception=sample_exception, component="test_component")
-
-            # Should still log the error
-            mock_logger.error.assert_called()
+        except Exception:
+            pytest.fail("report_error should handle logging exceptions gracefully")
 
     def test_report_error_none_exception(self) -> None:
         """Test error reporting with None exception."""
@@ -226,34 +191,27 @@ class TestReportError:
             # Should still work
             mock_logger.error.assert_called()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
+    @patch("claude_monitor.error_handling.logging.getLogger")
     def test_report_error_no_tags(
-        self, mock_sentry: Mock, sample_exception: ValueError
+        self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
         """Test error reporting with no additional tags."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         report_error(exception=sample_exception, component="test_component", tags=None)
 
-        # Should only set component tag
-        mock_scope.set_tag.assert_called_once_with("component", "test_component")
+        # Should still log the error
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.error.assert_called_once()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
+    @patch("claude_monitor.error_handling.logging.getLogger")
     def test_report_error_no_context(
-        self, mock_sentry: Mock, sample_exception: ValueError
+        self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
         """Test error reporting with no context data."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         report_error(
             exception=sample_exception,
@@ -262,18 +220,15 @@ class TestReportError:
             context_data=None,
         )
 
-        # Should not set context if data is None
-        mock_scope.set_context.assert_not_called()
+        # Should still log the error
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.error.assert_called_once()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
-    def test_report_error_complex_exception(self, mock_sentry: Mock) -> None:
+    @patch("claude_monitor.error_handling.logging.getLogger")
+    def test_report_error_complex_exception(self, mock_get_logger: Mock) -> None:
         """Test error reporting with complex exception."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         # Create a complex exception with cause
         try:
@@ -285,23 +240,17 @@ class TestReportError:
             report_error(exception=complex_exception, component="test_component")
 
         # Should handle complex exceptions properly
-        mock_sentry.capture_exception.assert_called_once()
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.error.assert_called_once()
 
-    def test_sentry_availability_flag(self) -> None:
-        """Test that SENTRY_AVAILABLE is a boolean."""
-        assert isinstance(SENTRY_AVAILABLE, bool)
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
+    @patch("claude_monitor.error_handling.logging.getLogger")
     def test_report_error_empty_tags_dict(
-        self, mock_sentry: Mock, sample_exception: ValueError
+        self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
         """Test error reporting with empty tags dictionary."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         report_error(
             exception=sample_exception,
@@ -309,28 +258,25 @@ class TestReportError:
             tags={},  # Empty dict
         )
 
-        # Should only set component tag
-        mock_scope.set_tag.assert_called_once_with("component", "test_component")
+        # Should still log the error
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.error.assert_called_once()
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
+    @patch("claude_monitor.error_handling.logging.getLogger")
     def test_report_error_special_characters_in_component(
-        self, mock_sentry: Mock, sample_exception: ValueError
+        self, mock_get_logger: Mock, sample_exception: ValueError
     ) -> None:
         """Test error reporting with special characters in component name."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         special_component = "test-component_with.special@chars"
 
         report_error(exception=sample_exception, component=special_component)
 
         # Should handle special characters in component name
-        mock_scope.set_tag.assert_called_once_with("component", special_component)
-        mock_sentry.capture_exception.assert_called_once()
+        mock_get_logger.assert_called_once_with(special_component)
+        mock_logger.error.assert_called_once()
 
 
 class TestErrorHandlingEdgeCases:
@@ -349,15 +295,11 @@ class TestErrorHandlingEdgeCases:
         # Note: Since ErrorLevel(str, Enum), string values are equal to enum values
         assert "info" in levels  # String IS the same as enum for this type
 
-    @patch("claude_monitor.error_handling.SENTRY_AVAILABLE", True)
-    @patch("claude_monitor.error_handling.sentry_sdk")
-    def test_report_error_with_unicode_data(self, mock_sentry: Mock) -> None:
+    @patch("claude_monitor.error_handling.logging.getLogger")
+    def test_report_error_with_unicode_data(self, mock_get_logger: Mock) -> None:
         """Test error reporting with unicode data."""
-        mock_scope = Mock()
-        mock_sentry.configure_scope.return_value.__enter__ = Mock(
-            return_value=mock_scope
-        )
-        mock_sentry.configure_scope.return_value.__exit__ = Mock(return_value=None)
+        mock_logger = Mock()
+        mock_get_logger.return_value = mock_logger
 
         unicode_exception = ValueError("Test with unicode: 测试 🚀 émojis")
         unicode_context = {"message": "测试消息", "emoji": "🎉", "accents": "café"}
@@ -370,5 +312,5 @@ class TestErrorHandlingEdgeCases:
         )
 
         # Should handle unicode data properly
-        mock_sentry.capture_exception.assert_called_once_with(unicode_exception)
-        mock_scope.set_context.assert_called_once_with("unicode_test", unicode_context)
+        mock_get_logger.assert_called_once_with("test_component")
+        mock_logger.error.assert_called_once()
