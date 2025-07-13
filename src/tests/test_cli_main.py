@@ -43,10 +43,9 @@ class TestMain:
             result = main(["--plan", "pro"])
             assert result == 1
 
-    @patch("claude_monitor.cli.main.discover_claude_data_paths")
     @patch("claude_monitor.core.settings.Settings.load_with_last_used")
     def test_successful_main_execution(
-        self, mock_load_settings: Mock, mock_discover: Mock
+        self, mock_load_settings: Mock
     ) -> None:
         """Test successful main execution by mocking core components."""
         mock_args = Mock()
@@ -63,9 +62,9 @@ class TestMain:
         mock_settings.to_namespace.return_value = mock_args
 
         mock_load_settings.return_value = mock_settings
-        mock_discover.return_value = [Path("/test/path")]
 
         with (
+            patch("claude_monitor.cli.main.discover_claude_data_paths", return_value=[Path("/test/path")]),
             patch("claude_monitor.terminal.manager.setup_terminal"),
             patch("claude_monitor.terminal.themes.get_themed_console"),
             patch("claude_monitor.ui.display_controller.DisplayController"),
