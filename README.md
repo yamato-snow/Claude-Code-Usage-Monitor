@@ -145,7 +145,7 @@ claude-monitor  # or cmonitor for short
 pipx install claude-monitor
 
 # Run from anywhere
-claude-monitor  # or cmonitor for short
+claude-monitor  # or claude-code-monitor, cmonitor, ccm for short
 ```
 
 #### conda/mamba
@@ -166,8 +166,10 @@ claude-monitor  # or cmonitor for short
 # Default (Custom plan with auto-detection)
 claude-monitor
 
-# Alternative short command
-cmonitor
+# Alternative commands
+claude-code-monitor  # Full descriptive name
+cmonitor             # Short alias
+ccm                  # Shortest alias
 
 # Exit the monitor
 # Press Ctrl+C to gracefully exit
@@ -317,7 +319,7 @@ claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 - `--custom-limit-tokens`: Explicit token limits for custom plans
 - `--log-file` and `--log-level`: Advanced logging capabilities
 - `--clear`: Reset saved configuration
-- `cmonitor`: Short command alias
+- Command aliases: `claude-code-monitor`, `cmonitor`, `ccm` for convenience
 
 #### **Breaking Changes**
 - Package name changed from `claude-usage-monitor` to `claude-monitor`
