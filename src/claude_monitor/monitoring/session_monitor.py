@@ -1,7 +1,11 @@
 """Unified session monitoring - combines tracking and validation."""
 
 import logging
-from typing import Any, Callable, Dict, List, Optional, Tuple
+
+from typing import Any
+from typing import Callable
+from typing import Optional
+
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +16,10 @@ class SessionMonitor:
     def __init__(self):
         """Initialize session monitor."""
         self._current_session_id: Optional[str] = None
-        self._session_callbacks: List[Callable] = []
-        self._session_history: List[Dict[str, Any]] = []
+        self._session_callbacks: list[Callable] = []
+        self._session_history: list[dict[str, Any]] = []
 
-    def update(self, data: Dict[str, Any]) -> Tuple[bool, List[str]]:
+    def update(self, data: dict[str, Any]) -> tuple[bool, list[str]]:
         """Update session tracking with new data and validate.
 
         Args:
@@ -50,7 +54,7 @@ class SessionMonitor:
 
         return is_valid, errors
 
-    def validate_data(self, data: Any) -> Tuple[bool, List[str]]:
+    def validate_data(self, data: Any) -> tuple[bool, list[str]]:
         """Validate monitoring data structure and content.
 
         Args:
@@ -79,7 +83,7 @@ class SessionMonitor:
 
         return len(errors) == 0, errors
 
-    def _validate_block(self, block: Any, index: int) -> List[str]:
+    def _validate_block(self, block: Any, index: int) -> list[str]:
         """Validate individual block.
 
         Args:
@@ -114,7 +118,7 @@ class SessionMonitor:
         return errors
 
     def _on_session_change(
-        self, old_id: Optional[str], new_id: str, session_data: Dict[str, Any]
+        self, old_id: Optional[str], new_id: str, session_data: dict[str, Any]
     ) -> None:
         """Handle session change.
 
@@ -141,7 +145,7 @@ class SessionMonitor:
             try:
                 callback("session_start", new_id, session_data)
             except Exception as e:
-                logger.error(f"Session callback error: {e}")
+                logger.exception(f"Session callback error: {e}")
 
     def _on_session_end(self, session_id: str) -> None:
         """Handle session end.
@@ -155,7 +159,7 @@ class SessionMonitor:
             try:
                 callback("session_end", session_id, None)
             except Exception as e:
-                logger.error(f"Session callback error: {e}")
+                logger.exception(f"Session callback error: {e}")
 
     def register_callback(self, callback: Callable) -> None:
         """Register session change callback.
@@ -186,6 +190,6 @@ class SessionMonitor:
         return len(self._session_history)
 
     @property
-    def session_history(self) -> List[Dict[str, Any]]:
+    def session_history(self) -> list[dict[str, Any]]:
         """Get session history."""
         return self._session_history.copy()

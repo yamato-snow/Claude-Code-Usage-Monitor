@@ -4,11 +4,13 @@ This module provides formatting functions for currency, time, and display output
 """
 
 import logging
+
 from datetime import datetime
 from typing import Optional
 
 from claude_monitor.utils.time_utils import format_display_time as _format_display_time
 from claude_monitor.utils.time_utils import get_time_format_preference
+
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +30,8 @@ def format_currency(amount: float, currency: str = "USD") -> str:
     if currency == "USD":
         if amount >= 0:
             return f"${amount:,.2f}"
-        else:
-            return f"$-{abs(amount):,.2f}"
-    else:
-        return f"{amount:,.2f} {currency}"
+        return f"$-{abs(amount):,.2f}"
+    return f"{amount:,.2f} {currency}"
 
 
 def format_time(minutes: float) -> str:

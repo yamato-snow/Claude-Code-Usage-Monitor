@@ -6,9 +6,11 @@ based on token usage and model pricing. It supports all Claude model types
 with caching.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any
+from typing import Optional
 
-from claude_monitor.core.models import TokenCounts, normalize_model_name
+from claude_monitor.core.models import TokenCounts
+from claude_monitor.core.models import normalize_model_name
 
 
 class PricingCalculator:
@@ -47,7 +49,7 @@ class PricingCalculator:
         },
     }
 
-    def __init__(self, custom_pricing: Optional[Dict[str, Dict[str, float]]] = None):
+    def __init__(self, custom_pricing: Optional[dict[str, dict[str, float]]] = None):
         """Initialize with optional custom pricing.
 
         Args:
@@ -64,7 +66,7 @@ class PricingCalculator:
             "claude-sonnet-4-20250514": self.FALLBACK_PRICING["sonnet"],
             "claude-opus-4-20250514": self.FALLBACK_PRICING["opus"],
         }
-        self._cost_cache: Dict[str, float] = {}
+        self._cost_cache: dict[str, float] = {}
 
     def calculate_cost(
         self,
@@ -132,7 +134,7 @@ class PricingCalculator:
 
     def _get_pricing_for_model(
         self, model: str, strict: bool = False
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Get pricing for a model with optional fallback logic.
 
         Args:
@@ -180,7 +182,7 @@ class PricingCalculator:
         # Default to Sonnet pricing
         return self.FALLBACK_PRICING["sonnet"]
 
-    def calculate_cost_for_entry(self, entry_data: Dict[str, Any], mode: Any) -> float:
+    def calculate_cost_for_entry(self, entry_data: dict[str, Any], mode: Any) -> float:
         """Calculate cost for a single entry (backward compatibility).
 
         Args:

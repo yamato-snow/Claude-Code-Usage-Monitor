@@ -3,15 +3,22 @@
 import argparse
 import json
 import logging
+
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any
+from typing import Literal
+from typing import Optional
 
 import pytz
-from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from pydantic import Field
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
 
 from claude_monitor import __version__
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +58,7 @@ class LastUsedParams:
         except Exception as e:
             logger.warning(f"Failed to save last used params: {e}")
 
-    def load(self) -> Dict[str, Any]:
+    def load(self) -> dict[str, Any]:
         """Load last used parameters."""
         if not self.params_file.exists():
             return {}
@@ -239,7 +246,7 @@ class Settings(BaseSettings):
         return (init_settings,)
 
     @classmethod
-    def load_with_last_used(cls, argv: Optional[List[str]] = None) -> "Settings":
+    def load_with_last_used(cls, argv: Optional[list[str]] = None) -> "Settings":
         """Load settings with last used params support (default behavior)."""
         if argv and "--version" in argv:
             print(f"claude-monitor {__version__}")
@@ -261,7 +268,7 @@ class Settings(BaseSettings):
 
             cli_provided_fields = set()
             if argv:
-                for i, arg in enumerate(argv):
+                for _i, arg in enumerate(argv):
                     if arg.startswith("--"):
                         field_name = arg[2:].replace("-", "_")
                         if field_name in cls.model_fields:
@@ -293,10 +300,8 @@ class Settings(BaseSettings):
         if settings.theme == "auto" or (
             "theme" not in cli_provided_fields and not clear_config
         ):
-            from claude_monitor.terminal.themes import (
-                BackgroundDetector,
-                BackgroundType,
-            )
+            from claude_monitor.terminal.themes import BackgroundDetector
+            from claude_monitor.terminal.themes import BackgroundType
 
             detector = BackgroundDetector()
             detected_bg = detector.detect_background()

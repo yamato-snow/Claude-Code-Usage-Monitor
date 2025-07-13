@@ -3,14 +3,23 @@
 import logging
 import os
 import re
-import select
 import sys
-import termios
 import threading
-import tty
+
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
+
+
+# Windows-compatible imports with graceful fallbacks
+try:
+    import select
+    import termios
+    import tty
+
+    HAS_TERMIOS = True
+except ImportError:
+    HAS_TERMIOS = False
 
 from rich.console import Console
 from rich.theme import Theme
@@ -29,8 +38,8 @@ class ThemeConfig:
     """Theme configuration."""
 
     name: str
-    colors: Dict[str, str]
-    symbols: Dict[str, str]
+    colors: dict[str, str]
+    symbols: dict[str, str]
     rich_theme: Theme
 
     def get_color(self, key: str, default: str = "default") -> str:
@@ -286,6 +295,9 @@ class BackgroundDetector:
     @staticmethod
     def _query_background_color() -> BackgroundType:
         """Query terminal background color using OSC 11."""
+        if not HAS_TERMIOS:
+            return BackgroundType.UNKNOWN
+
         if not sys.stdin.isatty() or not sys.stdout.isatty():
             return BackgroundType.UNKNOWN
 
@@ -353,7 +365,7 @@ class ThemeManager:
         self._forced_theme: Optional[str] = None
         self.themes = self._load_themes()
 
-    def _load_themes(self) -> Dict[str, ThemeConfig]:
+    def _load_themes(self) -> dict[str, ThemeConfig]:
         """Load all available themes."""
         themes = {}
 
@@ -385,7 +397,7 @@ class ThemeManager:
 
         return themes
 
-    def _get_symbols_for_theme(self, theme_name: str) -> Dict[str, str]:
+    def _get_symbols_for_theme(self, theme_name: str) -> dict[str, str]:
         """Get symbols based on theme."""
         if theme_name == "classic":
             return {
@@ -458,7 +470,7 @@ COST_STYLES = {
 }
 
 # Cost thresholds for automatic style selection
-COST_THRESHOLDS: List[Tuple[float, str]] = [
+COST_THRESHOLDS: list[tuple[float, str]] = [
     (10.0, COST_STYLES["high"]),
     (1.0, COST_STYLES["medium"]),
     (0.0, COST_STYLES["low"]),
@@ -482,9 +494,9 @@ def get_cost_style(cost: float) -> str:
     return COST_STYLES["low"]
 
 
-def get_velocity_indicator(burn_rate: float) -> Dict[str, str]:
+def get_velocity_indicator(burn_rate: float) -> dict[str, str]:
     """Get velocity indicator based on burn rate."""
-    for key, indicator in VELOCITY_INDICATORS.items():
+    for indicator in VELOCITY_INDICATORS.values():
         if burn_rate < indicator["threshold"]:
             return {"emoji": indicator["emoji"], "label": indicator["label"]}
     return VELOCITY_INDICATORS["very_fast"]

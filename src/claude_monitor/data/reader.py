@@ -6,20 +6,23 @@ into a single cohesive module.
 
 import json
 import logging
-from datetime import datetime, timedelta
+
+from datetime import datetime
+from datetime import timedelta
 from datetime import timezone as tz
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
+from typing import Optional
 
-from claude_monitor.core.data_processors import (
-    DataConverter,
-    TimestampProcessor,
-    TokenExtractor,
-)
-from claude_monitor.core.models import CostMode, UsageEntry
+from claude_monitor.core.data_processors import DataConverter
+from claude_monitor.core.data_processors import TimestampProcessor
+from claude_monitor.core.data_processors import TokenExtractor
+from claude_monitor.core.models import CostMode
+from claude_monitor.core.models import UsageEntry
 from claude_monitor.core.pricing import PricingCalculator
 from claude_monitor.error_handling import report_file_error
 from claude_monitor.utils.time_utils import TimezoneHandler
+
 
 FIELD_COST_USD = "cost_usd"
 FIELD_MODEL = "model"
@@ -34,7 +37,7 @@ def load_usage_entries(
     hours_back: Optional[int] = None,
     mode: CostMode = CostMode.AUTO,
     include_raw: bool = False,
-) -> Tuple[List[UsageEntry], Optional[List[Dict[str, Any]]]]:
+) -> tuple[list[UsageEntry], Optional[list[dict[str, Any]]]]:
     """Load and convert JSONL files to UsageEntry objects.
 
     Args:
@@ -84,7 +87,7 @@ def load_usage_entries(
     return all_entries, raw_entries
 
 
-def load_all_raw_entries(data_path: Optional[str] = None) -> List[Dict[str, Any]]:
+def load_all_raw_entries(data_path: Optional[str] = None) -> list[dict[str, Any]]:
     """Load all raw JSONL entries without processing.
 
     Args:
@@ -109,12 +112,12 @@ def load_all_raw_entries(data_path: Optional[str] = None) -> List[Dict[str, Any]
                     except json.JSONDecodeError:
                         continue
         except Exception as e:
-            logger.error(f"Error loading raw entries from {file_path}: {e}")
+            logger.exception(f"Error loading raw entries from {file_path}: {e}")
 
     return all_raw_entries
 
 
-def _find_jsonl_files(data_path: Path) -> List[Path]:
+def _find_jsonl_files(data_path: Path) -> list[Path]:
     """Find all .jsonl files in the data directory."""
     if not data_path.exists():
         logger.warning("Data path does not exist: %s", data_path)
@@ -126,11 +129,11 @@ def _process_single_file(
     file_path: Path,
     mode: CostMode,
     cutoff_time: Optional[datetime],
-    processed_hashes: Set[str],
+    processed_hashes: set[str],
     include_raw: bool,
     timezone_handler: TimezoneHandler,
     pricing_calculator: PricingCalculator,
-) -> Tuple[List[UsageEntry], Optional[List[Dict[str, Any]]]]:
+) -> tuple[list[UsageEntry], Optional[list[dict[str, Any]]]]:
     """Process a single JSONL file."""
     entries = []
     raw_data = [] if include_raw else None
@@ -190,9 +193,9 @@ def _process_single_file(
 
 
 def _should_process_entry(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     cutoff_time: Optional[datetime],
-    processed_hashes: Set[str],
+    processed_hashes: set[str],
     timezone_handler: TimezoneHandler,
 ) -> bool:
     """Check if entry should be processed based on time and uniqueness."""
@@ -205,10 +208,7 @@ def _should_process_entry(
                 return False
 
     unique_hash = _create_unique_hash(data)
-    if unique_hash and unique_hash in processed_hashes:
-        return False
-
-    return True
+    return not (unique_hash and unique_hash in processed_hashes)
 
 
 def _create_unique_hash(data: dict) -> Optional[str]:
@@ -223,7 +223,7 @@ def _create_unique_hash(data: dict) -> Optional[str]:
     return f"{message_id}:{request_id}" if message_id and request_id else None
 
 
-def _update_processed_hashes(data: Dict[str, Any], processed_hashes: Set[str]) -> None:
+def _update_processed_hashes(data: dict[str, Any], processed_hashes: set[str]) -> None:
     """Update the processed hashes set with current entry's hash."""
     unique_hash = _create_unique_hash(data)
     if unique_hash:
@@ -301,7 +301,7 @@ class UsageEntryMapper:
             data, mode, self.timezone_handler, self.pricing_calculator
         )
 
-    def _has_valid_tokens(self, tokens: Dict[str, int]) -> bool:
+    def _has_valid_tokens(self, tokens: dict[str, int]) -> bool:
         """Check if tokens are valid (for test compatibility)."""
         return any(v > 0 for v in tokens.values())
 
@@ -316,7 +316,7 @@ class UsageEntryMapper:
         """Extract model name (for test compatibility)."""
         return DataConverter.extract_model_name(data, default="unknown")
 
-    def _extract_metadata(self, data: dict) -> Dict[str, str]:
+    def _extract_metadata(self, data: dict) -> dict[str, str]:
         """Extract metadata (for test compatibility)."""
         message = data.get("message", {})
         return {

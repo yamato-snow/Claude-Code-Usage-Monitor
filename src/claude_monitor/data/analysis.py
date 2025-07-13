@@ -4,13 +4,17 @@ Contains the main analyze_usage function and related analysis components.
 """
 
 import logging
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+
+from datetime import datetime
+from datetime import timezone
+from typing import Any
+from typing import Optional
 
 from claude_monitor.core.calculations import BurnRateCalculator
 from claude_monitor.core.models import CostMode
 from claude_monitor.data.analyzer import SessionAnalyzer
 from claude_monitor.data.reader import load_usage_entries
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +24,7 @@ def analyze_usage(
     use_cache: bool = True,
     quick_start: bool = False,
     data_path: Optional[str] = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Main entry point to generate response_final.json.
 

@@ -5,7 +5,6 @@ This module consolidates layout management functionality including:
 - Screen layout and organization
 """
 
-from typing import List
 
 
 class HeaderManager:
@@ -18,7 +17,7 @@ class HeaderManager:
 
     def create_header(
         self, plan: str = "pro", timezone: str = "Europe/Warsaw"
-    ) -> List[str]:
+    ) -> list[str]:
         """Create stylized header with sparkles.
 
         Args:
@@ -78,7 +77,7 @@ class ScreenManager:
         self.margin_top = top
         self.margin_bottom = bottom
 
-    def create_full_screen_layout(self, content_sections: List[List[str]]) -> List[str]:
+    def create_full_screen_layout(self, content_sections: list[list[str]]) -> list[str]:
         """Create full screen layout with multiple content sections.
 
         Args:

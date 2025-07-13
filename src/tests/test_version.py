@@ -1,10 +1,12 @@
 """Tests for version management."""
 
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open
+from unittest.mock import patch
 
 import pytest
 
-from claude_monitor._version import _get_version_from_pyproject, get_version
+from claude_monitor._version import _get_version_from_pyproject
+from claude_monitor._version import get_version
 
 
 def test_get_version_from_metadata():
@@ -27,14 +29,12 @@ version = "3.0.0"
     with patch("importlib.metadata.version") as mock_version:
         mock_version.side_effect = ImportError("Package not found")
 
-        with patch("pathlib.Path.exists", return_value=True):
-            with patch(
-                "builtins.open", mock_open(read_data=mock_toml_content.encode())
-            ):
-                with patch("tomllib.load") as mock_load:
-                    mock_load.return_value = {"project": {"version": "3.0.0"}}
-                    version = _get_version_from_pyproject()
-                    assert version == "3.0.0"
+        with patch("pathlib.Path.exists", return_value=True), patch(
+            "builtins.open", mock_open(read_data=mock_toml_content.encode())
+        ), patch("tomllib.load") as mock_load:
+            mock_load.return_value = {"project": {"version": "3.0.0"}}
+            version = _get_version_from_pyproject()
+            assert version == "3.0.0"
 
 
 def test_get_version_fallback_unknown():
@@ -62,9 +62,9 @@ def test_version_format():
     # Should be semantic version format (X.Y.Z) or include "unknown"
     if __version__ != "unknown":
         parts = __version__.split(".")
-        assert (
-            len(parts) >= 2
-        ), f"Version should have at least 2 parts, got: {__version__}"
+        assert len(parts) >= 2, (
+            f"Version should have at least 2 parts, got: {__version__}"
+        )
 
         # First part should be numeric
         assert parts[0].isdigit(), f"Major version should be numeric, got: {parts[0]}"
@@ -82,9 +82,9 @@ def test_version_consistency():
 @pytest.mark.integration
 def test_version_matches_pyproject():
     """Integration test: verify version matches pyproject.toml."""
-    from pathlib import Path
-
     import tomllib
+
+    from pathlib import Path
 
     # Read version from pyproject.toml
     pyproject_path = Path(__file__).parent.parent.parent / "pyproject.toml"

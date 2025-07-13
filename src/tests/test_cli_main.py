@@ -1,11 +1,14 @@
 """Tests for CLI main module."""
 
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
+from unittest.mock import patch
 
 import pytest
 
-from claude_monitor.cli.main import _get_initial_token_limit, _run_monitoring, main
+from claude_monitor.cli.main import _get_initial_token_limit
+from claude_monitor.cli.main import _run_monitoring
+from claude_monitor.cli.main import main
 from claude_monitor.core.plans import Plans
 
 

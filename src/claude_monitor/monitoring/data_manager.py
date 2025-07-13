@@ -2,10 +2,13 @@
 
 import logging
 import time
-from typing import Any, Dict, Optional
+
+from typing import Any
+from typing import Optional
 
 from claude_monitor.data.analysis import analyze_usage
 from claude_monitor.error_handling import report_error
+
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +35,7 @@ class DataManager:
         self._last_error: Optional[str] = None
         self._last_successful_fetch: Optional[float] = None
 
-    def get_data(self, force_refresh: bool = False) -> Optional[Dict[str, Any]]:
+    def get_data(self, force_refresh: bool = False) -> Optional[dict[str, Any]]:
         """Get monitoring data with caching and error handling.
 
         Args:
@@ -69,7 +72,7 @@ class DataManager:
                 break
 
             except (FileNotFoundError, PermissionError, OSError) as e:
-                logger.error(f"Data access error (attempt {attempt + 1}): {e}")
+                logger.exception(f"Data access error (attempt {attempt + 1}): {e}")
                 self._last_error = str(e)
                 report_error(
                     exception=e, component="data_manager", context_name="access_error"
@@ -79,7 +82,7 @@ class DataManager:
                     continue
 
             except (ValueError, TypeError, KeyError) as e:
-                logger.error(f"Data format error: {e}")
+                logger.exception(f"Data format error: {e}")
                 self._last_error = str(e)
                 report_error(
                     exception=e, component="data_manager", context_name="format_error"
@@ -87,7 +90,7 @@ class DataManager:
                 break
 
             except Exception as e:
-                logger.error(f"Unexpected error (attempt {attempt + 1}): {e}")
+                logger.exception(f"Unexpected error (attempt {attempt + 1}): {e}")
                 self._last_error = str(e)
                 report_error(
                     exception=e,

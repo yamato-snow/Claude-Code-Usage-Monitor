@@ -5,22 +5,20 @@ Handles formatting of active session screens and session data display.
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Optional
 
 import pytz
 
-from claude_monitor.ui.components import CostIndicator, VelocityIndicator
+from claude_monitor.ui.components import CostIndicator
+from claude_monitor.ui.components import VelocityIndicator
 from claude_monitor.ui.layouts import HeaderManager
-from claude_monitor.ui.progress_bars import (
-    ModelUsageBar,
-    TimeProgressBar,
-    TokenProgressBar,
-)
-from claude_monitor.utils.time_utils import (
-    format_display_time,
-    get_time_format_preference,
-    percentage,
-)
+from claude_monitor.ui.progress_bars import ModelUsageBar
+from claude_monitor.ui.progress_bars import TimeProgressBar
+from claude_monitor.ui.progress_bars import TokenProgressBar
+from claude_monitor.utils.time_utils import format_display_time
+from claude_monitor.utils.time_utils import get_time_format_preference
+from claude_monitor.utils.time_utils import percentage
 
 
 @dataclass
@@ -40,9 +38,9 @@ class SessionDisplayData:
     total_session_minutes: float
     burn_rate: float
     session_cost: float
-    per_model_stats: Dict[str, Any]
+    per_model_stats: dict[str, Any]
     sent_messages: int
-    entries: List[Dict]
+    entries: list[dict]
     predicted_end_str: str
     reset_time_str: str
     current_time_str: str
@@ -94,7 +92,7 @@ class SessionDisplayComponent:
 
         return f"{color} [{filled_bar}]"
 
-    def format_active_session_screen_v2(self, data: SessionDisplayData) -> List[str]:
+    def format_active_session_screen_v2(self, data: SessionDisplayData) -> list[str]:
         """Format complete active session screen using data class.
 
         This is the refactored version using SessionDisplayData.
@@ -140,9 +138,9 @@ class SessionDisplayComponent:
         total_session_minutes: float,
         burn_rate: float,
         session_cost: float,
-        per_model_stats: Dict[str, Any],
+        per_model_stats: dict[str, Any],
         sent_messages: int,
-        entries: List[Dict],
+        entries: list[dict],
         predicted_end_str: str,
         reset_time_str: str,
         current_time_str: str,
@@ -151,7 +149,7 @@ class SessionDisplayComponent:
         show_tokens_will_run_out: bool = False,
         original_limit: int = 0,
         **kwargs,
-    ) -> List[str]:
+    ) -> list[str]:
         """Format complete active session screen.
 
         Args:
@@ -335,7 +333,7 @@ class SessionDisplayComponent:
 
     def _add_notifications(
         self,
-        screen_buffer: List[str],
+        screen_buffer: list[str],
         show_switch_notification: bool,
         show_exceed_notification: bool,
         show_tokens_will_run_out: bool,
@@ -382,7 +380,7 @@ class SessionDisplayComponent:
         token_limit: int,
         current_time: Optional[datetime] = None,
         args: Optional[Any] = None,
-    ) -> List[str]:
+    ) -> list[str]:
         """Format screen for no active session state.
 
         Args:

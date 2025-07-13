@@ -6,7 +6,8 @@ Shared constants (defaults, common limits, threshold) are exposed on the Plans c
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any
+from typing import Optional
 
 
 class PlanType(Enum):
@@ -44,7 +45,7 @@ class PlanConfig:
         return str(self.token_limit)
 
 
-PLAN_LIMITS: Dict[PlanType, Dict[str, Any]] = {
+PLAN_LIMITS: dict[PlanType, dict[str, Any]] = {
     PlanType.PRO: {
         "token_limit": 44_000,
         "cost_limit": 18.0,
@@ -100,7 +101,7 @@ class Plans:
         )
 
     @classmethod
-    def all_plans(cls) -> Dict[PlanType, PlanConfig]:
+    def all_plans(cls) -> dict[PlanType, PlanConfig]:
         """Return a copy of all available plan configurations."""
         return {pt: cls._build_config(pt) for pt in PLAN_LIMITS}
 
@@ -157,7 +158,7 @@ class Plans:
         return cls.get_plan_by_name(plan) is not None
 
 
-TOKEN_LIMITS: Dict[str, int] = {
+TOKEN_LIMITS: dict[str, int] = {
     plan.value: config.token_limit
     for plan, config in Plans.all_plans().items()
     if plan != PlanType.CUSTOM
@@ -167,7 +168,7 @@ DEFAULT_TOKEN_LIMIT: int = Plans.DEFAULT_TOKEN_LIMIT
 COMMON_TOKEN_LIMITS = Plans.COMMON_TOKEN_LIMITS
 LIMIT_DETECTION_THRESHOLD: float = Plans.LIMIT_DETECTION_THRESHOLD
 
-COST_LIMITS: Dict[str, float] = {
+COST_LIMITS: dict[str, float] = {
     plan.value: config.cost_limit
     for plan, config in Plans.all_plans().items()
     if plan != PlanType.CUSTOM

@@ -3,8 +3,10 @@
 Provides token usage, time progress, and model usage progress bars.
 """
 
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from abc import ABC
+from abc import abstractmethod
+from typing import Any
+from typing import Optional
 
 from claude_monitor.utils.time_utils import percentage
 
@@ -86,7 +88,7 @@ class BaseProgressBar(ABC):
         return f"{percentage:.{precision}f}%"
 
     def _get_color_style_by_threshold(
-        self, value: float, thresholds: List[Tuple[float, str]]
+        self, value: float, thresholds: list[tuple[float, str]]
     ) -> str:
         """Get color style based on value thresholds.
 
@@ -179,7 +181,7 @@ class TimeProgressBar(BaseProgressBar):
 class ModelUsageBar(BaseProgressBar):
     """Model usage progress bar showing Sonnet vs Opus distribution."""
 
-    def render(self, per_model_stats: Dict[str, Any]) -> str:
+    def render(self, per_model_stats: dict[str, Any]) -> str:
         """Render model usage progress bar.
 
         Args:

@@ -3,14 +3,13 @@
 Consolidates display indicators, error/loading screens, and advanced custom display.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Optional
 
 from rich.console import Console
 
-from claude_monitor.terminal.themes import (
-    get_cost_style,
-    get_velocity_indicator,
-)
+from claude_monitor.terminal.themes import get_cost_style
+from claude_monitor.terminal.themes import get_velocity_indicator
 from claude_monitor.ui.layouts import HeaderManager
 
 
@@ -88,7 +87,7 @@ class ErrorDisplayComponent:
 
     def format_error_screen(
         self, plan: str = "pro", timezone: str = "Europe/Warsaw"
-    ) -> List[str]:
+    ) -> list[str]:
         """Format error screen for failed data fetch.
 
         Args:
@@ -124,8 +123,8 @@ class LoadingScreenComponent:
         self,
         plan: str = "pro",
         timezone: str = "Europe/Warsaw",
-        custom_message: str = None,
-    ) -> List[str]:
+        custom_message: Optional[str] = None,
+    ) -> list[str]:
         """Create loading screen content.
 
         Args:
@@ -165,7 +164,7 @@ class LoadingScreenComponent:
         self,
         plan: str = "pro",
         timezone: str = "Europe/Warsaw",
-        custom_message: str = None,
+        custom_message: Optional[str] = None,
     ):
         """Create Rich renderable for loading screen.
 
@@ -191,8 +190,8 @@ class AdvancedCustomLimitDisplay:
         self.console = console
 
     def _collect_session_data(
-        self, blocks: Optional[List[Dict[str, Any]]] = None
-    ) -> Dict[str, Any]:
+        self, blocks: Optional[list[dict[str, Any]]] = None
+    ) -> dict[str, Any]:
         """Collect session data and identify limit sessions."""
         if not blocks:
             return {
@@ -235,14 +234,12 @@ class AdvancedCustomLimitDisplay:
             "active_sessions": active_sessions,
         }
 
-    def _is_limit_session(self, session: Dict[str, Any]) -> bool:
+    def _is_limit_session(self, session: dict[str, Any]) -> bool:
         """Check if session hit a general limit."""
         tokens = session["tokens"]
 
-        from claude_monitor.core.plans import (
-            COMMON_TOKEN_LIMITS,
-            LIMIT_DETECTION_THRESHOLD,
-        )
+        from claude_monitor.core.plans import COMMON_TOKEN_LIMITS
+        from claude_monitor.core.plans import LIMIT_DETECTION_THRESHOLD
 
         for limit in COMMON_TOKEN_LIMITS:
             if tokens >= limit * LIMIT_DETECTION_THRESHOLD:
@@ -251,8 +248,8 @@ class AdvancedCustomLimitDisplay:
         return False
 
     def _calculate_session_percentiles(
-        self, sessions: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, sessions: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         """Calculate percentiles from session data."""
         if not sessions:
             return {
@@ -299,7 +296,7 @@ class AdvancedCustomLimitDisplay:
 
 def format_error_screen(
     plan: str = "pro", timezone: str = "Europe/Warsaw"
-) -> List[str]:
+) -> list[str]:
     """Legacy function - format error screen.
 
     Maintained for backward compatibility.

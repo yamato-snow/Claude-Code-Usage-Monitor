@@ -1,40 +1,41 @@
 """Simplified CLI entry point using pydantic-settings."""
 
+import contextlib
 import logging
 import sys
 import traceback
+
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from claude_monitor import __version__
-from claude_monitor.cli.bootstrap import (
-    ensure_directories,
-    init_timezone,
-    setup_environment,
-    setup_logging,
-)
-from claude_monitor.core.plans import Plans, PlanType, get_token_limit
+from claude_monitor.cli.bootstrap import ensure_directories
+from claude_monitor.cli.bootstrap import init_timezone
+from claude_monitor.cli.bootstrap import setup_environment
+from claude_monitor.cli.bootstrap import setup_logging
+from claude_monitor.core.plans import Plans
+from claude_monitor.core.plans import PlanType
+from claude_monitor.core.plans import get_token_limit
 from claude_monitor.core.settings import Settings
 from claude_monitor.data.analysis import analyze_usage
 from claude_monitor.error_handling import report_error
 from claude_monitor.monitoring.orchestrator import MonitoringOrchestrator
-from claude_monitor.terminal.manager import (
-    enter_alternate_screen,
-    handle_cleanup_and_exit,
-    handle_error_and_exit,
-    restore_terminal,
-    setup_terminal,
-)
-from claude_monitor.terminal.themes import get_themed_console, print_themed
+from claude_monitor.terminal.manager import enter_alternate_screen
+from claude_monitor.terminal.manager import handle_cleanup_and_exit
+from claude_monitor.terminal.manager import handle_error_and_exit
+from claude_monitor.terminal.manager import restore_terminal
+from claude_monitor.terminal.manager import setup_terminal
+from claude_monitor.terminal.themes import get_themed_console
+from claude_monitor.terminal.themes import print_themed
 from claude_monitor.ui.display_controller import DisplayController
 
 
-def get_standard_claude_paths() -> List[str]:
+def get_standard_claude_paths() -> list[str]:
     """Get list of standard Claude data directory paths to check."""
     return ["~/.claude/projects", "~/.config/claude/projects"]
 
 
-def discover_claude_data_paths(custom_paths: List[str] = None) -> List[Path]:
+def discover_claude_data_paths(custom_paths: Optional[list[str]] = None) -> list[Path]:
     """Discover all available Claude data directories.
 
     Args:
@@ -43,10 +44,7 @@ def discover_claude_data_paths(custom_paths: List[str] = None) -> List[Path]:
     Returns:
         List of Path objects for existing Claude data directories
     """
-    if custom_paths:
-        paths_to_check = custom_paths
-    else:
-        paths_to_check = get_standard_claude_paths()
+    paths_to_check = custom_paths or get_standard_claude_paths()
 
     discovered_paths = []
 
@@ -58,7 +56,7 @@ def discover_claude_data_paths(custom_paths: List[str] = None) -> List[Path]:
     return discovered_paths
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     """Main entry point with direct pydantic-settings integration."""
     if argv is None:
         argv = sys.argv[1:]
@@ -218,26 +216,20 @@ def _run_monitoring(args):
 
             # Exit live display context if it was activated
             if live_display_active:
-                try:
+                with contextlib.suppress(Exception):
                     live_display.__exit__(None, None, None)
-                except Exception:
-                    pass
 
     except KeyboardInterrupt:
         # Clean exit from live display if it's active
         if "live_display" in locals():
-            try:
+            with contextlib.suppress(Exception):
                 live_display.__exit__(None, None, None)
-            except Exception:
-                pass
         handle_cleanup_and_exit(old_terminal_settings)
     except Exception as e:
         # Clean exit from live display if it's active
         if "live_display" in locals():
-            try:
+            with contextlib.suppress(Exception):
                 live_display.__exit__(None, None, None)
-            except Exception:
-                pass
         handle_error_and_exit(old_terminal_settings, e)
     finally:
         restore_terminal(old_terminal_settings)

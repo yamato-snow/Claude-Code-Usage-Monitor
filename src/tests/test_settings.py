@@ -3,12 +3,15 @@
 import argparse
 import json
 import tempfile
+
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
+from unittest.mock import patch
 
 import pytest
 
-from claude_monitor.core.settings import LastUsedParams, Settings
+from claude_monitor.core.settings import LastUsedParams
+from claude_monitor.core.settings import Settings
 
 
 class TestLastUsedParams:
@@ -592,25 +595,24 @@ class TestSettingsIntegration:
                 with patch(
                     "claude_monitor.core.settings.Settings._get_system_timezone",
                     return_value="UTC",
+                ), patch(
+                    "claude_monitor.core.settings.Settings._get_system_time_format",
+                    return_value="24h",
                 ):
-                    with patch(
-                        "claude_monitor.core.settings.Settings._get_system_time_format",
-                        return_value="24h",
-                    ):
-                        # First run - should create file
-                        settings1 = Settings.load_with_last_used(
-                            ["--theme", "dark", "--refresh-rate", "5"]
-                        )
+                    # First run - should create file
+                    settings1 = Settings.load_with_last_used(
+                        ["--theme", "dark", "--refresh-rate", "5"]
+                    )
 
-                        assert settings1.theme == "dark"
-                        assert settings1.refresh_rate == 5
+                    assert settings1.theme == "dark"
+                    assert settings1.refresh_rate == 5
 
-                        # Second run - should load from file
-                        settings2 = Settings.load_with_last_used(["--plan", "pro"])
+                    # Second run - should load from file
+                    settings2 = Settings.load_with_last_used(["--plan", "pro"])
 
-                        assert settings2.theme == "dark"  # From last used
-                        assert settings2.refresh_rate == 5  # From last used
-                        assert settings2.plan == "pro"  # From CLI
+                    assert settings2.theme == "dark"  # From last used
+                    assert settings2.refresh_rate == 5  # From last used
+                    assert settings2.plan == "pro"  # From CLI
 
     def test_settings_customise_sources(self):
         """Test settings source customization."""
