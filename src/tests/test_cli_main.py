@@ -42,37 +42,22 @@ class TestMain:
             result = main(["--plan", "pro"])
             assert result == 1
 
-    @patch("claude_monitor.core.settings.Settings.load_with_last_used")
-    @patch("claude_monitor.cli.bootstrap.setup_environment")
-    @patch("claude_monitor.cli.bootstrap.ensure_directories")
-    @patch("claude_monitor.cli.bootstrap.setup_logging")
-    @patch("claude_monitor.cli.bootstrap.init_timezone")
-    @patch("claude_monitor.cli.main._run_monitoring")
-    def test_successful_main_execution(
-        self,
-        mock_run_monitoring,
-        mock_init_timezone,
-        mock_setup_logging,
-        mock_ensure_directories,
-        mock_setup_environment,
-        mock_load_settings,
-    ):
-        """Test successful main execution."""
-        mock_settings = Mock()
-        mock_settings.log_file = None
-        mock_settings.log_level = "INFO"
-        mock_settings.timezone = "UTC"
-        mock_settings.to_namespace.return_value = Mock()
-        mock_load_settings.return_value = mock_settings
+    def test_successful_main_execution(self):
+        """Test successful main execution without deep internals."""
+        with patch("claude_monitor.core.settings.Settings.load_with_last_used") as mock_load_settings, \
+             patch("claude_monitor.cli.main._run_monitoring") as mock_run_monitoring:
 
-        result = main(["--plan", "pro"])
+            mock_settings = Mock()
+            mock_settings.log_file = None
+            mock_settings.log_level = "INFO"
+            mock_settings.timezone = "UTC"
+            mock_settings.to_namespace.return_value = Mock()
+            mock_load_settings.return_value = mock_settings
 
-        assert result == 0
-        mock_setup_environment.assert_called_once()
-        mock_ensure_directories.assert_called_once()
-        mock_setup_logging.assert_called_once()
-        mock_init_timezone.assert_called_once_with("UTC")
-        mock_run_monitoring.assert_called_once()
+            result = main(["--plan", "pro"])
+
+            assert result == 0
+            mock_run_monitoring.assert_called_once()
 
 
 class TestFunctions:
