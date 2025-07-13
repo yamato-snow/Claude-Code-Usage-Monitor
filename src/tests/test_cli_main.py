@@ -58,15 +58,22 @@ class TestMain:
         mock_settings.timezone = "UTC"
         mock_settings.to_namespace.return_value = mock_args
 
-        with patch("claude_monitor.core.settings.Settings.load_with_last_used", return_value=mock_settings), \
-             patch("claude_monitor.cli.main.discover_claude_data_paths", return_value=[Path("/test/path")]), \
-             patch("claude_monitor.terminal.manager.setup_terminal"), \
-             patch("claude_monitor.terminal.themes.get_themed_console"), \
-             patch("claude_monitor.ui.display_controller.DisplayController"), \
-             patch("claude_monitor.monitoring.orchestrator.MonitoringOrchestrator"), \
-             patch("time.sleep", side_effect=KeyboardInterrupt), \
-             patch("sys.exit"):  # Don't actually exit
-
+        with (
+            patch(
+                "claude_monitor.core.settings.Settings.load_with_last_used",
+                return_value=mock_settings,
+            ),
+            patch(
+                "claude_monitor.cli.main.discover_claude_data_paths",
+                return_value=[Path("/test/path")],
+            ),
+            patch("claude_monitor.terminal.manager.setup_terminal"),
+            patch("claude_monitor.terminal.themes.get_themed_console"),
+            patch("claude_monitor.ui.display_controller.DisplayController"),
+            patch("claude_monitor.monitoring.orchestrator.MonitoringOrchestrator"),
+            patch("time.sleep", side_effect=KeyboardInterrupt),
+            patch("sys.exit"),
+        ):  # Don't actually exit
             result = main(["--plan", "pro"])
             assert result == 0
 
