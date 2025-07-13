@@ -3,10 +3,8 @@
 Provides token usage, time progress, and model usage progress bars.
 """
 
-from abc import ABC
-from abc import abstractmethod
-from typing import Any
-from typing import Optional
+from abc import ABC, abstractmethod
+from typing import Any, Optional
 
 from claude_monitor.utils.time_utils import percentage
 

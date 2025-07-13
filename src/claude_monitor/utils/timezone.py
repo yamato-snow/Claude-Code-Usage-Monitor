@@ -5,13 +5,10 @@ for backward compatibility.
 """
 
 import logging
-
 from datetime import datetime
 from typing import Optional
 
-from claude_monitor.utils.time_utils import TimezoneHandler
-from claude_monitor.utils.time_utils import get_time_format_preference
-
+from claude_monitor.utils.time_utils import TimezoneHandler, get_time_format_preference
 
 logger = logging.getLogger(__name__)
 

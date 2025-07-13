@@ -5,8 +5,7 @@ code duplication across different components.
 """
 
 from datetime import datetime
-from typing import Any
-from typing import Optional
+from typing import Any, Optional
 
 from claude_monitor.utils.time_utils import TimezoneHandler
 

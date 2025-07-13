@@ -6,7 +6,6 @@ This module consolidates layout management functionality including:
 """
 
 
-
 class HeaderManager:
     """Manager for header layout and formatting."""
 

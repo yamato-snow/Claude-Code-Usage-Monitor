@@ -5,11 +5,8 @@ Sentry error handling patterns throughout the codebase.
 """
 
 import logging
-
 from enum import Enum
-from typing import Any
-from typing import Optional
-
+from typing import Any, Optional
 
 try:
     import sentry_sdk

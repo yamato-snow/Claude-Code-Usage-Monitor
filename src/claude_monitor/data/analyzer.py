@@ -5,19 +5,16 @@ Combines session block creation and limit detection functionality.
 
 import logging
 import re
+from datetime import datetime, timedelta, timezone
+from typing import Any, Optional
 
-from datetime import datetime
-from datetime import timedelta
-from datetime import timezone
-from typing import Any
-from typing import Optional
-
-from claude_monitor.core.models import SessionBlock
-from claude_monitor.core.models import TokenCounts
-from claude_monitor.core.models import UsageEntry
-from claude_monitor.core.models import normalize_model_name
+from claude_monitor.core.models import (
+    SessionBlock,
+    TokenCounts,
+    UsageEntry,
+    normalize_model_name,
+)
 from claude_monitor.utils.time_utils import TimezoneHandler
-
 
 logger = logging.getLogger(__name__)
 

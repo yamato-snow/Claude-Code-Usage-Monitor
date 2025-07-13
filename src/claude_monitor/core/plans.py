@@ -6,8 +6,7 @@ Shared constants (defaults, common limits, threshold) are exposed on the Plans c
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
-from typing import Optional
+from typing import Any, Optional
 
 
 class PlanType(Enum):

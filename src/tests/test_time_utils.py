@@ -2,23 +2,23 @@
 
 import locale
 import platform
-
 from datetime import datetime
-from unittest.mock import Mock
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 import pytz
 
-from claude_monitor.utils.time_utils import SystemTimeDetector
-from claude_monitor.utils.time_utils import TimeFormatDetector
-from claude_monitor.utils.time_utils import TimezoneHandler
-from claude_monitor.utils.time_utils import format_display_time
-from claude_monitor.utils.time_utils import format_time
-from claude_monitor.utils.time_utils import get_system_time_format
-from claude_monitor.utils.time_utils import get_system_timezone
-from claude_monitor.utils.time_utils import get_time_format_preference
-from claude_monitor.utils.time_utils import percentage
+from claude_monitor.utils.time_utils import (
+    SystemTimeDetector,
+    TimeFormatDetector,
+    TimezoneHandler,
+    format_display_time,
+    format_time,
+    get_system_time_format,
+    get_system_timezone,
+    get_time_format_preference,
+    percentage,
+)
 
 
 class TestTimeFormatDetector:
@@ -279,9 +279,10 @@ class TestTimeFormatDetector:
 
     def test_get_preference_timezone_fallback(self):
         """Test get_preference falling back to timezone detection."""
-        with patch.object(
-            TimeFormatDetector, "detect_from_timezone", return_value=True
-        ), patch.object(TimeFormatDetector, "detect_from_system") as mock_system:
+        with (
+            patch.object(TimeFormatDetector, "detect_from_timezone", return_value=True),
+            patch.object(TimeFormatDetector, "detect_from_system") as mock_system,
+        ):
             mock_system.return_value = "24h"  # Should be ignored
 
             result = TimeFormatDetector.get_preference(None, "America/New_York")
@@ -289,10 +290,9 @@ class TestTimeFormatDetector:
 
     def test_get_preference_system_fallback(self):
         """Test get_preference falling back to system detection."""
-        with patch.object(
-            TimeFormatDetector, "detect_from_timezone", return_value=None
-        ), patch.object(
-            TimeFormatDetector, "detect_from_system", return_value="12h"
+        with (
+            patch.object(TimeFormatDetector, "detect_from_timezone", return_value=None),
+            patch.object(TimeFormatDetector, "detect_from_system", return_value="12h"),
         ):
             result = TimeFormatDetector.get_preference(None, "Europe/Berlin")
             assert result is True
@@ -678,7 +678,7 @@ class TestFormattingUtilities:
                     dt, use_12h_format=True, include_seconds=True
                 )
                 assert "PM" in result
-                assert ("3:30:45" in result or "03:30:45" in result)
+                assert "3:30:45" in result or "03:30:45" in result
             except ValueError:
                 # Windows format fallback
                 result = format_display_time(
@@ -693,7 +693,7 @@ class TestFormattingUtilities:
         try:
             result = format_display_time(dt, use_12h_format=True, include_seconds=False)
             assert "PM" in result
-            assert ("3:30" in result or "03:30" in result)
+            assert "3:30" in result or "03:30" in result
         except ValueError:
             # Windows format fallback
             result = format_display_time(dt, use_12h_format=True, include_seconds=False)

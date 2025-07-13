@@ -8,7 +8,6 @@ import sys
 from claude_monitor.error_handling import report_error
 from claude_monitor.terminal.themes import print_themed
 
-
 logger = logging.getLogger(__name__)
 
 try:

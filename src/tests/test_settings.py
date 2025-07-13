@@ -3,15 +3,12 @@
 import argparse
 import json
 import tempfile
-
 from pathlib import Path
-from unittest.mock import Mock
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 
-from claude_monitor.core.settings import LastUsedParams
-from claude_monitor.core.settings import Settings
+from claude_monitor.core.settings import LastUsedParams, Settings
 
 
 class TestLastUsedParams:
@@ -592,12 +589,15 @@ class TestSettingsIntegration:
                 real_last_used = LastUsedParams(config_dir)
                 MockLastUsed.return_value = real_last_used
 
-                with patch(
-                    "claude_monitor.core.settings.Settings._get_system_timezone",
-                    return_value="UTC",
-                ), patch(
-                    "claude_monitor.core.settings.Settings._get_system_time_format",
-                    return_value="24h",
+                with (
+                    patch(
+                        "claude_monitor.core.settings.Settings._get_system_timezone",
+                        return_value="UTC",
+                    ),
+                    patch(
+                        "claude_monitor.core.settings.Settings._get_system_time_format",
+                        return_value="24h",
+                    ),
                 ):
                     # First run - should create file
                     settings1 = Settings.load_with_last_used(

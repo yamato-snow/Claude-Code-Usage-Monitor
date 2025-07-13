@@ -6,7 +6,6 @@ for backward compatibility.
 
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -88,9 +87,7 @@ def get_model_generation(model: str) -> str:
         return "3"
     if re.search(r"claude-2(?:\D|$)", model_lower):
         return "2"
-    if (
-        re.search(r"claude-1(?:\D|$)", model_lower) or "claude-instant-1" in model_lower
-    ):
+    if re.search(r"claude-1(?:\D|$)", model_lower) or "claude-instant-1" in model_lower:
         return "1"
     match = re.search(r"claude-(\d)(?:\D|$)", model_lower)
     if match:

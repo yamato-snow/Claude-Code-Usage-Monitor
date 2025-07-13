@@ -7,12 +7,10 @@ import os
 import platform
 import re
 import subprocess
-
 from datetime import datetime
 from typing import Optional
 
 import pytz
-
 
 try:
     from babel.dates import get_timezone_location

@@ -1,17 +1,16 @@
 """Tests for DisplayController class."""
 
-from datetime import datetime
-from datetime import timedelta
-from datetime import timezone
-from unittest.mock import Mock
-from unittest.mock import patch
+from datetime import datetime, timedelta, timezone
+from unittest.mock import Mock, patch
 
 import pytest
 
-from claude_monitor.ui.display_controller import DisplayController
-from claude_monitor.ui.display_controller import LiveDisplayManager
-from claude_monitor.ui.display_controller import ScreenBufferManager
-from claude_monitor.ui.display_controller import SessionCalculator
+from claude_monitor.ui.display_controller import (
+    DisplayController,
+    LiveDisplayManager,
+    ScreenBufferManager,
+    SessionCalculator,
+)
 
 
 class TestDisplayController:
@@ -170,13 +169,15 @@ class TestDisplayController:
 
     def test_check_notifications_switch_to_custom(self, controller):
         """Test notification checking for switch to custom."""
-        with patch.object(
-            controller.notification_manager, "should_notify"
-        ) as mock_should, patch.object(
-            controller.notification_manager, "mark_notified"
-        ) as mock_mark, patch.object(
-            controller.notification_manager, "is_notification_active"
-        ) as mock_active:
+        with (
+            patch.object(
+                controller.notification_manager, "should_notify"
+            ) as mock_should,
+            patch.object(controller.notification_manager, "mark_notified") as mock_mark,
+            patch.object(
+                controller.notification_manager, "is_notification_active"
+            ) as mock_active,
+        ):
             # Configure should_notify to return True only for switch_to_custom
             def should_notify_side_effect(notification_type):
                 return notification_type == "switch_to_custom"
@@ -189,28 +190,28 @@ class TestDisplayController:
                 original_limit=200000,
                 session_cost=2.0,
                 cost_limit=5.0,
-                predicted_end_time=datetime.now(timezone.utc)
-                + timedelta(hours=2),
+                predicted_end_time=datetime.now(timezone.utc) + timedelta(hours=2),
                 reset_time=datetime.now(timezone.utc) + timedelta(hours=12),
             )
 
             assert result["show_switch_notification"] is True
             # Verify switch_to_custom was called
             assert any(
-                call[0][0] == "switch_to_custom"
-                for call in mock_should.call_args_list
+                call[0][0] == "switch_to_custom" for call in mock_should.call_args_list
             )
             mock_mark.assert_called_with("switch_to_custom")
 
     def test_check_notifications_exceed_limit(self, controller):
         """Test notification checking for exceeding limit."""
-        with patch.object(
-            controller.notification_manager, "should_notify"
-        ) as mock_should, patch.object(
-            controller.notification_manager, "mark_notified"
-        ) as mock_mark, patch.object(
-            controller.notification_manager, "is_notification_active"
-        ) as mock_active:
+        with (
+            patch.object(
+                controller.notification_manager, "should_notify"
+            ) as mock_should,
+            patch.object(controller.notification_manager, "mark_notified") as mock_mark,
+            patch.object(
+                controller.notification_manager, "is_notification_active"
+            ) as mock_active,
+        ):
             # Configure should_notify to return True only for exceed_max_limit
             def should_notify_side_effect(notification_type):
                 return notification_type == "exceed_max_limit"
@@ -223,26 +224,25 @@ class TestDisplayController:
                 original_limit=200000,
                 session_cost=6.0,  # Exceeds limit
                 cost_limit=5.0,
-                predicted_end_time=datetime.now(timezone.utc)
-                + timedelta(hours=2),
+                predicted_end_time=datetime.now(timezone.utc) + timedelta(hours=2),
                 reset_time=datetime.now(timezone.utc) + timedelta(hours=12),
             )
 
             assert result["show_exceed_notification"] is True
             # Verify exceed_max_limit was called
             assert any(
-                call[0][0] == "exceed_max_limit"
-                for call in mock_should.call_args_list
+                call[0][0] == "exceed_max_limit" for call in mock_should.call_args_list
             )
             mock_mark.assert_called_with("exceed_max_limit")
 
     def test_check_notifications_cost_will_exceed(self, controller):
         """Test notification checking for cost will exceed."""
-        with patch.object(
-            controller.notification_manager, "should_notify"
-        ) as mock_should, patch.object(
-            controller.notification_manager, "mark_notified"
-        ) as mock_mark:
+        with (
+            patch.object(
+                controller.notification_manager, "should_notify"
+            ) as mock_should,
+            patch.object(controller.notification_manager, "mark_notified") as mock_mark,
+        ):
             mock_should.return_value = True
 
             # Predicted end time before reset time
@@ -660,11 +660,14 @@ class TestDisplayControllerAdvanced:
                 "token_limit": 200000,
             }
 
-            with patch.object(
-                controller.buffer_manager, "create_screen_renderable"
-            ) as mock_create, patch.object(
-                controller.session_display, "format_active_session_screen"
-            ) as mock_format:
+            with (
+                patch.object(
+                    controller.buffer_manager, "create_screen_renderable"
+                ) as mock_create,
+                patch.object(
+                    controller.session_display, "format_active_session_screen"
+                ) as mock_format,
+            ):
                 mock_format.return_value = ["screen", "buffer"]
                 mock_create.return_value = "rendered_screen"
 
@@ -689,11 +692,14 @@ class TestDisplayControllerAdvanced:
         with patch.object(controller, "_process_active_session_data") as mock_process:
             mock_process.side_effect = Exception("Test error")
 
-            with patch.object(
-                controller.error_display, "format_error_screen"
-            ) as mock_error, patch.object(
-                controller.buffer_manager, "create_screen_renderable"
-            ) as mock_create:
+            with (
+                patch.object(
+                    controller.error_display, "format_error_screen"
+                ) as mock_error,
+                patch.object(
+                    controller.buffer_manager, "create_screen_renderable"
+                ) as mock_create,
+            ):
                 mock_error.return_value = ["error", "screen"]
                 mock_create.return_value = "error_rendered"
 
@@ -737,11 +743,14 @@ class TestDisplayControllerAdvanced:
             ) as mock_format:
                 mock_format.side_effect = Exception("Format error")
 
-                with patch.object(
-                    controller.error_display, "format_error_screen"
-                ) as mock_error, patch.object(
-                    controller.buffer_manager, "create_screen_renderable"
-                ) as mock_create:
+                with (
+                    patch.object(
+                        controller.error_display, "format_error_screen"
+                    ) as mock_error,
+                    patch.object(
+                        controller.buffer_manager, "create_screen_renderable"
+                    ) as mock_create,
+                ):
                     mock_error.return_value = ["error", "screen"]
                     mock_create.return_value = "error_rendered"
 

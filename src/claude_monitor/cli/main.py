@@ -4,29 +4,29 @@ import contextlib
 import logging
 import sys
 import traceback
-
 from pathlib import Path
 from typing import Optional
 
 from claude_monitor import __version__
-from claude_monitor.cli.bootstrap import ensure_directories
-from claude_monitor.cli.bootstrap import init_timezone
-from claude_monitor.cli.bootstrap import setup_environment
-from claude_monitor.cli.bootstrap import setup_logging
-from claude_monitor.core.plans import Plans
-from claude_monitor.core.plans import PlanType
-from claude_monitor.core.plans import get_token_limit
+from claude_monitor.cli.bootstrap import (
+    ensure_directories,
+    init_timezone,
+    setup_environment,
+    setup_logging,
+)
+from claude_monitor.core.plans import Plans, PlanType, get_token_limit
 from claude_monitor.core.settings import Settings
 from claude_monitor.data.analysis import analyze_usage
 from claude_monitor.error_handling import report_error
 from claude_monitor.monitoring.orchestrator import MonitoringOrchestrator
-from claude_monitor.terminal.manager import enter_alternate_screen
-from claude_monitor.terminal.manager import handle_cleanup_and_exit
-from claude_monitor.terminal.manager import handle_error_and_exit
-from claude_monitor.terminal.manager import restore_terminal
-from claude_monitor.terminal.manager import setup_terminal
-from claude_monitor.terminal.themes import get_themed_console
-from claude_monitor.terminal.themes import print_themed
+from claude_monitor.terminal.manager import (
+    enter_alternate_screen,
+    handle_cleanup_and_exit,
+    handle_error_and_exit,
+    restore_terminal,
+    setup_terminal,
+)
+from claude_monitor.terminal.themes import get_themed_console, print_themed
 from claude_monitor.ui.display_controller import DisplayController
 
 

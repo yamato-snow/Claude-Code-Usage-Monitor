@@ -2,12 +2,10 @@
 Core data structures for usage tracking, session management, and token calculations.
 """
 
-from dataclasses import dataclass
-from dataclasses import field
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any
-from typing import Optional
+from typing import Any, Optional
 
 
 class CostMode(Enum):

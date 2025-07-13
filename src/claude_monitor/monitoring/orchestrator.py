@@ -3,17 +3,12 @@
 import logging
 import threading
 import time
+from typing import Any, Callable, Optional
 
-from typing import Any
-from typing import Callable
-from typing import Optional
-
-from claude_monitor.core.plans import DEFAULT_TOKEN_LIMIT
-from claude_monitor.core.plans import get_token_limit
+from claude_monitor.core.plans import DEFAULT_TOKEN_LIMIT, get_token_limit
 from claude_monitor.error_handling import report_error
 from claude_monitor.monitoring.data_manager import DataManager
 from claude_monitor.monitoring.session_monitor import SessionMonitor
-
 
 logger = logging.getLogger(__name__)
 
