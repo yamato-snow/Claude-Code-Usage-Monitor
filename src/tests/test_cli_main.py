@@ -44,9 +44,7 @@ class TestMain:
             assert result == 1
 
     @patch("claude_monitor.core.settings.Settings.load_with_last_used")
-    def test_successful_main_execution(
-        self, mock_load_settings: Mock
-    ) -> None:
+    def test_successful_main_execution(self, mock_load_settings: Mock) -> None:
         """Test successful main execution by mocking core components."""
         mock_args = Mock()
         mock_args.theme = None
@@ -63,17 +61,31 @@ class TestMain:
 
         mock_load_settings.return_value = mock_settings
 
-        with (
-            patch("claude_monitor.cli.main.discover_claude_data_paths", return_value=[Path("/test/path")]),
-            patch("claude_monitor.terminal.manager.setup_terminal"),
-            patch("claude_monitor.terminal.themes.get_themed_console"),
-            patch("claude_monitor.ui.display_controller.DisplayController"),
-            patch("claude_monitor.monitoring.orchestrator.MonitoringOrchestrator"),
-            patch("time.sleep", side_effect=KeyboardInterrupt),
-            patch("sys.exit"),
-        ):  # Don't actually exit
-            result = main(["--plan", "pro"])
-            assert result == 0
+        # Get the actual module to avoid Python version compatibility issues with mock.patch
+        import sys
+
+        actual_module = sys.modules["claude_monitor.cli.main"]
+
+        # Manually replace the function - this works across all Python versions
+        original_discover = actual_module.discover_claude_data_paths
+        actual_module.discover_claude_data_paths = Mock(
+            return_value=[Path("/test/path")]
+        )
+
+        try:
+            with (
+                patch("claude_monitor.terminal.manager.setup_terminal"),
+                patch("claude_monitor.terminal.themes.get_themed_console"),
+                patch("claude_monitor.ui.display_controller.DisplayController"),
+                patch("claude_monitor.monitoring.orchestrator.MonitoringOrchestrator"),
+                patch("time.sleep", side_effect=KeyboardInterrupt),
+                patch("sys.exit"),
+            ):  # Don't actually exit
+                result = main(["--plan", "pro"])
+                assert result == 0
+        finally:
+            # Restore the original function
+            actual_module.discover_claude_data_paths = original_discover
 
 
 class TestFunctions:
