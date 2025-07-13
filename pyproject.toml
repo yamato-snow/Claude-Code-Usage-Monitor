@@ -72,20 +72,7 @@ test = [
   "pytest-asyncio>=0.24.0",
   "pytest-benchmark>=4.0.0"
 ]
-docs = [
-  "sphinx>=5.0.0",
-  "sphinx-rtd-theme>=1.2.0",
-  "myst-parser>=0.18.0"
-]
-performance = [
-  "memory-profiler>=0.60.0",
-  "py-spy>=0.3.14",
-  "pytest-benchmark>=4.0.0"
-]
-security = [
-  "bandit>=1.7.10",
-  "safety>=3.2.0"
-]
+
 
 [project.urls]
 homepage = "https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor"
@@ -140,12 +127,10 @@ src_paths = ["src"]
 skip_glob = ["*/migrations/*", "*/venv/*", "*/build/*", "*/dist/*"]
 
 [tool.ruff]
-# Ruff configuration – replaces Black, isort, and basic linting
 line-length = 88
 target-version = "py39"
 
 [tool.ruff.lint]
-# Essential rules only
 select = ["E", "W", "F", "I"]  # pycodestyle + Pyflakes + isort
 ignore = ["E501"]              # Line length handled by formatter
 
@@ -155,12 +140,10 @@ quote-style = "double"
 
 [tool.mypy]
 python_version = "3.9"
-# Only essential checks enabled for a balanced workflow
 warn_return_any = true      # Catch unintended Any returns
 warn_no_return = true       # Ensure functions return as expected
 strict_optional = true      # Disallow None where not annotated
 
-# Non-essential warnings disabled
 disable_error_code = [
   "attr-defined",   # Attribute existence
   "name-defined",   # Name resolution
@@ -181,7 +164,6 @@ addopts = [
 ]
 markers = [
   "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-  "integration: marks tests as integration tests",
   "unit: marks tests as unit tests",
   "benchmark: marks tests as benchmarks",
   "network: marks tests as requiring network access",
@@ -221,16 +203,3 @@ directory = "htmlcov"
 
 [tool.coverage.xml]
 output = "coverage.xml"
-
-[tool.bandit]
-exclude_dirs = ["src/tests"]
-tests = ["B201","B301","B401","B501","B601","B602","B603","B604","B605","B606","B607","B608","B609","B610","B611","B701","B702","B703"]
-skips = ["B101","B601"]
-
-[tool.bandit.assert_used]
-skips = ["*_test.py","test_*.py"]
-
-[tool.sphinx.autodoc]
-typehints = "description"
-typehints_document_rtype = true
-typehints_defaults = "comma"
