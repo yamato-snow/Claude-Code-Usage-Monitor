@@ -94,8 +94,8 @@ class AdaptiveColorScheme:
                 "table.row": "color(235)",  # Very dark gray
                 "table.row.alt": "color(238)",  # Slightly lighter gray
                 # Progress styles
-                "progress.bar.fill": "color(22)",  # Dark green for visibility on light bg
-                "progress.bar.empty": "color(240)",  # Medium gray for better visibility on light bg
+                "progress.bar.fill": "color(240)",  # Semi-black (darker gray) for light theme
+                "progress.bar.empty": "color(250)",  # Very light gray for light theme
                 "progress.percentage": "bold color(235)",  # Bold very dark gray
                 # Chart styles
                 "chart.bar": "color(17)",  # Deep blue for better visibility
@@ -150,8 +150,8 @@ class AdaptiveColorScheme:
                 "table.row": "color(253)",  # Very light gray
                 "table.row.alt": "color(251)",  # Slightly darker gray
                 # Progress styles
-                "progress.bar.fill": "color(118)",  # Light green
-                "progress.bar.empty": "color(245)",  # Medium light gray
+                "progress.bar.fill": "color(250)",  # Semi-white (light gray) for dark theme
+                "progress.bar.empty": "color(238)",  # Darker gray for dark theme
                 "progress.percentage": "bold color(253)",  # Bold very light gray
                 # Chart styles
                 "chart.bar": "color(111)",  # Light cyan

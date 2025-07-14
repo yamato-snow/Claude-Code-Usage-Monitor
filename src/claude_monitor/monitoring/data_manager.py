@@ -14,7 +14,10 @@ class DataManager:
     """Manages data fetching and caching for monitoring."""
 
     def __init__(
-        self, cache_ttl: int = 30, hours_back: int = 96, data_path: Optional[str] = None
+        self,
+        cache_ttl: int = 30,
+        hours_back: int = 192,
+        data_path: Optional[str] = None,
     ) -> None:
         """Initialize data manager with cache and fetch settings.
 
@@ -54,7 +57,7 @@ class DataManager:
                 )
                 data: Optional[Dict[str, Any]] = analyze_usage(
                     hours_back=self.hours_back,
-                    quick_start=True,
+                    quick_start=False,
                     use_cache=False,
                     data_path=self.data_path,
                 )
