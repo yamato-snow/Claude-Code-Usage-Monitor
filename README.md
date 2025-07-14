@@ -90,17 +90,18 @@ The fastest and easiest way to install and use the monitor:
 
 #### Install from PyPI
 
-bash
+```bash
 # Install directly from PyPI with uv (easiest)
 uv tool install claude-monitor
 
 # Run from anywhere
 claude-monitor  # or cmonitor, ccmonitor for short
+```
 
 
 #### Install from Source
 
-bash
+```bash
 # Clone and install from source
 git clone https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor.git
 cd Claude-Code-Usage-Monitor
@@ -108,12 +109,13 @@ uv tool install .
 
 # Run from anywhere
 claude-monitor
+```
 
 
 #### First-time uv users
 If you don't have uv installed yet, get it with one command:
 
-bash
+```bash
 # On Linux/macOS:
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -121,11 +123,12 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 # After installation, restart your terminal
+```
 
 
 ### 📦 Installation with pip
 
-bash
+```bash
 # Install from PyPI
 pip install claude-monitor
 
@@ -135,6 +138,7 @@ source ~/.bashrc  # or restart your terminal
 
 # Run from anywhere
 claude-monitor  # or cmonitor, ccmonitor for short
+```
 
 
 >
@@ -150,31 +154,33 @@ claude-monitor  # or cmonitor, ccmonitor for short
 ### 🛠️ Other Package Managers
 
 #### pipx (Isolated Environments)
-bash
+```bash
 # Install with pipx
 pipx install claude-monitor
 
 # Run from anywhere
 claude-monitor  # or claude-code-monitor, cmonitor, ccmonitor, ccm for short
+```
 
 
 #### conda/mamba
-bash
+```bash
 # Install with pip in conda environment
 pip install claude-monitor
 
 # Run from anywhere
 claude-monitor  # or cmonitor, ccmonitor for short
+```
 
 
 ## 📖 Usage
 
 ### Get Help
 
-bash
+```bash
 # Show help information
 claude-monitor --help
-
+```
 
 #### Available Command-Line Parameters
 
@@ -227,7 +233,7 @@ The monitor automatically saves your preferences to avoid re-specifying them on 
 **Configuration Location:** ~/.claude-monitor/last_used.json
 
 **Usage Examples:**
-bash
+```bash
 # First run - specify preferences
 claude-monitor --plan pro --theme dark --timezone "America/New_York"
 
@@ -239,7 +245,7 @@ claude-monitor --plan pro --theme light
 
 # Clear all saved preferences
 claude-monitor --clear
-
+```
 
 **Key Features:**
 - ✅ Automatic parameter persistence between sessions
@@ -251,7 +257,7 @@ claude-monitor --clear
 ### Basic Usage
 
 #### With uv tool installation (Recommended)
-bash
+```bash
 # Default (Custom plan with auto-detection)
 claude-monitor
 
@@ -263,7 +269,7 @@ ccm                  # Shortest alias
 
 # Exit the monitor
 # Press Ctrl+C to gracefully exit
-
+```
 
 #### Development mode
 If running from source, use python -m claude_monitor from the src/ directory.
@@ -272,7 +278,7 @@ If running from source, use python -m claude_monitor from the src/ directory.
 
 #### Specify Your Plan
 
-bash
+```bash
 # Custom plan with P90 auto-detection (Default)
 claude-monitor --plan custom
 
@@ -287,21 +293,21 @@ claude-monitor --plan max20
 
 # Custom plan with explicit token limit
 claude-monitor --plan custom --custom-limit-tokens 100000
-
+```
 
 #### Custom Reset Times
 
-bash
+```bash
 # Reset at 3 AM
 claude-monitor --reset-hour 3
 
 # Reset at 10 PM
 claude-monitor --reset-hour 22
-
+```
 
 #### Performance and Display Configuration
 
-bash
+```bash
 # Adjust refresh rate (1-60 seconds, default: 10)
 claude-monitor --refresh-rate 5
 
@@ -316,13 +322,13 @@ claude-monitor --theme dark  # light, dark, classic, auto
 
 # Clear saved configuration
 claude-monitor --clear
-
+```
 
 #### Timezone Configuration
 
 The default timezone is **auto-detected from your system**. Override with any valid timezone:
 
-bash
+```bash
 # Use US Eastern Time
 claude-monitor --timezone America/New_York
 
@@ -334,11 +340,11 @@ claude-monitor --timezone UTC
 
 # Use London time
 claude-monitor --timezone Europe/London
-
+```
 
 #### Logging and Debugging
 
-bash
+```bash
 # Enable debug logging
 claude-monitor --debug
 
@@ -347,7 +353,7 @@ claude-monitor --log-file ~/.claude-monitor/logs/monitor.log
 
 # Set log level
 claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-
+```
 
 ### Available Plans
 
@@ -402,22 +408,102 @@ claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 The new version features a complete rewrite with modular architecture following Single Responsibility Principle (SRP):
 
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│   CLI Module    │  │ Settings/Config │  │ Error Handling  │
-│ (Pydantic-based│  │ (Type-safe)     │  │ (Sentry-ready)  │
-└─────────────────┘  └─────────────────┘  └─────────────────┘
-         │                      │                      │
-┌─────────────────────────────────────────────────────────────┐
-│                 Monitoring Orchestrator                      │
-├─────────────────┬─────────────────┬─────────────────────────┤
-│  Data Manager   │ Session Monitor │   UI Display Controller │
-│ (Cache, Load)   │ (Real-time)     │    (Rich Components)    │
-└─────────────────┴─────────────────┴─────────────────────────┘
-         │                      │                      │
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│ Core Models     │  │ Analysis Engine │  │ Terminal Themes │
-│ (Pydantic)      │  │ (P90 Calculator)│  │ (Adaptive)      │
-└─────────────────┘  └─────────────────┘  └─────────────────┘
+Here’s the Mermaid snippet you can paste directly into your `README.md`:
+
+<h2>🎯 Claude Code Usage Monitor v3.0.0 Architecture</h2>
+
+<table>
+  <!-- User Interface Layer -->
+  <tr>
+    <th colspan="4" style="padding:8px; background:#f0f0f0; text-align:left;">
+      🖥️ <strong>User Interface Layer</strong>
+    </th>
+  </tr>
+  <tr>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>CLI Module</strong><br><small>(Pydantic-based)</small>
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>Settings/Config</strong><br><small>(Type-safe)</small>
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>Error Handling</strong><br><small>(Sentry-ready)</small>
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>Rich Terminal UI</strong><br><small>(Adaptive Theme)</small>
+    </td>
+  </tr>
+
+  <!-- Arrow row -->
+  <tr>
+    <td colspan="4" style="text-align:center; padding:4px;">⬇️</td>
+  </tr>
+
+  <!-- Monitoring Orchestrator -->
+  <tr>
+    <th colspan="4" style="padding:8px; background:#f0f0f0; text-align:left;">
+      🎛️ <strong>Monitoring Orchestrator</strong>
+    </th>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding:8px; border:1px solid #ddd;">
+      <strong>🧠 Central Control Hub</strong><br>
+      • Session Management  • Real-time Data Flow  • Component Coordination
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>📊 Data Manager</strong><br>
+      • Cache Mgmt  • File I/O  • State Persist
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>🔄 Session Monitor</strong><br>
+      • Real-time  • 5hr Windows  • Token Track
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>🎨 UI Controller</strong><br>
+      • Rich Display  • Progress Bars  • Theme System
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>📈 Analytics</strong><br>
+      • P90 Calculator  • Burn Rate  • Predictions
+    </td>
+  </tr>
+
+  <!-- Arrow row -->
+  <tr>
+    <td colspan="4" style="text-align:center; padding:4px;">⬇️</td>
+  </tr>
+
+  <!-- Foundation Layer -->
+  <tr>
+    <th colspan="4" style="padding:8px; background:#f0f0f0; text-align:left;">
+      🏗️ <strong>Foundation Layer</strong>
+    </th>
+  </tr>
+  <tr>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>Core Models</strong><br>
+      • Session Data  • Config Schema  • Type Safety
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>Analysis Engine</strong><br>
+      • ML Algorithms  • Statistical  • Forecasting
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>Terminal Themes</strong><br>
+      • Auto-detection  • WCAG Colors  • Contrast Opt
+    </td>
+    <td style="padding:8px; border:1px solid #ddd;">
+      <strong>Claude API Data</strong><br>
+      • Token Tracking  • Cost Calculator  • Session Blocks
+    </td>
+  </tr>
+</table>
+
+<p style="font-style:italic; text-align:center; margin-top:12px;">
+  Claude Config Files → Data Layer → Analysis Engine → UI Components → Terminal Display
+</p>
 
 
 ### Current Features
@@ -500,7 +586,7 @@ The monitor calculates burn rate using sophisticated analysis:
 
 #### Dependencies (v3.0.0)
 
-toml
+```toml
 # Core dependencies (automatically installed)
 pytz>=2023.3                # Timezone handling
 rich>=13.7.0                # Rich terminal UI
@@ -510,7 +596,7 @@ numpy>=1.21.0               # Statistical calculations
 sentry-sdk>=1.40.0          # Error reporting (optional)
 pyyaml>=6.0                 # Configuration files
 tzdata                      # Windows timezone data
-
+```
 
 #### Python Requirements
 
@@ -548,12 +634,13 @@ The auto-detection system:
 #### 🌅 Morning Developer
 **Scenario**: You start work at 9 AM and want tokens to reset aligned with your schedule.
 
-bash
+```bash
 # Set custom reset time to 9 AM
 ./claude_monitor.py --reset-hour 9
 
 # With your timezone
 ./claude_monitor.py --reset-hour 9 --timezone US/Eastern
+```
 
 
 **Benefits**:
@@ -564,12 +651,13 @@ bash
 #### 🌙 Night Owl Coder
 **Scenario**: You often work past midnight and need flexible reset scheduling.
 
-bash
+```bash
 # Reset at midnight for clean daily boundaries
 ./claude_monitor.py --reset-hour 0
 
 # Late evening reset (11 PM)
 ./claude_monitor.py --reset-hour 23
+```
 
 
 **Strategy**:
@@ -580,12 +668,13 @@ bash
 #### 🔄 Heavy User with Variable Limits
 **Scenario**: Your token limits seem to change, and you're not sure of your exact plan.
 
-bash
+```bash
 # Auto-detect your highest previous usage
 claude-monitor --plan custom_max
 
 # Monitor with custom scheduling
 claude-monitor --plan custom_max --reset-hour 6
+```
 
 
 **Approach**:
@@ -596,7 +685,7 @@ claude-monitor --plan custom_max --reset-hour 6
 #### 🌍 International User
 **Scenario**: You're working across different timezones or traveling.
 
-bash
+```bash
 # US East Coast
 claude-monitor --timezone America/New_York
 
@@ -608,16 +697,18 @@ claude-monitor --timezone Asia/Singapore
 
 # UTC for international team coordination
 claude-monitor --timezone UTC --reset-hour 12
+```
 
 
 #### ⚡ Quick Check
 **Scenario**: You just want to see current status without configuration.
 
-bash
+```bash
 # Just run it with defaults
 claude-monitor
 
 # Press Ctrl+C after checking status
+```
 
 
 ### Plan Selection Strategies
@@ -625,27 +716,30 @@ claude-monitor
 #### How to Choose Your Plan
 
 **Start with Default (Recommended for New Users)**
-bash
+```bash
 # Pro plan detection with auto-switching
 claude-monitor
+```
 
 - Monitor will detect if you exceed Pro limits
 - Automatically switches to custom_max if needed
 - Shows notification when switching occurs
 
 **Known Subscription Users**
-bash
+```bash
 # If you know you have Max5
 claude-monitor --plan max5
 
 # If you know you have Max20
 claude-monitor --plan max20
+```
 
 
 **Unknown Limits**
-bash
+```bash
 # Auto-detect from previous usage
 claude-monitor --plan custom_max
+```
 
 
 ### Best Practices
@@ -654,12 +748,13 @@ claude-monitor --plan custom_max
 
 1. **Start Early in Sessions**
 
-bash
+```bash
    # Begin monitoring when starting Claude work (uv installation)
    claude-monitor
 
    # Or development mode
    ./claude_monitor.py
+   ```
 
    - Gives accurate session tracking from the start
    - Better burn rate calculations
@@ -667,10 +762,11 @@ bash
 
 2. **Use Modern Installation (Recommended)**
 
-bash
+```bash
    # Easy installation and updates with uv
    uv tool install claude-monitor
    claude-monitor --plan max5
+   ```
 
    - Clean system installation
    - Easy updates and maintenance
@@ -678,9 +774,10 @@ bash
 
 3. **Custom Shell Alias (Legacy Setup)**
 
-bash
+```bash
    # Add to ~/.bashrc or ~/.zshrc (only for development setup)
    alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && ./claude_monitor.py'
+   ```
 
 
 #### Usage Best Practices
@@ -692,9 +789,10 @@ bash
 
 2. **Strategic Session Planning**
 
-bash
+```bash
    # Plan heavy usage around reset times
    claude-monitor --reset-hour 9
+   ```
 
    - Schedule large tasks after resets
    - Use lighter tasks when approaching limits
@@ -702,9 +800,10 @@ bash
 
 3. **Timezone Awareness**
 
-bash
+```bash
    # Always use your actual timezone
    claude-monitor --timezone Europe/Warsaw
+   ```
 
    - Accurate reset time predictions
    - Better planning for work schedules
@@ -720,7 +819,7 @@ bash
 
 2. **Workflow Integration**
 
-bash
+```bash
    # Start monitoring with your development session (uv installation)
    tmux new-session -d -s claude-monitor 'claude-monitor'
 
@@ -729,6 +828,7 @@ bash
 
    # Check status anytime
    tmux attach -t claude-monitor
+   ```
 
 
 3. **Multi-Session Strategy**
@@ -739,9 +839,10 @@ bash
 #### Real-World Workflows
 
 **Large Project Development**
-bash
+```bash
 # Setup for sustained development
 claude-monitor --plan max20 --reset-hour 8 --timezone America/New_York
+```
 
 
 **Daily Routine**:
@@ -752,15 +853,17 @@ claude-monitor --plan max20 --reset-hour 8 --timezone America/New_York
 5. **4:00 PM**: Light tasks, prepare for evening session
 
 **Learning & Experimentation**
-bash
+```bash
 # Flexible setup for learning
 claude-monitor --plan pro
+```
 
 
 **Sprint Development**
-bash
+```bash
 # High-intensity development setup
 claude-monitor --plan max20 --reset-hour 6
+```
 
 
 ## 🔧 Development Installation
@@ -769,7 +872,7 @@ For contributors and developers who want to work with the source code:
 
 ### Quick Start (Development/Testing)
 
-bash
+```bash
 # Clone the repository
 git clone https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor.git
 cd Claude-Code-Usage-Monitor
@@ -779,6 +882,7 @@ pip install -e .
 
 # Run from source
 python -m claude_monitor
+```
 
 
 ### v3.0.0 Testing Features
@@ -791,7 +895,7 @@ The new version includes a comprehensive test suite:
 - **Performance tests** with benchmarking
 - **Mock objects** for isolated testing
 
-bash
+```bash
 # Run tests
 cd src/
 python -m pytest
@@ -801,6 +905,7 @@ python -m pytest --cov=claude_monitor --cov-report=html
 
 # Run specific test modules
 python -m pytest tests/test_analysis.py -v
+```
 
 
 ### Prerequisites
@@ -825,7 +930,7 @@ Using a virtual environment is **strongly recommended** because:
 
 If you don't have venv module available:
 
-bash
+```bash
 # Ubuntu/Debian
 sudo apt-get update
 sudo apt-get install python3-venv
@@ -840,21 +945,23 @@ brew install python3
 # Windows (usually comes with Python)
 # If not available, reinstall Python from python.org
 # Make sure to check "Add Python to PATH" during installation
+```
 
 
 Alternatively, use the virtualenv package:
-bash
+```bash
 # Install virtualenv via pip
 pip install virtualenv
 
 # Then create virtual environment with:
 virtualenv venv
 # instead of: python3 -m venv venv
+```
 
 
 #### Step-by-Step Setup
 
-bash
+```bash
 # 1. Clone the repository
 git clone https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor.git
 cd Claude-Code-Usage-Monitor
@@ -878,13 +985,14 @@ chmod +x claude_monitor.py
 
 # 6. Run the monitor
 python claude_monitor.py
+```
 
 
 #### Daily Usage
 
 After initial setup, you only need:
 
-bash
+```bash
 # Navigate to project directory
 cd Claude-Code-Usage-Monitor
 
@@ -898,17 +1006,19 @@ source venv/bin/activate  # Linux/Mac
 
 # When done, deactivate
 deactivate
+```
 
 
 #### Pro Tip: Shell Alias
 
 Create an alias for quick access:
-bash
+```bash
 # Add to ~/.bashrc or ~/.zshrc
 alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && ./claude_monitor.py'
 
 # Then just run:
 claude-monitor
+```
 
 
 ## Troubleshooting
@@ -918,25 +1028,28 @@ claude-monitor
 #### "externally-managed-environment" Error
 
 On modern Linux distributions (Ubuntu 23.04+, Debian 12+, Fedora 38+), you may encounter:
+```
 error: externally-managed-environment
 × This environment is externally managed
+```
 
 
 **Solutions (in order of preference):**
 
 1. **Use uv (Recommended)**
 
-bash
+```bash
    # Install uv first
    curl -LsSf https://astral.sh/uv/install.sh | sh
 
    # Then install with uv
    uv tool install claude-monitor
+   ```
 
 
 2. **Use pipx (Isolated Environment)**
 
-bash
+```bash
    # Install pipx
    sudo apt install pipx  # Ubuntu/Debian
    # or
@@ -944,20 +1057,23 @@ bash
 
    # Install claude-monitor
    pipx install claude-monitor
+   ```
 
 
 3. **Use virtual environment**
 
-bash
+```bash
    python3 -m venv myenv
    source myenv/bin/activate
    pip install claude-monitor
+   ```
 
 
 4. **Force installation (Not Recommended)**
 
-bash
+```bash
    pip install --user claude-monitor --break-system-packages
+   ```
 
    ⚠️ **Warning**: This bypasses system protection and may cause conflicts. We strongly recommend using a virtual environment instead.
 
@@ -967,32 +1083,36 @@ If claude-monitor command is not found after pip installation:
 
 1. **Check if it's a PATH issue**
 
-bash
+```bash
    # Look for the warning message during pip install:
    # WARNING: The script claude-monitor is installed in '/home/username/.local/bin' which is not on PATH
+   ```
 
 
 2. **Add to PATH**
 
-bash
+```bash
    # Add this to ~/.bashrc or ~/.zshrc
    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
    # Reload shell
    source ~/.bashrc  # or source ~/.zshrc
+   ```
 
 
 3. **Verify installation location**
 
-bash
+```bash
    # Find where pip installed the script
    pip show -f claude-monitor | grep claude-monitor
+   ```
 
 
 4. **Run directly with Python**
 
-bash
+```bash
    python3 -m claude_monitor
+   ```
 
 
 #### Python Version Conflicts
@@ -1001,22 +1121,25 @@ If you have multiple Python versions:
 
 1. **Check Python version**
 
-bash
+```bash
    python3 --version
    pip3 --version
+   ```
 
 
 2. **Use specific Python version**
 
-bash
+```bash
    python3.11 -m pip install claude-monitor
    python3.11 -m claude_monitor
+   ```
 
 
 3. **Use uv (handles Python versions automatically)**
 
-bash
+```bash
    uv tool install claude-monitor
+   ```
 
 
 ### Runtime Issues
@@ -1030,8 +1153,9 @@ If you encounter the error No active session found, please follow these steps:
 2. **Configuration Path**:
    If the issue persists, consider specifying a custom configuration path. By default, Claude Code uses ~/.config/claude. You may need to adjust this path depending on your environment.
 
-bash
+```bash
 CLAUDE_CONFIG_DIR=~/.config/claude ./claude_monitor.py
+```
 
 
 
