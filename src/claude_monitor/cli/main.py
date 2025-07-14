@@ -268,7 +268,7 @@ def _get_initial_token_limit(
         try:
             # Use quick start mode for faster initial load
             usage_data: Optional[Dict[str, Any]] = analyze_usage(
-                hours_back=96*2,
+                hours_back=96 * 2,
                 quick_start=False,
                 use_cache=False,
                 data_path=str(data_path),
