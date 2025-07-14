@@ -86,6 +86,7 @@ changelog = "https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor/blob/m
 claude-monitor = "claude_monitor.__main__:main"
 claude-code-monitor = "claude_monitor.__main__:main"
 cmonitor = "claude_monitor.__main__:main"
+ccmonitor = "claude_monitor.__main__:main"
 ccm = "claude_monitor.__main__:main"
 
 [tool.setuptools.packages.find]

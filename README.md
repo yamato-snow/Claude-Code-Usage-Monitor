@@ -19,6 +19,7 @@ A beautiful real-time terminal monitoring tool for Claude AI token usage with ad
   - [📦 Installation with pip](#-installation-with-pip)
   - [🛠️ Other Package Managers](#️-other-package-managers)
 - [📖 Usage](#-usage)
+  - [Get Help](#get-help)
   - [Basic Usage](#basic-usage)
   - [Configuration Options](#configuration-options)
   - [Available Plans](#available-plans)
@@ -85,7 +86,7 @@ The fastest and easiest way to install and use the monitor:
 uv tool install claude-monitor
 
 # Run from anywhere
-claude-monitor  # or cmonitor for short
+claude-monitor  # or cmonitor, ccmonitor for short
 ```
 
 #### Install from Source
@@ -124,7 +125,7 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc  # or restart your terminal
 
 # Run from anywhere
-claude-monitor  # or cmonitor for short
+claude-monitor  # or cmonitor, ccmonitor for short
 ```
 
 >
@@ -145,7 +146,7 @@ claude-monitor  # or cmonitor for short
 pipx install claude-monitor
 
 # Run from anywhere
-claude-monitor  # or claude-code-monitor, cmonitor, ccm for short
+claude-monitor  # or claude-code-monitor, cmonitor, ccmonitor, ccm for short
 ```
 
 #### conda/mamba
@@ -154,10 +155,89 @@ claude-monitor  # or claude-code-monitor, cmonitor, ccm for short
 pip install claude-monitor
 
 # Run from anywhere
-claude-monitor  # or cmonitor for short
+claude-monitor  # or cmonitor, ccmonitor for short
 ```
 
 ## 📖 Usage
+
+### Get Help
+
+```bash
+# Show help information
+claude-monitor --help
+```
+
+#### Available Command-Line Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `--plan` | string | `custom` | Plan type: `pro`, `max5`, `max20`, or `custom` |
+| `--custom-limit-tokens` | int | None | Token limit for custom plan (must be > 0) |
+| `--timezone` | string | `auto` | Timezone (auto-detected). Examples: `UTC`, `America/New_York`, `Europe/London` |
+| `--time-format` | string | `auto` | Time format: `12h`, `24h`, or `auto` |
+| `--theme` | string | `auto` | Display theme: `light`, `dark`, `classic`, or `auto` |
+| `--refresh-rate` | int | `10` | Data refresh rate in seconds (1-60) |
+| `--refresh-per-second` | float | `0.75` | Display refresh rate in Hz (0.1-20.0) |
+| `--reset-hour` | int | None | Daily reset hour (0-23) |
+| `--log-level` | string | `INFO` | Logging level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
+| `--log-file` | path | None | Log file path |
+| `--debug` | flag | `False` | Enable debug logging |
+| `--version`, `-v` | flag | `False` | Show version information |
+| `--clear` | flag | `False` | Clear saved configuration |
+
+#### Plan Options
+
+| Plan | Token Limit | Cost Limit | Description |
+|------|-------------|------------|-------------|
+| `pro` | 19,000 | $18.00 | Claude Pro subscription |
+| `max5` | 88,000 | $35.00 | Claude Max5 subscription |
+| `max20` | 220,000 | $140.00 | Claude Max20 subscription |
+| `custom` | P90-based | $200.00 | Auto-detection with ML analysis |
+
+#### Command Aliases
+
+The tool can be invoked using any of these commands:
+- `claude-monitor` (primary)
+- `claude-code-monitor` (full name)
+- `cmonitor` (short)
+- `ccmonitor` (short alternative)
+- `ccm` (shortest)
+
+#### Save Flags Feature
+
+The monitor automatically saves your preferences to avoid re-specifying them on each run:
+
+**What Gets Saved:**
+- Theme preferences (`--theme`)
+- Timezone settings (`--timezone`)
+- Time format (`--time-format`)
+- Refresh rates (`--refresh-rate`, `--refresh-per-second`)
+- Reset hour (`--reset-hour`)
+- Custom token limits (`--custom-limit-tokens`)
+
+**Configuration Location:** `~/.claude-monitor/last_used.json`
+
+**Usage Examples:**
+```bash
+# First run - specify preferences
+claude-monitor --plan pro --theme dark --timezone "America/New_York"
+
+# Subsequent runs - preferences automatically restored
+claude-monitor --plan pro
+
+# Override saved settings for this session
+claude-monitor --plan pro --theme light
+
+# Clear all saved preferences
+claude-monitor --clear
+```
+
+**Key Features:**
+- ✅ Automatic parameter persistence between sessions
+- ✅ CLI arguments always override saved settings
+- ✅ Atomic file operations prevent corruption
+- ✅ Graceful fallback if config files are damaged
+- ✅ Plan parameter never saved (must specify each time)
 
 ### Basic Usage
 
@@ -169,6 +249,7 @@ claude-monitor
 # Alternative commands
 claude-code-monitor  # Full descriptive name
 cmonitor             # Short alias
+ccmonitor            # Short alternative
 ccm                  # Shortest alias
 
 # Exit the monitor
@@ -297,7 +378,7 @@ claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 - `--custom-limit-tokens`: Explicit token limits for custom plans
 - `--log-file` and `--log-level`: Advanced logging capabilities
 - `--clear`: Reset saved configuration
-- Command aliases: `claude-code-monitor`, `cmonitor`, `ccm` for convenience
+- Command aliases: `claude-code-monitor`, `cmonitor`, `ccmonitor`, `ccm` for convenience
 
 #### **Breaking Changes**
 - Package name changed from `claude-usage-monitor` to `claude-monitor`
