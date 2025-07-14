@@ -7,7 +7,7 @@
 
 A beautiful real-time terminal monitoring tool for Claude AI token usage with advanced analytics, machine learning-based predictions, and Rich UI. Track your token consumption, burn rate, cost analysis, and get intelligent predictions about session limits.
 
-![Claude Token Monitor Screenshot](https://raw.githubusercontent.com/Maciek-roboblog/Claude-Code-Usage-Monitor/main/doc/sc.png)
+![Claude Token Monitor Screenshot](https://raw.githubusercontent.com/Maciek-roboblog/Claude-Code-Usage-Monitor/main/doc/scnew.png)
 
 ---
 
@@ -81,17 +81,17 @@ The fastest and easiest way to install and use the monitor:
 
 #### Install from PyPI
 
-```bash
+bash
 # Install directly from PyPI with uv (easiest)
 uv tool install claude-monitor
 
 # Run from anywhere
 claude-monitor  # or cmonitor, ccmonitor for short
-```
+
 
 #### Install from Source
 
-```bash
+bash
 # Clone and install from source
 git clone https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor.git
 cd Claude-Code-Usage-Monitor
@@ -99,12 +99,12 @@ uv tool install .
 
 # Run from anywhere
 claude-monitor
-```
+
 
 #### First-time uv users
 If you don't have uv installed yet, get it with one command:
 
-```bash
+bash
 # On Linux/macOS:
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -112,11 +112,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 # After installation, restart your terminal
-```
+
 
 ### 📦 Installation with pip
 
-```bash
+bash
 # Install from PyPI
 pip install claude-monitor
 
@@ -126,99 +126,99 @@ source ~/.bashrc  # or restart your terminal
 
 # Run from anywhere
 claude-monitor  # or cmonitor, ccmonitor for short
-```
+
 
 >
-> **⚠️ PATH Setup**: If you see `WARNING: The script claude-monitor is installed in '/home/username/.local/bin' which is not on PATH`, follow the export PATH command above.
+> **⚠️ PATH Setup**: If you see WARNING: The script claude-monitor is installed in '/home/username/.local/bin' which is not on PATH, follow the export PATH command above.
 >
-> **⚠️ Important**: On modern Linux distributions (Ubuntu 23.04+, Debian 12+, Fedora 38+), you may encounter an "externally-managed-environment" error. Instead of using `--break-system-packages`, we strongly recommend:
+> **⚠️ Important**: On modern Linux distributions (Ubuntu 23.04+, Debian 12+, Fedora 38+), you may encounter an "externally-managed-environment" error. Instead of using --break-system-packages, we strongly recommend:
 > 1. **Use uv instead** (see above) - it's safer and easier
-> 2. **Use a virtual environment** - `python3 -m venv myenv && source myenv/bin/activate`
-> 3. **Use pipx** - `pipx install claude-usage-monitor`
+> 2. **Use a virtual environment** - python3 -m venv myenv && source myenv/bin/activate
+> 3. **Use pipx** - pipx install claude-usage-monitor
 >
 > See the Troubleshooting section for detailed solutions.
 
 ### 🛠️ Other Package Managers
 
 #### pipx (Isolated Environments)
-```bash
+bash
 # Install with pipx
 pipx install claude-monitor
 
 # Run from anywhere
 claude-monitor  # or claude-code-monitor, cmonitor, ccmonitor, ccm for short
-```
+
 
 #### conda/mamba
-```bash
+bash
 # Install with pip in conda environment
 pip install claude-monitor
 
 # Run from anywhere
 claude-monitor  # or cmonitor, ccmonitor for short
-```
+
 
 ## 📖 Usage
 
 ### Get Help
 
-```bash
+bash
 # Show help information
 claude-monitor --help
-```
+
 
 #### Available Command-Line Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `--plan` | string | `custom` | Plan type: `pro`, `max5`, `max20`, or `custom` |
-| `--custom-limit-tokens` | int | None | Token limit for custom plan (must be > 0) |
-| `--timezone` | string | `auto` | Timezone (auto-detected). Examples: `UTC`, `America/New_York`, `Europe/London` |
-| `--time-format` | string | `auto` | Time format: `12h`, `24h`, or `auto` |
-| `--theme` | string | `auto` | Display theme: `light`, `dark`, `classic`, or `auto` |
-| `--refresh-rate` | int | `10` | Data refresh rate in seconds (1-60) |
-| `--refresh-per-second` | float | `0.75` | Display refresh rate in Hz (0.1-20.0) |
-| `--reset-hour` | int | None | Daily reset hour (0-23) |
-| `--log-level` | string | `INFO` | Logging level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
-| `--log-file` | path | None | Log file path |
-| `--debug` | flag | `False` | Enable debug logging |
-| `--version`, `-v` | flag | `False` | Show version information |
-| `--clear` | flag | `False` | Clear saved configuration |
+| --plan | string | custom | Plan type: pro, max5, max20, or custom |
+| --custom-limit-tokens | int | None | Token limit for custom plan (must be > 0) |
+| --timezone | string | auto | Timezone (auto-detected). Examples: UTC, America/New_York, Europe/London |
+| --time-format | string | auto | Time format: 12h, 24h, or auto |
+| --theme | string | auto | Display theme: light, dark, classic, or auto |
+| --refresh-rate | int | 10 | Data refresh rate in seconds (1-60) |
+| --refresh-per-second | float | 0.75 | Display refresh rate in Hz (0.1-20.0) |
+| --reset-hour | int | None | Daily reset hour (0-23) |
+| --log-level | string | INFO | Logging level: DEBUG, INFO, WARNING, ERROR, CRITICAL |
+| --log-file | path | None | Log file path |
+| --debug | flag | False | Enable debug logging |
+| --version, -v | flag | False | Show version information |
+| --clear | flag | False | Clear saved configuration |
 
 #### Plan Options
 
 | Plan | Token Limit | Cost Limit | Description |
 |------|-------------|------------|-------------|
-| `pro` | 19,000 | $18.00 | Claude Pro subscription |
-| `max5` | 88,000 | $35.00 | Claude Max5 subscription |
-| `max20` | 220,000 | $140.00 | Claude Max20 subscription |
-| `custom` | P90-based | $200.00 | Auto-detection with ML analysis |
+| pro | 19,000 | $18.00 | Claude Pro subscription |
+| max5 | 88,000 | $35.00 | Claude Max5 subscription |
+| max20 | 220,000 | $140.00 | Claude Max20 subscription |
+| custom | P90-based | $200.00 | Auto-detection with ML analysis |
 
 #### Command Aliases
 
 The tool can be invoked using any of these commands:
-- `claude-monitor` (primary)
-- `claude-code-monitor` (full name)
-- `cmonitor` (short)
-- `ccmonitor` (short alternative)
-- `ccm` (shortest)
+- claude-monitor (primary)
+- claude-code-monitor (full name)
+- cmonitor (short)
+- ccmonitor (short alternative)
+- ccm (shortest)
 
 #### Save Flags Feature
 
 The monitor automatically saves your preferences to avoid re-specifying them on each run:
 
 **What Gets Saved:**
-- Theme preferences (`--theme`)
-- Timezone settings (`--timezone`)
-- Time format (`--time-format`)
-- Refresh rates (`--refresh-rate`, `--refresh-per-second`)
-- Reset hour (`--reset-hour`)
-- Custom token limits (`--custom-limit-tokens`)
+- Theme preferences (--theme)
+- Timezone settings (--timezone)
+- Time format (--time-format)
+- Refresh rates (--refresh-rate, --refresh-per-second)
+- Reset hour (--reset-hour)
+- Custom token limits (--custom-limit-tokens)
 
-**Configuration Location:** `~/.claude-monitor/last_used.json`
+**Configuration Location:** ~/.claude-monitor/last_used.json
 
 **Usage Examples:**
-```bash
+bash
 # First run - specify preferences
 claude-monitor --plan pro --theme dark --timezone "America/New_York"
 
@@ -230,7 +230,7 @@ claude-monitor --plan pro --theme light
 
 # Clear all saved preferences
 claude-monitor --clear
-```
+
 
 **Key Features:**
 - ✅ Automatic parameter persistence between sessions
@@ -242,7 +242,7 @@ claude-monitor --clear
 ### Basic Usage
 
 #### With uv tool installation (Recommended)
-```bash
+bash
 # Default (Custom plan with auto-detection)
 claude-monitor
 
@@ -254,16 +254,16 @@ ccm                  # Shortest alias
 
 # Exit the monitor
 # Press Ctrl+C to gracefully exit
-```
+
 
 #### Development mode
-If running from source, use `python -m claude_monitor` from the src/ directory.
+If running from source, use python -m claude_monitor from the src/ directory.
 
 ### Configuration Options
 
 #### Specify Your Plan
 
-```bash
+bash
 # Custom plan with P90 auto-detection (Default)
 claude-monitor --plan custom
 
@@ -278,21 +278,21 @@ claude-monitor --plan max20
 
 # Custom plan with explicit token limit
 claude-monitor --plan custom --custom-limit-tokens 100000
-```
+
 
 #### Custom Reset Times
 
-```bash
+bash
 # Reset at 3 AM
 claude-monitor --reset-hour 3
 
 # Reset at 10 PM
 claude-monitor --reset-hour 22
-```
+
 
 #### Performance and Display Configuration
 
-```bash
+bash
 # Adjust refresh rate (1-60 seconds, default: 10)
 claude-monitor --refresh-rate 5
 
@@ -307,13 +307,13 @@ claude-monitor --theme dark  # light, dark, classic, auto
 
 # Clear saved configuration
 claude-monitor --clear
-```
+
 
 #### Timezone Configuration
 
 The default timezone is **auto-detected from your system**. Override with any valid timezone:
 
-```bash
+bash
 # Use US Eastern Time
 claude-monitor --timezone America/New_York
 
@@ -325,11 +325,11 @@ claude-monitor --timezone UTC
 
 # Use London time
 claude-monitor --timezone Europe/London
-```
+
 
 #### Logging and Debugging
 
-```bash
+bash
 # Enable debug logging
 claude-monitor --debug
 
@@ -338,7 +338,7 @@ claude-monitor --log-file ~/.claude-monitor/logs/monitor.log
 
 # Set log level
 claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-```
+
 
 ### Available Plans
 
@@ -373,16 +373,16 @@ claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 - **Rich UI**: WCAG-compliant themes with automatic terminal background detection
 
 #### **New CLI Options**
-- `--refresh-per-second`: Configurable display refresh rate (0.1-20 Hz)
-- `--time-format`: Automatic 12h/24h format detection
-- `--custom-limit-tokens`: Explicit token limits for custom plans
-- `--log-file` and `--log-level`: Advanced logging capabilities
-- `--clear`: Reset saved configuration
-- Command aliases: `claude-code-monitor`, `cmonitor`, `ccmonitor`, `ccm` for convenience
+- --refresh-per-second: Configurable display refresh rate (0.1-20 Hz)
+- --time-format: Automatic 12h/24h format detection
+- --custom-limit-tokens: Explicit token limits for custom plans
+- --log-file and --log-level: Advanced logging capabilities
+- --clear: Reset saved configuration
+- Command aliases: claude-code-monitor, cmonitor, ccmonitor, ccm for convenience
 
 #### **Breaking Changes**
-- Package name changed from `claude-usage-monitor` to `claude-monitor`
-- Default plan changed from `pro` to `custom` (with auto-detection)
+- Package name changed from claude-usage-monitor to claude-monitor
+- Default plan changed from pro to custom (with auto-detection)
 - Minimum Python version increased to 3.9+
 - Command structure updated (see examples above)
 
@@ -393,7 +393,6 @@ claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 The new version features a complete rewrite with modular architecture following Single Responsibility Principle (SRP):
 
-```
 ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
 │   CLI Module    │  │ Settings/Config │  │ Error Handling  │
 │ (Pydantic-based│  │ (Type-safe)     │  │ (Sentry-ready)  │
@@ -410,7 +409,7 @@ The new version features a complete rewrite with modular architecture following 
 │ Core Models     │  │ Analysis Engine │  │ Terminal Themes │
 │ (Pydantic)      │  │ (P90 Calculator)│  │ (Adaptive)      │
 └─────────────────┘  └─────────────────┘  └─────────────────┘
-```
+
 
 ### Current Features
 
@@ -453,13 +452,12 @@ Claude Code operates on a **5-hour rolling session window system**:
 #### Session Reset Schedule
 
 **Example Session Timeline:**
-```
 10:30 AM - First message (Session A starts at 10 AM)
 03:00 PM - Session A expires (5 hours later)
 
 12:15 PM - First message (Session B starts 12PM)
 05:15 PM - Session B expires (5 hours later 5PM)
-```
+
 
 #### Burn Rate Calculation
 
@@ -493,7 +491,7 @@ The monitor calculates burn rate using sophisticated analysis:
 
 #### Dependencies (v3.0.0)
 
-```toml
+toml
 # Core dependencies (automatically installed)
 pytz>=2023.3                # Timezone handling
 rich>=13.7.0                # Rich terminal UI
@@ -503,7 +501,7 @@ numpy>=1.21.0               # Statistical calculations
 sentry-sdk>=1.40.0          # Error reporting (optional)
 pyyaml>=6.0                 # Configuration files
 tzdata                      # Windows timezone data
-```
+
 
 #### Python Requirements
 
@@ -541,13 +539,13 @@ The auto-detection system:
 #### 🌅 Morning Developer
 **Scenario**: You start work at 9 AM and want tokens to reset aligned with your schedule.
 
-```bash
+bash
 # Set custom reset time to 9 AM
 ./claude_monitor.py --reset-hour 9
 
 # With your timezone
 ./claude_monitor.py --reset-hour 9 --timezone US/Eastern
-```
+
 
 **Benefits**:
 - Reset times align with your work schedule
@@ -557,13 +555,13 @@ The auto-detection system:
 #### 🌙 Night Owl Coder
 **Scenario**: You often work past midnight and need flexible reset scheduling.
 
-```bash
+bash
 # Reset at midnight for clean daily boundaries
 ./claude_monitor.py --reset-hour 0
 
 # Late evening reset (11 PM)
 ./claude_monitor.py --reset-hour 23
-```
+
 
 **Strategy**:
 - Plan heavy coding sessions around reset times
@@ -573,13 +571,13 @@ The auto-detection system:
 #### 🔄 Heavy User with Variable Limits
 **Scenario**: Your token limits seem to change, and you're not sure of your exact plan.
 
-```bash
+bash
 # Auto-detect your highest previous usage
 claude-monitor --plan custom_max
 
 # Monitor with custom scheduling
 claude-monitor --plan custom_max --reset-hour 6
-```
+
 
 **Approach**:
 - Let auto-detection find your real limits
@@ -589,7 +587,7 @@ claude-monitor --plan custom_max --reset-hour 6
 #### 🌍 International User
 **Scenario**: You're working across different timezones or traveling.
 
-```bash
+bash
 # US East Coast
 claude-monitor --timezone America/New_York
 
@@ -601,77 +599,80 @@ claude-monitor --timezone Asia/Singapore
 
 # UTC for international team coordination
 claude-monitor --timezone UTC --reset-hour 12
-```
+
 
 #### ⚡ Quick Check
 **Scenario**: You just want to see current status without configuration.
 
-```bash
+bash
 # Just run it with defaults
 claude-monitor
 
 # Press Ctrl+C after checking status
-```
+
 
 ### Plan Selection Strategies
 
 #### How to Choose Your Plan
 
 **Start with Default (Recommended for New Users)**
-```bash
+bash
 # Pro plan detection with auto-switching
 claude-monitor
-```
+
 - Monitor will detect if you exceed Pro limits
 - Automatically switches to custom_max if needed
 - Shows notification when switching occurs
 
 **Known Subscription Users**
-```bash
+bash
 # If you know you have Max5
 claude-monitor --plan max5
 
 # If you know you have Max20
 claude-monitor --plan max20
-```
+
 
 **Unknown Limits**
-```bash
+bash
 # Auto-detect from previous usage
 claude-monitor --plan custom_max
-```
+
 
 ### Best Practices
 
 #### Setup Best Practices
 
 1. **Start Early in Sessions**
-   ```bash
+
+bash
    # Begin monitoring when starting Claude work (uv installation)
    claude-monitor
 
    # Or development mode
    ./claude_monitor.py
-   ```
+
    - Gives accurate session tracking from the start
    - Better burn rate calculations
    - Early warning for limit approaches
 
 2. **Use Modern Installation (Recommended)**
-   ```bash
+
+bash
    # Easy installation and updates with uv
    uv tool install claude-monitor
    claude-monitor --plan max5
-   ```
+
    - Clean system installation
    - Easy updates and maintenance
    - Available from anywhere
 
 3. **Custom Shell Alias (Legacy Setup)**
-   ```bash
+
+bash
    # Add to ~/.bashrc or ~/.zshrc (only for development setup)
    alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && ./claude_monitor.py'
-   ```
+
 
 #### Usage Best Practices
 
@@ -681,19 +682,21 @@ claude-monitor --plan custom_max
    - Plan big refactors around session resets
 
 2. **Strategic Session Planning**
-   ```bash
+
+bash
    # Plan heavy usage around reset times
    claude-monitor --reset-hour 9
-   ```
+
    - Schedule large tasks after resets
    - Use lighter tasks when approaching limits
    - Leverage multiple overlapping sessions
 
 3. **Timezone Awareness**
-   ```bash
+
+bash
    # Always use your actual timezone
    claude-monitor --timezone Europe/Warsaw
-   ```
+
    - Accurate reset time predictions
    - Better planning for work schedules
    - Correct session expiration estimates
@@ -702,12 +705,13 @@ claude-monitor --plan custom_max
 
 1. **Terminal Setup**
    - Use terminals with at least 80 character width
-   - Enable color support for better visual feedback (check `COLORTERM` environment variable)
+   - Enable color support for better visual feedback (check COLORTERM environment variable)
    - Consider dedicated terminal window for monitoring
    - Use terminals with truecolor support for best theme experience
 
 2. **Workflow Integration**
-   ```bash
+
+bash
    # Start monitoring with your development session (uv installation)
    tmux new-session -d -s claude-monitor 'claude-monitor'
 
@@ -716,7 +720,7 @@ claude-monitor --plan custom_max
 
    # Check status anytime
    tmux attach -t claude-monitor
-   ```
+
 
 3. **Multi-Session Strategy**
    - Remember sessions last exactly 5 hours
@@ -726,10 +730,10 @@ claude-monitor --plan custom_max
 #### Real-World Workflows
 
 **Large Project Development**
-```bash
+bash
 # Setup for sustained development
 claude-monitor --plan max20 --reset-hour 8 --timezone America/New_York
-```
+
 
 **Daily Routine**:
 1. **8:00 AM**: Fresh tokens, start major features
@@ -739,16 +743,16 @@ claude-monitor --plan max20 --reset-hour 8 --timezone America/New_York
 5. **4:00 PM**: Light tasks, prepare for evening session
 
 **Learning & Experimentation**
-```bash
+bash
 # Flexible setup for learning
 claude-monitor --plan pro
-```
+
 
 **Sprint Development**
-```bash
+bash
 # High-intensity development setup
 claude-monitor --plan max20 --reset-hour 6
-```
+
 
 ## 🔧 Development Installation
 
@@ -756,7 +760,7 @@ For contributors and developers who want to work with the source code:
 
 ### Quick Start (Development/Testing)
 
-```bash
+bash
 # Clone the repository
 git clone https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor.git
 cd Claude-Code-Usage-Monitor
@@ -766,7 +770,7 @@ pip install -e .
 
 # Run from source
 python -m claude_monitor
-```
+
 
 ### v3.0.0 Testing Features
 
@@ -778,7 +782,7 @@ The new version includes a comprehensive test suite:
 - **Performance tests** with benchmarking
 - **Mock objects** for isolated testing
 
-```bash
+bash
 # Run tests
 cd src/
 python -m pytest
@@ -788,7 +792,7 @@ python -m pytest --cov=claude_monitor --cov-report=html
 
 # Run specific test modules
 python -m pytest tests/test_analysis.py -v
-```
+
 
 ### Prerequisites
 
@@ -810,9 +814,9 @@ Using a virtual environment is **strongly recommended** because:
 
 #### Installing virtualenv (if needed)
 
-If you don't have `venv` module available:
+If you don't have venv module available:
 
-```bash
+bash
 # Ubuntu/Debian
 sudo apt-get update
 sudo apt-get install python3-venv
@@ -827,21 +831,21 @@ brew install python3
 # Windows (usually comes with Python)
 # If not available, reinstall Python from python.org
 # Make sure to check "Add Python to PATH" during installation
-```
 
-Alternatively, use the `virtualenv` package:
-```bash
+
+Alternatively, use the virtualenv package:
+bash
 # Install virtualenv via pip
 pip install virtualenv
 
 # Then create virtual environment with:
 virtualenv venv
 # instead of: python3 -m venv venv
-```
+
 
 #### Step-by-Step Setup
 
-```bash
+bash
 # 1. Clone the repository
 git clone https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor.git
 cd Claude-Code-Usage-Monitor
@@ -865,13 +869,13 @@ chmod +x claude_monitor.py
 
 # 6. Run the monitor
 python claude_monitor.py
-```
+
 
 #### Daily Usage
 
 After initial setup, you only need:
 
-```bash
+bash
 # Navigate to project directory
 cd Claude-Code-Usage-Monitor
 
@@ -885,18 +889,18 @@ source venv/bin/activate  # Linux/Mac
 
 # When done, deactivate
 deactivate
-```
+
 
 #### Pro Tip: Shell Alias
 
 Create an alias for quick access:
-```bash
+bash
 # Add to ~/.bashrc or ~/.zshrc
 alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && ./claude_monitor.py'
 
 # Then just run:
 claude-monitor
-```
+
 
 ## Troubleshooting
 
@@ -905,24 +909,25 @@ claude-monitor
 #### "externally-managed-environment" Error
 
 On modern Linux distributions (Ubuntu 23.04+, Debian 12+, Fedora 38+), you may encounter:
-```
 error: externally-managed-environment
 × This environment is externally managed
-```
+
 
 **Solutions (in order of preference):**
 
 1. **Use uv (Recommended)**
-   ```bash
+
+bash
    # Install uv first
    curl -LsSf https://astral.sh/uv/install.sh | sh
 
    # Then install with uv
    uv tool install claude-monitor
-   ```
+
 
 2. **Use pipx (Isolated Environment)**
-   ```bash
+
+bash
    # Install pipx
    sudo apt install pipx  # Ubuntu/Debian
    # or
@@ -930,86 +935,95 @@ error: externally-managed-environment
 
    # Install claude-monitor
    pipx install claude-monitor
-   ```
+
 
 3. **Use virtual environment**
-   ```bash
+
+bash
    python3 -m venv myenv
    source myenv/bin/activate
    pip install claude-monitor
-   ```
+
 
 4. **Force installation (Not Recommended)**
-   ```bash
+
+bash
    pip install --user claude-monitor --break-system-packages
-   ```
+
    ⚠️ **Warning**: This bypasses system protection and may cause conflicts. We strongly recommend using a virtual environment instead.
 
 #### Command Not Found After pip Install
 
-If `claude-monitor` command is not found after pip installation:
+If claude-monitor command is not found after pip installation:
 
 1. **Check if it's a PATH issue**
-   ```bash
+
+bash
    # Look for the warning message during pip install:
    # WARNING: The script claude-monitor is installed in '/home/username/.local/bin' which is not on PATH
-   ```
+
 
 2. **Add to PATH**
-   ```bash
+
+bash
    # Add this to ~/.bashrc or ~/.zshrc
    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
    # Reload shell
    source ~/.bashrc  # or source ~/.zshrc
-   ```
+
 
 3. **Verify installation location**
-   ```bash
+
+bash
    # Find where pip installed the script
    pip show -f claude-monitor | grep claude-monitor
-   ```
+
 
 4. **Run directly with Python**
-   ```bash
+
+bash
    python3 -m claude_monitor
-   ```
+
 
 #### Python Version Conflicts
 
 If you have multiple Python versions:
 
 1. **Check Python version**
-   ```bash
+
+bash
    python3 --version
    pip3 --version
-   ```
+
 
 2. **Use specific Python version**
-   ```bash
+
+bash
    python3.11 -m pip install claude-monitor
    python3.11 -m claude_monitor
-   ```
+
 
 3. **Use uv (handles Python versions automatically)**
-   ```bash
+
+bash
    uv tool install claude-monitor
-   ```
+
 
 ### Runtime Issues
 
 #### No active session found
-If you encounter the error `No active session found`, please follow these steps:
+If you encounter the error No active session found, please follow these steps:
 
 1. **Initial Test**:
    Launch Claude Code and send at least two messages. In some cases, the session may not initialize correctly on the first attempt, but it resolves after a few interactions.
 
 2. **Configuration Path**:
-   If the issue persists, consider specifying a custom configuration path. By default, Claude Code uses `~/.config/claude`. You may need to adjust this path depending on your environment.
+   If the issue persists, consider specifying a custom configuration path. By default, Claude Code uses ~/.config/claude. You may need to adjust this path depending on your environment.
 
-```bash
+bash
 CLAUDE_CONFIG_DIR=~/.config/claude ./claude_monitor.py
-```
+
 
 
 ## 📞 Contact

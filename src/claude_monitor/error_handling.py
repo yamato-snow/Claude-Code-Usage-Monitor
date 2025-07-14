@@ -41,11 +41,16 @@ def report_error(
 
     extra_data = {"context": context_name, "data": context_data, "tags": tags}
 
-    log_method(
-        f"Error in {component}: {exception}",
-        exc_info=True,
-        extra=extra_data,
-    )
+    try:
+        log_method(
+            f"Error in {component}: {exception}",
+            exc_info=True,
+            extra=extra_data,
+        )
+    except Exception:
+        # If logging itself fails, we can't do much more than silently continue
+        # to avoid cascading failures
+        pass
 
 
 def report_file_error(
