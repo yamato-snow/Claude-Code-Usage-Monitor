@@ -408,109 +408,42 @@ claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 The new version features a complete rewrite with modular architecture following Single Responsibility Principle (SRP):
 
-<table style="border-collapse: collapse; width: 100%; margin: auto; font-family: sans-serif;">
-  <caption style="caption-side: top; text-align: center; font-size: 1.25em; margin-bottom: 0.5em;">
-    🎯 <strong>Claude Code Usage Monitor v3.0.0 Architecture</strong>
-  </caption>
+### 🖥️ User Interface Layer
 
-  <thead>
-    <tr>
-      <th colspan="4"
-          style="background: #f0f0f0; padding: 12px 8px; text-align: left; font-size: 1.1em;">
-        🖥️ <strong>User Interface Layer</strong>
-      </th>
-    </tr>
-    <tr>
-      <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">
-        <strong>CLI Module</strong><br><small>(Pydantic-based)</small>
-      </th>
-      <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">
-        <strong>Settings/Config</strong><br><small>(Type-safe)</small>
-      </th>
-      <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">
-        <strong>Error Handling</strong><br><small>(Sentry-ready)</small>
-      </th>
-      <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">
-        <strong>Rich Terminal UI</strong><br><small>(Adaptive Theme)</small>
-      </th>
-    </tr>
-  </thead>
+| Component            | Description           |
+| -------------------- | --------------------- |
+| **CLI Module**       | Pydantic-based        |
+| **Settings/Config**  | Type-safe             |
+| **Error Handling**   | Sentry-ready          |
+| **Rich Terminal UI** | Adaptive Theme        |
 
-  <tbody>
-    <tr>
-      <td colspan="4"
-          style="text-align: center; padding: 8px; font-size: 1.5em;">⬇️</td>
-    </tr>
-    <tr>
-      <th colspan="4"
-          style="background: #f0f0f0; padding: 12px 8px; text-align: left; font-size: 1.1em;">
-        🎛️ <strong>Monitoring Orchestrator</strong>
-      </th>
-    </tr>
-    <tr>
-      <td colspan="4"
-          style="border: 1px solid #ddd; padding: 12px;">
-        <strong>🧠 Central Control Hub</strong><br>
-        • Session Management  • Real-time Data Flow  • Component Coordination
-      </td>
-    </tr>
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>📊 Data Manager</strong><br>
-        • Cache Mgmt  • File I/O  • State Persist
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>🔄 Session Monitor</strong><br>
-        • Real-time  • 5hr Windows  • Token Track
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>🎨 UI Controller</strong><br>
-        • Rich Display  • Progress Bars  • Theme System
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>📈 Analytics</strong><br>
-        • P90 Calculator  • Burn Rate  • Predictions
-      </td>
-    </tr>
-    <tr>
-      <td colspan="4"
-          style="text-align: center; padding: 8px; font-size: 1.5em;">⬇️</td>
-    </tr>
-    <tr>
-      <th colspan="4"
-          style="background: #f0f0f0; padding: 12px 8px; text-align: left; font-size: 1.1em;">
-        🏗️ <strong>Foundation Layer</strong>
-      </th>
-    </tr>
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>Core Models</strong><br>
-        • Session Data  • Config Schema  • Type Safety
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>Analysis Engine</strong><br>
-        • ML Algorithms  • Statistical  • Forecasting
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>Terminal Themes</strong><br>
-        • Auto-detection  • WCAG Colors  • Contrast Opt
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        <strong>Claude API Data</strong><br>
-        • Token Tracking  • Cost Calculator  • Session Blocks
-      </td>
-    </tr>
-  </tbody>
+---
 
-  <tfoot>
-    <tr>
-      <td colspan="4"
-          style="padding: 8px; text-align: center; font-style: italic;">
-        Claude Config Files → Data Layer → Analysis Engine → UI Components → Terminal Display
-      </td>
-    </tr>
-  </tfoot>
-</table>
+### 🎛️ Monitoring Orchestrator
+
+| Component                | Key Responsibilities                                             |
+| ------------------------ | ---------------------------------------------------------------- |
+| **Central Control Hub**  | Session Mgmt · Real-time Data Flow · Component Coordination      |
+| **Data Manager**         | Cache Mgmt · File I/O · State Persist                           |
+| **Session Monitor**      | Real-time · 5 hr Windows · Token Track                           |
+| **UI Controller**        | Rich Display · Progress Bars · Theme System                     |
+| **Analytics**            | P90 Calculator · Burn Rate · Predictions                        |
+
+---
+
+### 🏗️ Foundation Layer
+
+| Component           | Core Features                                           |
+| ------------------- | ------------------------------------------------------- |
+| **Core Models**     | Session Data · Config Schema · Type Safety             |
+| **Analysis Engine** | ML Algorithms · Statistical · Forecasting              |
+| **Terminal Themes** | Auto-detection · WCAG Colors · Contrast Opt            |
+| **Claude API Data** | Token Tracking · Cost Calculator · Session Blocks      |
+
+---
+
+**🔄 Data Flow:**  
+Claude Config Files → Data Layer → Analysis Engine → UI Components → Terminal Display
 
 
 ### Current Features
