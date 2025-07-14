@@ -442,7 +442,7 @@ The new version features a complete rewrite with modular architecture following 
 
 ---
 
-**🔄 Data Flow:**  
+**🔄 Data Flow:**
 Claude Config Files → Data Layer → Analysis Engine → UI Components → Terminal Display
 
 
