@@ -38,13 +38,9 @@ def report_error(
     """
     logger = logging.getLogger(component)
     log_method = getattr(logger, level.value, logger.error)
-    
-    extra_data = {
-        "context": context_name, 
-        "data": context_data,
-        "tags": tags
-    }
-    
+
+    extra_data = {"context": context_name, "data": context_data, "tags": tags}
+
     log_method(
         f"Error in {component}: {exception}",
         exc_info=True,

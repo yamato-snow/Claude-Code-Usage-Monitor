@@ -38,7 +38,7 @@ class PlanConfig:
 
     @property
     def formatted_token_limit(self) -> str:
-        """Human-readable token limit (e.g., '44k' instead of '44000')."""
+        """Human-readable token limit (e.g., '19k' instead of '19000')."""
         if self.token_limit >= 1_000:
             return f"{self.token_limit // 1_000}k"
         return str(self.token_limit)
@@ -46,7 +46,7 @@ class PlanConfig:
 
 PLAN_LIMITS: Dict[PlanType, Dict[str, Any]] = {
     PlanType.PRO: {
-        "token_limit": 44_000,
+        "token_limit": 19_000,
         "cost_limit": 18.0,
         "message_limit": 250,
         "display_name": "Pro",
@@ -84,7 +84,7 @@ class Plans:
     DEFAULT_TOKEN_LIMIT: int = _DEFAULTS["token_limit"]
     DEFAULT_COST_LIMIT: float = _DEFAULTS["cost_limit"]
     DEFAULT_MESSAGE_LIMIT: int = _DEFAULTS["message_limit"]
-    COMMON_TOKEN_LIMITS: List[int] = [44_000, 88_000, 220_000, 880_000]
+    COMMON_TOKEN_LIMITS: List[int] = [19_000, 88_000, 220_000, 880_000]
     LIMIT_DETECTION_THRESHOLD: float = 0.95
 
     @classmethod

@@ -253,10 +253,10 @@ class AdvancedCustomLimitDisplay:
         """Calculate percentiles from session data."""
         if not sessions:
             return {
-                "tokens": {"p50": 44000, "p75": 66000, "p90": 88000, "p95": 110000},
+                "tokens": {"p50": 19000, "p75": 66000, "p90": 88000, "p95": 110000},
                 "costs": {"p50": 100.0, "p75": 150.0, "p90": 200.0, "p95": 250.0},
                 "messages": {"p50": 150, "p75": 200, "p90": 250, "p95": 300},
-                "averages": {"tokens": 44000, "cost": 100.0, "messages": 150},
+                "averages": {"tokens": 19000, "cost": 100.0, "messages": 150},
                 "count": 0,
             }
 

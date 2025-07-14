@@ -47,9 +47,9 @@ A beautiful real-time terminal monitoring tool for Claude AI token usage with ad
 
 ### 🚀 **v3.0.0 Major Update - Complete Architecture Rewrite**
 
+- **🔮 ML-based predictions** - P90 percentile calculations and intelligent session limit detection
 - **🔄 Real-time monitoring** - Configurable refresh rates (0.1-20 Hz) with intelligent display updates
 - **📊 Advanced Rich UI** - Beautiful color-coded progress bars, tables, and layouts with WCAG-compliant contrast
-- **🔮 ML-based predictions** - P90 percentile calculations and intelligent session limit detection
 - **🤖 Smart auto-detection** - Automatic plan switching with custom limit discovery
 - **📋 Enhanced plan support** - Updated limits: Pro (44k), Max5 (88k), Max20 (220k), Custom (P90-based)
 - **⚠️ Advanced warning system** - Multi-level alerts with cost and time predictions
@@ -261,41 +261,19 @@ claude-monitor --log-level WARNING  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 ### Available Plans
 
-| Plan | Token Limit | Best For |
-|------|-------------|----------|
+| Plan | Token Limit     | Best For |
+|------|-----------------|----------|
 | **custom** | P90 auto-detect | Intelligent limit detection (default) |
-| **pro** | ~44,000 | Claude Pro subscription |
-| **max5** | ~88,000 | Claude Max5 subscription |
-| **max20** | ~220,000 | Claude Max20 subscription |
+| **pro** | ~19,000         | Claude Pro subscription |
+| **max5** | ~88,000         | Claude Max5 subscription |
+| **max20** | ~220,000        | Claude Max20 subscription |
 
 #### Advanced Plan Features
 
 - **P90 Analysis**: Custom plan uses 90th percentile calculations from your usage history
-- **Auto-switching**: Automatically switches plans when limits are exceeded
 - **Cost Tracking**: Model-specific pricing with cache token calculations
 - **Limit Detection**: Intelligent threshold detection with 95% confidence
 
-
-## 🙏 Please Help Test This Release!
-
-> **We need your help!** This is a new release and we want to ensure it works perfectly on all systems.
->
-> **If something doesn't work:**
-> 1. Switch to the [develop branch](https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor/tree/develop) for the latest fixes:
->    ```bash
->    git clone -b develop https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor.git
->    cd Claude-Code-Usage-Monitor
->    python3 -m venv venv
->    source venv/bin/activate  # On Windows: venv\Scripts\activate
->    pip install -e .
->    claude-monitor
->    ```
-> 2. Create an issue with title format: **[MAIN-PROBLEM]: Your specific problem**
->    - Example: `[MAIN-PROBLEM]: Command not found after pip install on Ubuntu 24.04`
->    - Include your OS, Python version, and installation method
->    - [Create Issue Here](https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor/issues/new)
->
-> **Thank you for helping make this tool better! 🚀**
 
 ## 🚀 What's New in v3.0.0
 
@@ -393,18 +371,13 @@ Claude Code operates on a **5-hour rolling session window system**:
 
 #### Session Reset Schedule
 
-**Default reference times** (in your configured timezone):
-- `04:00`, `09:00`, `14:00`, `18:00`, `23:00`
-
-> **⚠️ Important**: These are reference times for planning. Your actual token refresh happens exactly 5 hours after YOUR first message in each session.
-
 **Example Session Timeline:**
 ```
-10:30 AM - First message (Session A starts)
-03:30 PM - Session A expires (5 hours later)
+10:30 AM - First message (Session A starts at 10 AM)
+03:00 PM - Session A expires (5 hours later)
 
-12:15 PM - First message (Session B starts)
-05:15 PM - Session B expires (5 hours later)
+12:15 PM - First message (Session B starts 12PM)
+05:15 PM - Session B expires (5 hours later 5PM)
 ```
 
 #### Burn Rate Calculation
@@ -422,11 +395,11 @@ The monitor calculates burn rate using sophisticated analysis:
 #### v3.0.0 Updated Plan Limits
 
 | Plan | Limit (Tokens) | Cost Limit | Messages | Algorithm |
-|------|---------------|------------|----------|-----------|
-| **Claude Pro** | 44,000 | $18.00 | 250 | Fixed limit |
-| **Claude Max5** | 88,000 | $35.00 | 1,000 | Fixed limit |
-| **Claude Max20** | 220,000 | $140.00 | 2,000 | Fixed limit |
-| **Custom** | P90-based | $200.00 | 250+ | Machine learning |
+|------|----------------|------------|----------|-----------|
+| **Claude Pro** | 19,000         | $18.00 | 250 | Fixed limit |
+| **Claude Max5** | 88,000         | $35.00 | 1,000 | Fixed limit |
+| **Claude Max20** | 220,000        | $140.00 | 2,000 | Fixed limit |
+| **Custom** | P90-based      | $200.00 | 250+ | Machine learning |
 
 #### Advanced Limit Detection
 
