@@ -330,12 +330,4 @@ class ModelUsageBar(BaseProgressBar):
         else:
             summary = f"Other {other_percentage:.1f}%"
 
-        if len(model_names) > 0:
-            model_list = ", ".join(model_names[:3])
-            if len(model_names) > 3:
-                model_list += f" +{len(model_names) - 3} more"
-            debug_info = f" ({model_list})"
-        else:
-            debug_info = ""
-
-        return f"🤖 [{bar_display}] {summary}{debug_info}"
+        return f"🤖 [{bar_display}] {summary}"

@@ -1,4 +1,4 @@
-# 🎯 Claude Code Usage Monitor v3.0.0
+# 🎯 Claude Code Usage Monitor
 [![PyPI Version](https://img.shields.io/pypi/v/claude-monitor.svg)](https://pypi.org/project/claude-monitor/)
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -63,6 +63,15 @@ A beautiful real-time terminal monitoring tool for Claude AI token usage with ad
 - **🧪 Extensive testing** - 100+ test cases with full coverage
 - **🎯 Error reporting** - Optional Sentry integration for production monitoring
 - **⚡ Performance optimized** - Advanced caching and efficient data processing
+
+### 📋 Default Custom Plan
+
+The **Custom plan** is now the default option, specifically designed for 5-hour Claude Code sessions. It monitors three critical metrics:
+- **Token usage** - Tracks your token consumption
+- **Messages usage** - Monitors message count
+- **Cost usage** - The most important metric for long sessions
+
+The Custom plan automatically adapts to your usage patterns by analyzing all your sessions from the last 192 hours (8 days) and calculating personalized limits based on your actual usage. This ensures accurate predictions and warnings tailored to your specific workflow.
 
 
 ## 🚀 Installation

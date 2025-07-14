@@ -82,19 +82,20 @@ class AdaptiveColorScheme:
                 "value": "color(235)",  # Very dark gray (#262626) - 16:1 contrast
                 "dim": "color(243)",  # Medium gray (#767676) - 5:1 contrast
                 "separator": "color(240)",  # Light gray (#585858) - 6:1 contrast
-                "progress_bar": "color(22)",  # Dark green (#005f00) - matches success
+                "progress_bar": "black",  # Pure black for light theme
                 "highlight": "color(124)",  # Dark red (#af0000) - matches error
                 # Cost styles
-                "cost.low": "color(22)",  # Dark green
-                "cost.medium": "color(166)",  # Dark orange
-                "cost.high": "color(124)",  # Dark red
+                "cost.low": "black",  # Pure black for light theme
+                "cost.medium": "black",  # Pure black for light theme
+                "cost.high": "black",  # Pure black for light theme
                 # Table styles
                 "table.border": "color(238)",  # Medium-dark gray for better visibility
                 "table.header": "bold color(17)",  # Bold deep blue
                 "table.row": "color(235)",  # Very dark gray
                 "table.row.alt": "color(238)",  # Slightly lighter gray
                 # Progress styles
-                "progress.bar.fill": "color(240)",  # Semi-black (darker gray) for light theme
+                "progress.bar.fill": "black",  # Pure black for light theme
+                "progress.bar": "black",  # Pure black for light theme (fallback)
                 "progress.bar.empty": "color(250)",  # Very light gray for light theme
                 "progress.percentage": "bold color(235)",  # Bold very dark gray
                 # Chart styles
@@ -138,19 +139,20 @@ class AdaptiveColorScheme:
                 "value": "color(253)",  # Very light gray (#dadada) - 17:1 contrast
                 "dim": "color(245)",  # Medium light gray (#8a8a8a) - 7:1 contrast
                 "separator": "color(248)",  # Light gray (#a8a8a8) - 9:1 contrast
-                "progress_bar": "color(118)",  # Light green (#87ff00) - matches success
+                "progress_bar": "white",  # Pure white for dark theme
                 "highlight": "color(203)",  # Light red (#ff5f5f) - matches error
                 # Cost styles
-                "cost.low": "color(118)",  # Light green
-                "cost.medium": "color(214)",  # Orange
-                "cost.high": "color(203)",  # Light red
+                "cost.low": "white",  # Pure white for dark theme
+                "cost.medium": "white",  # Pure white for dark theme
+                "cost.high": "white",  # Pure white for dark theme
                 # Table styles
                 "table.border": "color(248)",  # Light gray
                 "table.header": "bold color(117)",  # Bold light blue
                 "table.row": "color(253)",  # Very light gray
                 "table.row.alt": "color(251)",  # Slightly darker gray
                 # Progress styles
-                "progress.bar.fill": "color(250)",  # Semi-white (light gray) for dark theme
+                "progress.bar.fill": "white",  # Pure white for dark theme
+                "progress.bar": "white",  # Pure white for dark theme (fallback)
                 "progress.bar.empty": "color(238)",  # Darker gray for dark theme
                 "progress.percentage": "bold color(253)",  # Bold very light gray
                 # Chart styles
