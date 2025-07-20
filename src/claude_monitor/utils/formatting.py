@@ -15,11 +15,11 @@ logger = logging.getLogger(__name__)
 
 def format_number(value: Union[int, float], decimals: int = 0) -> str:
     """Format number with thousands separator.
-    
+
     Args:
         value: Number to format
         decimals: Number of decimal places (default: 0)
-        
+
     Returns:
         Formatted number string with thousands separator
     """

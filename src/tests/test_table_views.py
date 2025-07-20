@@ -1,7 +1,7 @@
 """Tests for table views module."""
 
 from typing import Any, Dict, List
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 from rich.table import Table
