@@ -22,7 +22,7 @@ class TableViewsController:
 
     def __init__(self, console: Optional[Console] = None):
         """Initialize the table views controller.
-        
+
         Args:
             console: Optional Console instance for rich output
         """
@@ -236,10 +236,10 @@ class TableViewsController:
             # Show first 3 models and count of remaining
             displayed_models = models[:3]
             remaining_count = len(models) - 3
-            
+
             formatted_list = [f"• {model}" for model in displayed_models]
             formatted_list.append(f"• ... and {remaining_count} more")
-            
+
             return "\n".join(formatted_list)
 
     def create_no_data_display(self, view_type: str) -> Panel:
@@ -295,7 +295,7 @@ class TableViewsController:
             return self.create_monthly_table(aggregate_data, totals, timezone)
         else:
             raise ValueError(f"Invalid view type: {view_type}")
-    
+
     def display_aggregated_view(
         self,
         data: List[Dict[str, Any]],
@@ -306,7 +306,7 @@ class TableViewsController:
         console: Optional[Console] = None,
     ) -> None:
         """Display aggregated view with table and summary.
-        
+
         Args:
             data: Aggregated data
             view_mode: View type ('daily' or 'monthly')
@@ -322,7 +322,7 @@ class TableViewsController:
             else:
                 print(no_data_display)
             return
-            
+
         # Calculate totals
         totals = {
             "input_tokens": sum(d["input_tokens"] for d in data),
@@ -337,19 +337,19 @@ class TableViewsController:
             "total_cost": sum(d["total_cost"] for d in data),
             "entries_count": sum(d.get("entries_count", 0) for d in data),
         }
-        
+
         # Determine period for summary
         if view_mode == "daily":
             period = f"{data[0]['date']} to {data[-1]['date']}" if data else "No data"
         else:  # monthly
             period = f"{data[0]['month']} to {data[-1]['month']}" if data else "No data"
-        
+
         # Create and display summary panel
         summary_panel = self.create_summary_panel(view_mode, totals, period)
-        
+
         # Create and display table
         table = self.create_aggregate_table(data, totals, view_mode, timezone)
-        
+
         # Display using console if provided
         if console:
             console.print(summary_panel)

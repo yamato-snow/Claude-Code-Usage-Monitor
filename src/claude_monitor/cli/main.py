@@ -6,7 +6,6 @@ import logging
 import signal
 import sys
 import threading
-import time
 import traceback
 from pathlib import Path
 from typing import Any, Callable, Dict, List, NoReturn, Optional, Union
@@ -111,7 +110,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 def _run_monitoring(args: argparse.Namespace) -> None:
     """Main monitoring implementation without facade."""
     view_mode = getattr(args, "view", "realtime")
-    
+
     if hasattr(args, "theme") and args.theme:
         console = get_themed_console(force_theme=args.theme.lower())
     else:
@@ -129,7 +128,7 @@ def _run_monitoring(args: argparse.Namespace) -> None:
         data_path: Path = data_paths[0]
         logger = logging.getLogger(__name__)
         logger.info(f"Using data path: {data_path}")
-        
+
         # Handle different view modes
         if view_mode in ["daily", "monthly"]:
             _run_table_view(args, data_path, view_mode, console)
@@ -229,17 +228,17 @@ def _run_monitoring(args: argparse.Namespace) -> None:
 
             # Main loop - use event to wait for shutdown signal
             shutdown_event = threading.Event()
-            
+
             def signal_handler(signum, frame):
                 """Handle shutdown signals."""
                 logger.info(f"Received signal {signum}, shutting down...")
                 shutdown_event.set()
-            
+
             # Register signal handlers (Windows-compatible)
             if sys.platform != "win32":
                 signal.signal(signal.SIGTERM, signal_handler)
             signal.signal(signal.SIGINT, signal_handler)
-            
+
             # Wait for shutdown signal
             shutdown_event.wait()
         finally:
@@ -391,7 +390,7 @@ def _run_table_view(
 ) -> None:
     """Run table view mode (daily/monthly)."""
     logger = logging.getLogger(__name__)
-    
+
     try:
         # Create aggregator with appropriate mode
         aggregator = UsageAggregator(
@@ -399,18 +398,18 @@ def _run_table_view(
             aggregation_mode=view_mode,
             timezone=args.timezone,
         )
-        
+
         # Create table controller
         controller = TableViewsController(console=console)
-        
+
         # Get aggregated data
         logger.info(f"Loading {view_mode} usage data...")
         aggregated_data = aggregator.aggregate()
-        
+
         if not aggregated_data:
             print_themed(f"No usage data found for {view_mode} view", style="warning")
             return
-            
+
         # Display the table
         controller.display_aggregated_view(
             data=aggregated_data,
@@ -419,24 +418,24 @@ def _run_table_view(
             plan=args.plan,
             token_limit=_get_initial_token_limit(args, data_path),
         )
-        
+
         # Wait for user to press Ctrl+C
         print_themed("\nPress Ctrl+C to exit", style="info")
         try:
             # Use event-based waiting instead of busy loop
             exit_event = threading.Event()
-            
+
             def exit_handler(signum, frame):
                 """Handle exit signal."""
                 exit_event.set()
-            
+
             signal.signal(signal.SIGINT, exit_handler)
             exit_event.wait()
-            
+
             print_themed("\nExiting...", style="info")
         except KeyboardInterrupt:
             print_themed("\nExiting...", style="info")
-        
+
     except Exception as e:
         logger.error(f"Error in table view: {e}", exc_info=True)
         print_themed(f"Error displaying {view_mode} view: {e}", style="error")

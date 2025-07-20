@@ -85,7 +85,7 @@ class UsageAggregator:
 
     def __init__(self, data_path: str, aggregation_mode: str = "daily", timezone: str = "UTC"):
         """Initialize the aggregator.
-        
+
         Args:
             data_path: Path to the data directory
             aggregation_mode: Mode of aggregation ('daily' or 'monthly')
@@ -246,29 +246,29 @@ class UsageAggregator:
             "total_cost": total_stats.cost,
             "entries_count": total_stats.count,
         }
-    
+
     def aggregate(self) -> List[Dict[str, Any]]:
         """Main aggregation method that reads data and returns aggregated results.
-        
+
         Returns:
             List of aggregated data based on aggregation_mode
         """
         from claude_monitor.data.reader import load_usage_entries
-        
+
         logger.info(f"Starting aggregation in {self.aggregation_mode} mode")
-        
+
         # Load usage entries
         entries, _ = load_usage_entries(data_path=self.data_path)
-        
+
         if not entries:
             logger.warning("No usage entries found")
             return []
-        
+
         # Apply timezone to entries
         for entry in entries:
             if entry.timestamp.tzinfo is None:
                 entry.timestamp = self.timezone_handler.ensure_timezone(entry.timestamp)
-        
+
         # Aggregate based on mode
         if self.aggregation_mode == "daily":
             return self.aggregate_daily(entries)
