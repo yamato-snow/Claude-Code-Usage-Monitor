@@ -664,10 +664,10 @@ _theme_manager: ThemeManager = ThemeManager()
 
 def get_theme(name: Optional[str] = None) -> Theme:
     """Get Rich theme by name or auto-detect.
-    
+
     Args:
         name: Theme name ('light', 'dark', 'classic') or None for auto-detection
-        
+
     Returns:
         Rich Theme object
     """

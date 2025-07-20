@@ -323,8 +323,8 @@ class TableViewsController:
             "cache_creation_tokens": sum(d["cache_creation_tokens"] for d in data),
             "cache_read_tokens": sum(d["cache_read_tokens"] for d in data),
             "total_tokens": sum(
-                d["input_tokens"] + d["output_tokens"] + 
-                d["cache_creation_tokens"] + d["cache_read_tokens"] 
+                d["input_tokens"] + d["output_tokens"] +
+                d["cache_creation_tokens"] + d["cache_read_tokens"]
                 for d in data
             ),
             "total_cost": sum(d["total_cost"] for d in data),

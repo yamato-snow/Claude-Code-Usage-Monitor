@@ -5,7 +5,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import pytz
 from pydantic import Field, field_validator
@@ -103,7 +103,7 @@ class Settings(BaseSettings):
         default="custom",
         description="Plan type (pro, max5, max20, custom)",
     )
-    
+
     view: Literal["realtime", "daily", "monthly", "session"] = Field(
         default="realtime",
         description="View mode (realtime, daily, monthly, session)",
@@ -183,7 +183,7 @@ class Settings(BaseSettings):
                 f"Invalid plan: {v}. Must be one of: {', '.join(valid_plans)}"
             )
         return v
-    
+
     @field_validator("view", mode="before")
     @classmethod
     def validate_view(cls, v: Any) -> str:

@@ -6,7 +6,6 @@ import logging
 import signal
 import sys
 import time
-import threading
 import traceback
 from pathlib import Path
 from typing import Any, Callable, Dict, List, NoReturn, Optional, Union
