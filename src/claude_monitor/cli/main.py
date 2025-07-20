@@ -5,6 +5,7 @@ import contextlib
 import logging
 import signal
 import sys
+import time
 import threading
 import traceback
 from pathlib import Path
@@ -226,21 +227,14 @@ def _run_monitoring(args: argparse.Namespace) -> None:
             if not orchestrator.wait_for_initial_data(timeout=10.0):
                 logger.warning("Timeout waiting for initial data")
 
-            # Main loop - use event to wait for shutdown signal
-            shutdown_event = threading.Event()
-
-            def signal_handler(signum, frame):
-                """Handle shutdown signals."""
-                logger.info(f"Received signal {signum}, shutting down...")
-                shutdown_event.set()
-
-            # Register signal handlers (Windows-compatible)
-            if sys.platform != "win32":
-                signal.signal(signal.SIGTERM, signal_handler)
-            signal.signal(signal.SIGINT, signal_handler)
-
-            # Wait for shutdown signal
-            shutdown_event.wait()
+            # Main loop - live display is already active
+            # Use signal.pause() for more efficient waiting
+            try:
+                signal.pause()
+            except AttributeError:
+                # Fallback for Windows which doesn't support signal.pause()
+                while True:
+                    time.sleep(1)
         finally:
             # Stop monitoring first
             if "orchestrator" in locals():
@@ -422,17 +416,13 @@ def _run_table_view(
         # Wait for user to press Ctrl+C
         print_themed("\nPress Ctrl+C to exit", style="info")
         try:
-            # Use event-based waiting instead of busy loop
-            exit_event = threading.Event()
-
-            def exit_handler(signum, frame):
-                """Handle exit signal."""
-                exit_event.set()
-
-            signal.signal(signal.SIGINT, exit_handler)
-            exit_event.wait()
-
-            print_themed("\nExiting...", style="info")
+            # Use signal.pause() for more efficient waiting
+            try:
+                signal.pause()
+            except AttributeError:
+                # Fallback for Windows which doesn't support signal.pause()
+                while True:
+                    time.sleep(1)
         except KeyboardInterrupt:
             print_themed("\nExiting...", style="info")
 

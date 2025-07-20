@@ -37,22 +37,19 @@ class TableViewsController:
         self.table_header_style = "bold"
         self.border_style = "bright_blue"
 
-    def create_daily_table(
-        self, daily_data: List[Dict[str, Any]], totals: Dict[str, Any], timezone: str = "UTC"
-    ) -> Table:
-        """Create a daily statistics table.
+    def _create_base_table(self, title: str, period_column_name: str, period_column_width: int) -> Table:
+        """Create a base table with common structure.
 
         Args:
-            daily_data: List of daily aggregated data
-            totals: Total statistics
-            timezone: Timezone for display
+            title: Table title
+            period_column_name: Name for the period column ('Date' or 'Month')
+            period_column_width: Width for the period column
 
         Returns:
-            Rich Table object
+            Rich Table object with columns added
         """
-        # Create table with title
         table = Table(
-            title=f"Claude Code Token Usage Report - Daily ({timezone})",
+            title=title,
             title_style="bold cyan",
             show_header=True,
             header_style="bold",
@@ -62,7 +59,7 @@ class TableViewsController:
         )
 
         # Add columns
-        table.add_column("Date", style=self.key_style, width=12)
+        table.add_column(period_column_name, style=self.key_style, width=period_column_width)
         table.add_column("Models", style=self.value_style, width=20)
         table.add_column("Input", style=self.value_style, justify="right", width=12)
         table.add_column("Output", style=self.value_style, justify="right", width=12)
@@ -71,8 +68,17 @@ class TableViewsController:
         table.add_column("Total Tokens", style=self.accent_style, justify="right", width=12)
         table.add_column("Cost (USD)", style=self.success_style, justify="right", width=10)
 
-        # Add data rows
-        for data in daily_data:
+        return table
+
+    def _add_data_rows(self, table: Table, data_list: List[Dict[str, Any]], period_key: str) -> None:
+        """Add data rows to the table.
+
+        Args:
+            table: Table to add rows to
+            data_list: List of data dictionaries
+            period_key: Key to use for period column ('date' or 'month')
+        """
+        for data in data_list:
             models_text = self._format_models(data["models_used"])
             total_tokens = (
                 data["input_tokens"]
@@ -82,7 +88,7 @@ class TableViewsController:
             )
 
             table.add_row(
-                data["date"],
+                data[period_key],
                 models_text,
                 format_number(data["input_tokens"]),
                 format_number(data["output_tokens"]),
@@ -92,6 +98,13 @@ class TableViewsController:
                 format_currency(data["total_cost"]),
             )
 
+    def _add_totals_row(self, table: Table, totals: Dict[str, Any]) -> None:
+        """Add totals row to the table.
+
+        Args:
+            table: Table to add totals to
+            totals: Dictionary with total statistics
+        """
         # Add separator
         table.add_row("", "", "", "", "", "", "", "")
 
@@ -106,6 +119,32 @@ class TableViewsController:
             Text(format_number(totals["total_tokens"]), style=self.accent_style),
             Text(format_currency(totals["total_cost"]), style=self.success_style),
         )
+
+    def create_daily_table(
+        self, daily_data: List[Dict[str, Any]], totals: Dict[str, Any], timezone: str = "UTC"
+    ) -> Table:
+        """Create a daily statistics table.
+
+        Args:
+            daily_data: List of daily aggregated data
+            totals: Total statistics
+            timezone: Timezone for display
+
+        Returns:
+            Rich Table object
+        """
+        # Create base table
+        table = self._create_base_table(
+            title=f"Claude Code Token Usage Report - Daily ({timezone})",
+            period_column_name="Date",
+            period_column_width=12
+        )
+
+        # Add data rows
+        self._add_data_rows(table, daily_data, "date")
+
+        # Add totals
+        self._add_totals_row(table, totals)
 
         return table
 
@@ -122,62 +161,18 @@ class TableViewsController:
         Returns:
             Rich Table object
         """
-        # Create table with title
-        table = Table(
+        # Create base table
+        table = self._create_base_table(
             title=f"Claude Code Token Usage Report - Monthly ({timezone})",
-            title_style="bold cyan",
-            show_header=True,
-            header_style="bold",
-            border_style="bright_blue",
-            expand=True,
-            show_lines=True,
+            period_column_name="Month",
+            period_column_width=10
         )
-
-        # Add columns
-        table.add_column("Month", style=self.key_style, width=10)
-        table.add_column("Models", style=self.value_style, width=20)
-        table.add_column("Input", style=self.value_style, justify="right", width=12)
-        table.add_column("Output", style=self.value_style, justify="right", width=12)
-        table.add_column("Cache Create", style=self.value_style, justify="right", width=12)
-        table.add_column("Cache Read", style=self.value_style, justify="right", width=12)
-        table.add_column("Total Tokens", style=self.accent_style, justify="right", width=12)
-        table.add_column("Cost (USD)", style=self.success_style, justify="right", width=10)
 
         # Add data rows
-        for data in monthly_data:
-            models_text = self._format_models(data["models_used"])
-            total_tokens = (
-                data["input_tokens"]
-                + data["output_tokens"]
-                + data["cache_creation_tokens"]
-                + data["cache_read_tokens"]
-            )
+        self._add_data_rows(table, monthly_data, "month")
 
-            table.add_row(
-                data["month"],
-                models_text,
-                format_number(data["input_tokens"]),
-                format_number(data["output_tokens"]),
-                format_number(data["cache_creation_tokens"]),
-                format_number(data["cache_read_tokens"]),
-                format_number(total_tokens),
-                format_currency(data["total_cost"]),
-            )
-
-        # Add separator
-        table.add_row("", "", "", "", "", "", "", "")
-
-        # Add totals row
-        table.add_row(
-            Text("Total", style=self.accent_style),
-            "",
-            Text(format_number(totals["input_tokens"]), style=self.accent_style),
-            Text(format_number(totals["output_tokens"]), style=self.accent_style),
-            Text(format_number(totals["cache_creation_tokens"]), style=self.accent_style),
-            Text(format_number(totals["cache_read_tokens"]), style=self.accent_style),
-            Text(format_number(totals["total_tokens"]), style=self.accent_style),
-            Text(format_currency(totals["total_cost"]), style=self.success_style),
-        )
+        # Add totals
+        self._add_totals_row(table, totals)
 
         return table
 
@@ -230,17 +225,15 @@ class TableViewsController:
         # Create bullet list
         if len(models) == 1:
             return models[0]
-        elif len(models) <= 5:
+        elif len(models) <= 3:
             return "\n".join([f"• {model}" for model in models])
         else:
-            # Show first 3 models and count of remaining
-            displayed_models = models[:3]
-            remaining_count = len(models) - 3
-
-            formatted_list = [f"• {model}" for model in displayed_models]
-            formatted_list.append(f"• ... and {remaining_count} more")
-
-            return "\n".join(formatted_list)
+            # Truncate long lists
+            first_two = models[:2]
+            remaining_count = len(models) - 2
+            formatted = "\n".join([f"• {model}" for model in first_two])
+            formatted += f"\n• ...and {remaining_count} more"
+            return formatted
 
     def create_no_data_display(self, view_type: str) -> Panel:
         """Create a display for when no data is available.

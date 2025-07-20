@@ -7,8 +7,8 @@ by day and month, similar to ccusage's functionality.
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, List, Optional
 
 from claude_monitor.core.models import SessionBlock, UsageEntry, normalize_model_name
 from claude_monitor.utils.time_utils import TimezoneHandler
