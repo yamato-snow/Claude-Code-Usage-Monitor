@@ -230,8 +230,17 @@ class TableViewsController:
         # Create bullet list
         if len(models) == 1:
             return models[0]
-        else:
+        elif len(models) <= 5:
             return "\n".join([f"• {model}" for model in models])
+        else:
+            # Show first 3 models and count of remaining
+            displayed_models = models[:3]
+            remaining_count = len(models) - 3
+            
+            formatted_list = [f"• {model}" for model in displayed_models]
+            formatted_list.append(f"• ... and {remaining_count} more")
+            
+            return "\n".join(formatted_list)
 
     def create_no_data_display(self, view_type: str) -> Panel:
         """Create a display for when no data is available.
@@ -326,7 +335,7 @@ class TableViewsController:
                 for d in data
             ),
             "total_cost": sum(d["total_cost"] for d in data),
-            "entries_count": len(data),
+            "entries_count": sum(d.get("entries_count", 0) for d in data),
         }
         
         # Determine period for summary

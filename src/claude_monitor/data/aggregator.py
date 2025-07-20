@@ -267,7 +267,7 @@ class UsageAggregator:
         # Apply timezone to entries
         for entry in entries:
             if entry.timestamp.tzinfo is None:
-                entry.timestamp = self.timezone_handler.localize_datetime(entry.timestamp)
+                entry.timestamp = self.timezone_handler.ensure_timezone(entry.timestamp)
         
         # Aggregate based on mode
         if self.aggregation_mode == "daily":

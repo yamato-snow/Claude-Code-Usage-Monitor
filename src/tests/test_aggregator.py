@@ -282,9 +282,9 @@ class TestUsageAggregator:
     """Test cases for UsageAggregator class."""
 
     @pytest.fixture
-    def aggregator(self) -> UsageAggregator:
+    def aggregator(self, tmp_path) -> UsageAggregator:
         """Create a UsageAggregator instance."""
-        return UsageAggregator()
+        return UsageAggregator(data_path=str(tmp_path))
 
     @pytest.fixture
     def sample_entries(self) -> List[UsageEntry]:
