@@ -316,7 +316,7 @@ claude-monitor --view realtime
 # Daily token usage aggregated in table format
 claude-monitor --view daily
 
-# Monthly token usage aggregated in table format  
+# Monthly token usage aggregated in table format
 claude-monitor --view monthly
 
 ```
