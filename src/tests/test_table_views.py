@@ -3,8 +3,8 @@
 from typing import Any, Dict, List
 
 import pytest
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 
 from claude_monitor.ui.table_views import TableViewsController
 

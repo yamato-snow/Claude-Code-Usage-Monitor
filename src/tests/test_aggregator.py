@@ -2,14 +2,13 @@
 
 from datetime import datetime, timezone
 from typing import List
-from unittest.mock import Mock
 
 import pytest
 
 from claude_monitor.core.models import UsageEntry
 from claude_monitor.data.aggregator import (
-    AggregatedStats,
     AggregatedPeriod,
+    AggregatedStats,
     UsageAggregator,
 )
 
