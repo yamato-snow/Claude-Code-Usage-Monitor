@@ -1,11 +1,8 @@
 """Tests for table views module."""
 
-from typing import Any
-from typing import Dict
-from typing import List
+from typing import Any, Dict, List
 
 import pytest
-
 from rich.panel import Panel
 from rich.table import Table
 

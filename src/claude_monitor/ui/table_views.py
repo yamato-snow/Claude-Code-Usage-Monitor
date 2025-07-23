@@ -5,12 +5,7 @@ in table format using Rich library.
 """
 
 import logging
-
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Union
+from typing import Any, Dict, List, Optional, Union
 
 from rich.align import Align
 from rich.console import Console
@@ -19,9 +14,7 @@ from rich.table import Table
 from rich.text import Text
 
 # Removed theme import - using direct styles
-from claude_monitor.utils.formatting import format_currency
-from claude_monitor.utils.formatting import format_number
-
+from claude_monitor.utils.formatting import format_currency, format_number
 
 logger = logging.getLogger(__name__)
 
