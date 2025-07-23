@@ -3,15 +3,25 @@
 import argparse
 import json
 import logging
+
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Literal
+from typing import Optional
+from typing import Tuple
 
 import pytz
-from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from pydantic import Field
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
 
 from claude_monitor import __version__
+
 
 logger = logging.getLogger(__name__)
 
@@ -313,10 +323,8 @@ class Settings(BaseSettings):
         if settings.theme == "auto" or (
             "theme" not in cli_provided_fields and not clear_config
         ):
-            from claude_monitor.terminal.themes import (
-                BackgroundDetector,
-                BackgroundType,
-            )
+            from claude_monitor.terminal.themes import BackgroundDetector
+            from claude_monitor.terminal.themes import BackgroundType
 
             detector = BackgroundDetector()
             detected_bg = detector.detect_background()

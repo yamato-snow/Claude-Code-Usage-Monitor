@@ -5,7 +5,12 @@ in table format using Rich library.
 """
 
 import logging
-from typing import Any, Dict, List, Optional, Union
+
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Union
 
 from rich.align import Align
 from rich.console import Console
@@ -14,9 +19,13 @@ from rich.table import Table
 from rich.text import Text
 
 # Removed theme import - using direct styles
-from claude_monitor.utils.formatting import format_currency, format_number
+from claude_monitor.utils.formatting import format_currency
+from claude_monitor.utils.formatting import format_number
+
 
 logger = logging.getLogger(__name__)
+
+
 class TableViewsController:
     """Controller for table-based views (daily, monthly)."""
 
@@ -37,7 +46,9 @@ class TableViewsController:
         self.table_header_style = "bold"
         self.border_style = "bright_blue"
 
-    def _create_base_table(self, title: str, period_column_name: str, period_column_width: int) -> Table:
+    def _create_base_table(
+        self, title: str, period_column_name: str, period_column_width: int
+    ) -> Table:
         """Create a base table with common structure.
 
         Args:
@@ -59,18 +70,30 @@ class TableViewsController:
         )
 
         # Add columns
-        table.add_column(period_column_name, style=self.key_style, width=period_column_width)
+        table.add_column(
+            period_column_name, style=self.key_style, width=period_column_width
+        )
         table.add_column("Models", style=self.value_style, width=20)
         table.add_column("Input", style=self.value_style, justify="right", width=12)
         table.add_column("Output", style=self.value_style, justify="right", width=12)
-        table.add_column("Cache Create", style=self.value_style, justify="right", width=12)
-        table.add_column("Cache Read", style=self.value_style, justify="right", width=12)
-        table.add_column("Total Tokens", style=self.accent_style, justify="right", width=12)
-        table.add_column("Cost (USD)", style=self.success_style, justify="right", width=10)
+        table.add_column(
+            "Cache Create", style=self.value_style, justify="right", width=12
+        )
+        table.add_column(
+            "Cache Read", style=self.value_style, justify="right", width=12
+        )
+        table.add_column(
+            "Total Tokens", style=self.accent_style, justify="right", width=12
+        )
+        table.add_column(
+            "Cost (USD)", style=self.success_style, justify="right", width=10
+        )
 
         return table
 
-    def _add_data_rows(self, table: Table, data_list: List[Dict[str, Any]], period_key: str) -> None:
+    def _add_data_rows(
+        self, table: Table, data_list: List[Dict[str, Any]], period_key: str
+    ) -> None:
         """Add data rows to the table.
 
         Args:
@@ -114,14 +137,19 @@ class TableViewsController:
             "",
             Text(format_number(totals["input_tokens"]), style=self.accent_style),
             Text(format_number(totals["output_tokens"]), style=self.accent_style),
-            Text(format_number(totals["cache_creation_tokens"]), style=self.accent_style),
+            Text(
+                format_number(totals["cache_creation_tokens"]), style=self.accent_style
+            ),
             Text(format_number(totals["cache_read_tokens"]), style=self.accent_style),
             Text(format_number(totals["total_tokens"]), style=self.accent_style),
             Text(format_currency(totals["total_cost"]), style=self.success_style),
         )
 
     def create_daily_table(
-        self, daily_data: List[Dict[str, Any]], totals: Dict[str, Any], timezone: str = "UTC"
+        self,
+        daily_data: List[Dict[str, Any]],
+        totals: Dict[str, Any],
+        timezone: str = "UTC",
     ) -> Table:
         """Create a daily statistics table.
 
@@ -137,7 +165,7 @@ class TableViewsController:
         table = self._create_base_table(
             title=f"Claude Code Token Usage Report - Daily ({timezone})",
             period_column_name="Date",
-            period_column_width=12
+            period_column_width=12,
         )
 
         # Add data rows
@@ -149,7 +177,10 @@ class TableViewsController:
         return table
 
     def create_monthly_table(
-        self, monthly_data: List[Dict[str, Any]], totals: Dict[str, Any], timezone: str = "UTC"
+        self,
+        monthly_data: List[Dict[str, Any]],
+        totals: Dict[str, Any],
+        timezone: str = "UTC",
     ) -> Table:
         """Create a monthly statistics table.
 
@@ -165,7 +196,7 @@ class TableViewsController:
         table = self._create_base_table(
             title=f"Claude Code Token Usage Report - Monthly ({timezone})",
             period_column_name="Month",
-            period_column_width=10
+            period_column_width=10,
         )
 
         # Add data rows
@@ -176,7 +207,9 @@ class TableViewsController:
 
         return table
 
-    def create_summary_panel(self, view_type: str, totals: Dict[str, Any], period: str) -> Panel:
+    def create_summary_panel(
+        self, view_type: str, totals: Dict[str, Any], period: str
+    ) -> Panel:
         """Create a summary panel for the table view.
 
         Args:
@@ -323,8 +356,10 @@ class TableViewsController:
             "cache_creation_tokens": sum(d["cache_creation_tokens"] for d in data),
             "cache_read_tokens": sum(d["cache_read_tokens"] for d in data),
             "total_tokens": sum(
-                d["input_tokens"] + d["output_tokens"] +
-                d["cache_creation_tokens"] + d["cache_read_tokens"]
+                d["input_tokens"]
+                + d["output_tokens"]
+                + d["cache_creation_tokens"]
+                + d["cache_read_tokens"]
                 for d in data
             ),
             "total_cost": sum(d["total_cost"] for d in data),
@@ -350,7 +385,7 @@ class TableViewsController:
             console.print(table)
         else:
             from rich import print as rprint
+
             rprint(summary_panel)
             rprint()
             rprint(table)
-

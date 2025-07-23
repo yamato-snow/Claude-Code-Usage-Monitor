@@ -1,16 +1,15 @@
 """Tests for data aggregator module."""
 
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 from typing import List
 
 import pytest
 
 from claude_monitor.core.models import UsageEntry
-from claude_monitor.data.aggregator import (
-    AggregatedPeriod,
-    AggregatedStats,
-    UsageAggregator,
-)
+from claude_monitor.data.aggregator import AggregatedPeriod
+from claude_monitor.data.aggregator import AggregatedStats
+from claude_monitor.data.aggregator import UsageAggregator
 
 
 class TestAggregatedStats:
@@ -85,7 +84,7 @@ class TestAggregatedStats:
             cache_creation_tokens=100,
             cache_read_tokens=50,
             cost=0.05,
-            count=10
+            count=10,
         )
 
         result = stats.to_dict()
@@ -180,7 +179,9 @@ class TestAggregatedPeriod:
         # Check overall stats
         assert period.stats.input_tokens == 450
         assert period.stats.output_tokens == 225
-        assert abs(period.stats.cost - 0.0045) < 0.0000001  # Handle floating point precision
+        assert (
+            abs(period.stats.cost - 0.0045) < 0.0000001
+        )  # Handle floating point precision
         assert period.stats.count == 3
 
         # Check models
@@ -224,7 +225,7 @@ class TestAggregatedPeriod:
             cache_creation_tokens=100,
             cache_read_tokens=50,
             cost=0.05,
-            count=10
+            count=10,
         )
         period.models_used = {"claude-3-haiku", "claude-3-sonnet"}
         period.model_breakdowns["claude-3-haiku"] = AggregatedStats(
@@ -233,7 +234,7 @@ class TestAggregatedPeriod:
             cache_creation_tokens=60,
             cache_read_tokens=30,
             cost=0.03,
-            count=6
+            count=6,
         )
         period.model_breakdowns["claude-3-sonnet"] = AggregatedStats(
             input_tokens=400,
@@ -241,7 +242,7 @@ class TestAggregatedPeriod:
             cache_creation_tokens=40,
             cache_read_tokens=20,
             cost=0.02,
-            count=4
+            count=4,
         )
 
         result = period.to_dict("date")
@@ -266,7 +267,7 @@ class TestAggregatedPeriod:
             cache_creation_tokens=1000,
             cache_read_tokens=500,
             cost=0.5,
-            count=100
+            count=100,
         )
         period.models_used = {"claude-3-haiku"}
 
@@ -323,7 +324,9 @@ class TestUsageAggregator:
 
         return entries
 
-    def test_aggregate_daily_basic(self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]) -> None:
+    def test_aggregate_daily_basic(
+        self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]
+    ) -> None:
         """Test basic daily aggregation."""
         result = aggregator.aggregate_daily(sample_entries)
 
@@ -339,10 +342,14 @@ class TestUsageAggregator:
         assert jan1["entries_count"] == 4
         assert set(jan1["models_used"]) == {"claude-3-haiku", "claude-3-sonnet"}
 
-    def test_aggregate_daily_with_date_filter(self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]) -> None:
+    def test_aggregate_daily_with_date_filter(
+        self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]
+    ) -> None:
         """Test daily aggregation with date filters."""
         start_date = datetime(2024, 1, 15, tzinfo=timezone.utc)
-        end_date = datetime(2024, 1, 31, 23, 59, 59, tzinfo=timezone.utc)  # Include the whole day
+        end_date = datetime(
+            2024, 1, 31, 23, 59, 59, tzinfo=timezone.utc
+        )  # Include the whole day
 
         result = aggregator.aggregate_daily(sample_entries, start_date, end_date)
 
@@ -351,7 +358,9 @@ class TestUsageAggregator:
         assert result[0]["date"] == "2024-01-15"
         assert result[1]["date"] == "2024-01-31"
 
-    def test_aggregate_monthly_basic(self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]) -> None:
+    def test_aggregate_monthly_basic(
+        self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]
+    ) -> None:
         """Test basic monthly aggregation."""
         result = aggregator.aggregate_monthly(sample_entries)
 
@@ -362,21 +371,25 @@ class TestUsageAggregator:
         jan = result[0]
         assert jan["month"] == "2024-01"
         assert jan["input_tokens"] == 1400  # 14 entries * 100
-        assert jan["output_tokens"] == 700   # 14 entries * 50
-        assert abs(jan["total_cost"] - 0.014) < 0.0000001  # Handle floating point precision
+        assert jan["output_tokens"] == 700  # 14 entries * 50
+        assert (
+            abs(jan["total_cost"] - 0.014) < 0.0000001
+        )  # Handle floating point precision
         assert jan["entries_count"] == 14
         assert set(jan["models_used"]) == {"claude-3-haiku", "claude-3-sonnet"}
 
         # Check February
         feb = result[1]
         assert feb["month"] == "2024-02"
-        assert feb["input_tokens"] == 600   # 3 entries * 200
+        assert feb["input_tokens"] == 600  # 3 entries * 200
         assert feb["output_tokens"] == 300  # 3 entries * 100
         assert feb["total_cost"] == 0.006  # 3 entries * 0.002
         assert feb["entries_count"] == 3
         assert feb["models_used"] == ["claude-3-opus"]
 
-    def test_aggregate_monthly_with_date_filter(self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]) -> None:
+    def test_aggregate_monthly_with_date_filter(
+        self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]
+    ) -> None:
         """Test monthly aggregation with date filters."""
         start_date = datetime(2024, 2, 1, tzinfo=timezone.utc)
 
@@ -386,7 +399,9 @@ class TestUsageAggregator:
         assert len(result) == 1
         assert result[0]["month"] == "2024-02"
 
-    def test_aggregate_from_blocks_daily(self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]) -> None:
+    def test_aggregate_from_blocks_daily(
+        self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]
+    ) -> None:
         """Test aggregating from session blocks for daily view."""
         # Create mock session blocks
         from claude_monitor.core.models import SessionBlock
@@ -396,7 +411,7 @@ class TestUsageAggregator:
             start_time=datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc),
             end_time=datetime(2024, 1, 1, 15, 0, tzinfo=timezone.utc),
             entries=sample_entries[:5],
-            is_gap=False
+            is_gap=False,
         )
 
         block2 = SessionBlock(
@@ -404,7 +419,7 @@ class TestUsageAggregator:
             start_time=datetime(2024, 1, 2, 10, 0, tzinfo=timezone.utc),
             end_time=datetime(2024, 1, 2, 15, 0, tzinfo=timezone.utc),
             entries=sample_entries[5:10],
-            is_gap=False
+            is_gap=False,
         )
 
         # Gap block should be ignored
@@ -413,7 +428,7 @@ class TestUsageAggregator:
             start_time=datetime(2024, 1, 3, 10, 0, tzinfo=timezone.utc),
             end_time=datetime(2024, 1, 3, 15, 0, tzinfo=timezone.utc),
             entries=[],
-            is_gap=True
+            is_gap=True,
         )
 
         blocks = [block1, block2, gap_block]
@@ -422,7 +437,9 @@ class TestUsageAggregator:
         assert len(result) >= 2  # At least 2 days of data
         assert result[0]["date"] == "2024-01-01"
 
-    def test_aggregate_from_blocks_monthly(self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]) -> None:
+    def test_aggregate_from_blocks_monthly(
+        self, aggregator: UsageAggregator, sample_entries: List[UsageEntry]
+    ) -> None:
         """Test aggregating from session blocks for monthly view."""
         from claude_monitor.core.models import SessionBlock
 
@@ -431,7 +448,7 @@ class TestUsageAggregator:
             start_time=datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc),
             end_time=datetime(2024, 1, 1, 15, 0, tzinfo=timezone.utc),
             entries=sample_entries,
-            is_gap=False
+            is_gap=False,
         )
 
         result = aggregator.aggregate_from_blocks([block], "monthly")
@@ -440,7 +457,9 @@ class TestUsageAggregator:
         assert result[0]["month"] == "2024-01"
         assert result[1]["month"] == "2024-02"
 
-    def test_aggregate_from_blocks_invalid_view_type(self, aggregator: UsageAggregator) -> None:
+    def test_aggregate_from_blocks_invalid_view_type(
+        self, aggregator: UsageAggregator
+    ) -> None:
         """Test aggregate_from_blocks with invalid view type."""
         from claude_monitor.core.models import SessionBlock
 
@@ -449,7 +468,7 @@ class TestUsageAggregator:
             start_time=datetime.now(timezone.utc),
             end_time=datetime.now(timezone.utc),
             entries=[],
-            is_gap=False
+            is_gap=False,
         )
 
         with pytest.raises(ValueError, match="Invalid view type"):
@@ -497,7 +516,9 @@ class TestUsageAggregator:
         assert result["cache_creation_tokens"] == 300
         assert result["cache_read_tokens"] == 150
         assert result["total_tokens"] == 4950
-        assert abs(result["total_cost"] - 0.15) < 0.0000001  # Handle floating point precision
+        assert (
+            abs(result["total_cost"] - 0.15) < 0.0000001
+        )  # Handle floating point precision
         assert result["entries_count"] == 30
 
     def test_aggregate_daily_empty_entries(self, aggregator: UsageAggregator) -> None:

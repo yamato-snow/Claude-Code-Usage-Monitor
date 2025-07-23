@@ -5,18 +5,30 @@ by day and month, similar to ccusage's functionality.
 """
 
 import logging
-from collections import defaultdict
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional
 
-from claude_monitor.core.models import SessionBlock, UsageEntry, normalize_model_name
+from collections import defaultdict
+from dataclasses import dataclass
+from dataclasses import field
+from datetime import datetime
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import List
+from typing import Optional
+
+from claude_monitor.core.models import SessionBlock
+from claude_monitor.core.models import UsageEntry
+from claude_monitor.core.models import normalize_model_name
 from claude_monitor.utils.time_utils import TimezoneHandler
 
+
 logger = logging.getLogger(__name__)
+
+
 @dataclass
 class AggregatedStats:
     """Statistics for aggregated usage data."""
+
     input_tokens: int = 0
     output_tokens: int = 0
     cache_creation_tokens: int = 0
@@ -43,13 +55,18 @@ class AggregatedStats:
             "cost": self.cost,
             "count": self.count,
         }
+
+
 @dataclass
 class AggregatedPeriod:
     """Aggregated data for a time period (day or month)."""
+
     period_key: str
     stats: AggregatedStats = field(default_factory=AggregatedStats)
     models_used: set = field(default_factory=set)
-    model_breakdowns: Dict[str, AggregatedStats] = field(default_factory=lambda: defaultdict(AggregatedStats))
+    model_breakdowns: Dict[str, AggregatedStats] = field(
+        default_factory=lambda: defaultdict(AggregatedStats)
+    )
 
     def add_entry(self, entry: UsageEntry) -> None:
         """Add an entry to this period's aggregate."""
@@ -74,16 +91,19 @@ class AggregatedPeriod:
             "total_cost": self.stats.cost,
             "models_used": sorted(list(self.models_used)),
             "model_breakdowns": {
-                model: stats.to_dict()
-                for model, stats in self.model_breakdowns.items()
+                model: stats.to_dict() for model, stats in self.model_breakdowns.items()
             },
             "entries_count": self.stats.count,
         }
         return result
+
+
 class UsageAggregator:
     """Aggregates usage data for daily and monthly reports."""
 
-    def __init__(self, data_path: str, aggregation_mode: str = "daily", timezone: str = "UTC"):
+    def __init__(
+        self, data_path: str, aggregation_mode: str = "daily", timezone: str = "UTC"
+    ):
         """Initialize the aggregator.
 
         Args:
@@ -144,7 +164,10 @@ class UsageAggregator:
         return result
 
     def aggregate_daily(
-        self, entries: List[UsageEntry], start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
+        self,
+        entries: List[UsageEntry],
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
     ) -> List[Dict[str, Any]]:
         """Aggregate usage data by day.
 
@@ -165,7 +188,10 @@ class UsageAggregator:
         )
 
     def aggregate_monthly(
-        self, entries: List[UsageEntry], start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
+        self,
+        entries: List[UsageEntry],
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
     ) -> List[Dict[str, Any]]:
         """Aggregate usage data by month.
 
@@ -199,7 +225,9 @@ class UsageAggregator:
         """
         # Validate view type
         if view_type not in ["daily", "monthly"]:
-            raise ValueError(f"Invalid view type: {view_type}. Must be 'daily' or 'monthly'")
+            raise ValueError(
+                f"Invalid view type: {view_type}. Must be 'daily' or 'monthly'"
+            )
 
         # Extract all entries from blocks
         all_entries = []
@@ -276,4 +304,3 @@ class UsageAggregator:
             return self.aggregate_monthly(entries)
         else:
             raise ValueError(f"Invalid aggregation mode: {self.aggregation_mode}")
-

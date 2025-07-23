@@ -7,34 +7,41 @@ import signal
 import sys
 import time
 import traceback
+
 from pathlib import Path
-from typing import Any, Callable, Dict, List, NoReturn, Optional, Union
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import List
+from typing import NoReturn
+from typing import Optional
+from typing import Union
 
 from rich.console import Console
 
 from claude_monitor import __version__
-from claude_monitor.cli.bootstrap import (
-    ensure_directories,
-    init_timezone,
-    setup_environment,
-    setup_logging,
-)
-from claude_monitor.core.plans import Plans, PlanType, get_token_limit
+from claude_monitor.cli.bootstrap import ensure_directories
+from claude_monitor.cli.bootstrap import init_timezone
+from claude_monitor.cli.bootstrap import setup_environment
+from claude_monitor.cli.bootstrap import setup_logging
+from claude_monitor.core.plans import Plans
+from claude_monitor.core.plans import PlanType
+from claude_monitor.core.plans import get_token_limit
 from claude_monitor.core.settings import Settings
 from claude_monitor.data.aggregator import UsageAggregator
 from claude_monitor.data.analysis import analyze_usage
 from claude_monitor.error_handling import report_error
 from claude_monitor.monitoring.orchestrator import MonitoringOrchestrator
-from claude_monitor.terminal.manager import (
-    enter_alternate_screen,
-    handle_cleanup_and_exit,
-    handle_error_and_exit,
-    restore_terminal,
-    setup_terminal,
-)
-from claude_monitor.terminal.themes import get_themed_console, print_themed
+from claude_monitor.terminal.manager import enter_alternate_screen
+from claude_monitor.terminal.manager import handle_cleanup_and_exit
+from claude_monitor.terminal.manager import handle_error_and_exit
+from claude_monitor.terminal.manager import restore_terminal
+from claude_monitor.terminal.manager import setup_terminal
+from claude_monitor.terminal.themes import get_themed_console
+from claude_monitor.terminal.themes import print_themed
 from claude_monitor.ui.display_controller import DisplayController
 from claude_monitor.ui.table_views import TableViewsController
+
 
 # Type aliases for CLI callbacks
 DataUpdateCallback = Callable[[Dict[str, Any]], None]
@@ -164,9 +171,9 @@ def _run_monitoring(args: argparse.Namespace) -> None:
             live_display.update(loading_display)
 
             orchestrator = MonitoringOrchestrator(
-                update_interval=args.refresh_rate
-                if hasattr(args, "refresh_rate")
-                else 10,
+                update_interval=(
+                    args.refresh_rate if hasattr(args, "refresh_rate") else 10
+                ),
                 data_path=str(data_path),
             )
             orchestrator.set_args(args)

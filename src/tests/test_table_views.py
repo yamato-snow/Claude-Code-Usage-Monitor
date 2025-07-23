@@ -1,8 +1,11 @@
 """Tests for table views module."""
 
-from typing import Any, Dict, List
+from typing import Any
+from typing import Dict
+from typing import List
 
 import pytest
+
 from rich.panel import Panel
 from rich.table import Table
 
@@ -157,7 +160,12 @@ class TestTableViewsController:
         assert controller.table_header_style == "bold"
         assert controller.border_style == "bright_blue"
 
-    def test_create_daily_table_structure(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_create_daily_table_structure(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test creation of daily table structure."""
         table = controller.create_daily_table(sample_daily_data, sample_totals, "UTC")
 
@@ -181,7 +189,12 @@ class TestTableViewsController:
         assert table.columns[6].header == "Total Tokens"
         assert table.columns[7].header == "Cost (USD)"
 
-    def test_create_daily_table_data(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_create_daily_table_data(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test daily table data population."""
         table = controller.create_daily_table(sample_daily_data, sample_totals, "UTC")
 
@@ -192,9 +205,16 @@ class TestTableViewsController:
         # Total: 4 rows
         assert table.row_count == 4
 
-    def test_create_monthly_table_structure(self, controller: TableViewsController, sample_monthly_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_create_monthly_table_structure(
+        self,
+        controller: TableViewsController,
+        sample_monthly_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test creation of monthly table structure."""
-        table = controller.create_monthly_table(sample_monthly_data, sample_totals, "UTC")
+        table = controller.create_monthly_table(
+            sample_monthly_data, sample_totals, "UTC"
+        )
 
         assert isinstance(table, Table)
         assert table.title == "Claude Code Token Usage Report - Monthly (UTC)"
@@ -216,9 +236,16 @@ class TestTableViewsController:
         assert table.columns[6].header == "Total Tokens"
         assert table.columns[7].header == "Cost (USD)"
 
-    def test_create_monthly_table_data(self, controller: TableViewsController, sample_monthly_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_create_monthly_table_data(
+        self,
+        controller: TableViewsController,
+        sample_monthly_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test monthly table data population."""
-        table = controller.create_monthly_table(sample_monthly_data, sample_totals, "UTC")
+        table = controller.create_monthly_table(
+            sample_monthly_data, sample_totals, "UTC"
+        )
 
         # The table should have:
         # - 2 data rows (for the 2 months)
@@ -227,7 +254,9 @@ class TestTableViewsController:
         # Total: 4 rows
         assert table.row_count == 4
 
-    def test_create_summary_panel(self, controller: TableViewsController, sample_totals: Dict[str, Any]) -> None:
+    def test_create_summary_panel(
+        self, controller: TableViewsController, sample_totals: Dict[str, Any]
+    ) -> None:
         """Test creation of summary panel."""
         panel = controller.create_summary_panel("daily", sample_totals, "Last 30 days")
 
@@ -245,7 +274,9 @@ class TestTableViewsController:
 
     def test_format_models_multiple(self, controller: TableViewsController) -> None:
         """Test formatting multiple models."""
-        result = controller._format_models(["claude-3-haiku", "claude-3-sonnet", "claude-3-opus"])
+        result = controller._format_models(
+            ["claude-3-haiku", "claude-3-sonnet", "claude-3-opus"]
+        )
         expected = "• claude-3-haiku\n• claude-3-sonnet\n• claude-3-opus"
         assert result == expected
 
@@ -265,33 +296,70 @@ class TestTableViewsController:
         assert panel.expand is True
         assert panel.height == 10
 
-    def test_create_aggregate_table_daily(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_create_aggregate_table_daily(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test create_aggregate_table for daily view."""
-        table = controller.create_aggregate_table(sample_daily_data, sample_totals, "daily", "UTC")
+        table = controller.create_aggregate_table(
+            sample_daily_data, sample_totals, "daily", "UTC"
+        )
 
         assert isinstance(table, Table)
         assert table.title == "Claude Code Token Usage Report - Daily (UTC)"
 
-    def test_create_aggregate_table_monthly(self, controller: TableViewsController, sample_monthly_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_create_aggregate_table_monthly(
+        self,
+        controller: TableViewsController,
+        sample_monthly_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test create_aggregate_table for monthly view."""
-        table = controller.create_aggregate_table(sample_monthly_data, sample_totals, "monthly", "UTC")
+        table = controller.create_aggregate_table(
+            sample_monthly_data, sample_totals, "monthly", "UTC"
+        )
 
         assert isinstance(table, Table)
         assert table.title == "Claude Code Token Usage Report - Monthly (UTC)"
 
-    def test_create_aggregate_table_invalid_view_type(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_create_aggregate_table_invalid_view_type(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test create_aggregate_table with invalid view type."""
         with pytest.raises(ValueError, match="Invalid view type"):
-            controller.create_aggregate_table(sample_daily_data, sample_totals, "weekly", "UTC")
+            controller.create_aggregate_table(
+                sample_daily_data, sample_totals, "weekly", "UTC"
+            )
 
-    def test_daily_table_timezone_display(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_daily_table_timezone_display(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test daily table displays correct timezone."""
-        table = controller.create_daily_table(sample_daily_data, sample_totals, "America/New_York")
-        assert table.title == "Claude Code Token Usage Report - Daily (America/New_York)"
+        table = controller.create_daily_table(
+            sample_daily_data, sample_totals, "America/New_York"
+        )
+        assert (
+            table.title == "Claude Code Token Usage Report - Daily (America/New_York)"
+        )
 
-    def test_monthly_table_timezone_display(self, controller: TableViewsController, sample_monthly_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_monthly_table_timezone_display(
+        self,
+        controller: TableViewsController,
+        sample_monthly_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test monthly table displays correct timezone."""
-        table = controller.create_monthly_table(sample_monthly_data, sample_totals, "Europe/London")
+        table = controller.create_monthly_table(
+            sample_monthly_data, sample_totals, "Europe/London"
+        )
         assert table.title == "Claude Code Token Usage Report - Monthly (Europe/London)"
 
     def test_table_with_zero_tokens(self, controller: TableViewsController) -> None:
@@ -328,7 +396,9 @@ class TestTableViewsController:
         # Note: Rich table doesn't count empty separator as a row in some versions
         assert table.row_count in [3, 4]  # Allow for version differences
 
-    def test_summary_panel_different_periods(self, controller: TableViewsController, sample_totals: Dict[str, Any]) -> None:
+    def test_summary_panel_different_periods(
+        self, controller: TableViewsController, sample_totals: Dict[str, Any]
+    ) -> None:
         """Test summary panel with different period descriptions."""
         periods = [
             "Last 30 days",
@@ -343,14 +413,21 @@ class TestTableViewsController:
             assert isinstance(panel, Panel)
             assert panel.title == "Summary"
 
-    def test_no_data_display_different_view_types(self, controller: TableViewsController) -> None:
+    def test_no_data_display_different_view_types(
+        self, controller: TableViewsController
+    ) -> None:
         """Test no data display for different view types."""
         for view_type in ["daily", "monthly", "weekly", "yearly"]:
             panel = controller.create_no_data_display(view_type)
             assert isinstance(panel, Panel)
             assert panel.title == f"No {view_type.capitalize()} Data"
 
-    def test_number_formatting_integration(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_number_formatting_integration(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test that number formatting is integrated correctly."""
         # Test that the table can be created with real formatting functions
         table = controller.create_daily_table(sample_daily_data, sample_totals, "UTC")
@@ -359,7 +436,12 @@ class TestTableViewsController:
         assert table is not None
         assert table.row_count >= 3  # At least data rows + separator + totals
 
-    def test_currency_formatting_integration(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_currency_formatting_integration(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test that currency formatting is integrated correctly."""
         # Test that the table can be created with real formatting functions
         table = controller.create_daily_table(sample_daily_data, sample_totals, "UTC")
@@ -368,7 +450,12 @@ class TestTableViewsController:
         assert table is not None
         assert table.row_count >= 3  # At least data rows + separator + totals
 
-    def test_table_column_alignment(self, controller: TableViewsController, sample_daily_data: List[Dict[str, Any]], sample_totals: Dict[str, Any]) -> None:
+    def test_table_column_alignment(
+        self,
+        controller: TableViewsController,
+        sample_daily_data: List[Dict[str, Any]],
+        sample_totals: Dict[str, Any],
+    ) -> None:
         """Test that numeric columns are right-aligned."""
         table = controller.create_daily_table(sample_daily_data, sample_totals, "UTC")
 

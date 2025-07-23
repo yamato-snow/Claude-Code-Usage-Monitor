@@ -3,13 +3,18 @@
 import argparse
 import json
 import tempfile
+
 from pathlib import Path
-from typing import Dict, List, Union
-from unittest.mock import Mock, patch
+from typing import Dict
+from typing import List
+from typing import Union
+from unittest.mock import Mock
+from unittest.mock import patch
 
 import pytest
 
-from claude_monitor.core.settings import LastUsedParams, Settings
+from claude_monitor.core.settings import LastUsedParams
+from claude_monitor.core.settings import Settings
 
 
 class TestLastUsedParams:
@@ -43,16 +48,20 @@ class TestLastUsedParams:
     def test_save_success(self) -> None:
         """Test successful saving of parameters."""
         # Create mock settings with type object
-        mock_settings = type('MockSettings', (), {
-            'plan': 'pro',
-            'theme': 'dark',
-            'timezone': 'UTC',
-            'time_format': '24h',
-            'refresh_rate': 5,
-            'reset_hour': 12,
-            'custom_limit_tokens': 1000,
-            'view': 'realtime'
-        })()
+        mock_settings = type(
+            "MockSettings",
+            (),
+            {
+                "plan": "pro",
+                "theme": "dark",
+                "timezone": "UTC",
+                "time_format": "24h",
+                "refresh_rate": 5,
+                "reset_hour": 12,
+                "custom_limit_tokens": 1000,
+                "view": "realtime",
+            },
+        )()
 
         # Save parameters
         self.last_used.save(mock_settings)
@@ -76,16 +85,20 @@ class TestLastUsedParams:
 
     def test_save_without_custom_limit(self) -> None:
         """Test saving without custom limit tokens."""
-        mock_settings = type('MockSettings', (), {
-            'plan': 'pro',
-            'theme': 'light',
-            'timezone': 'UTC',
-            'time_format': '12h',
-            'refresh_rate': 10,
-            'reset_hour': None,
-            'custom_limit_tokens': None,
-            'view': 'realtime'
-        })()
+        mock_settings = type(
+            "MockSettings",
+            (),
+            {
+                "plan": "pro",
+                "theme": "light",
+                "timezone": "UTC",
+                "time_format": "12h",
+                "refresh_rate": 10,
+                "reset_hour": None,
+                "custom_limit_tokens": None,
+                "view": "realtime",
+            },
+        )()
 
         self.last_used.save(mock_settings)
 
@@ -101,16 +114,20 @@ class TestLastUsedParams:
         non_existent_dir = self.temp_dir / "non-existent"
         last_used = LastUsedParams(non_existent_dir)
 
-        mock_settings = type('MockSettings', (), {
-            'plan': 'pro',
-            'theme': 'dark',
-            'timezone': 'UTC',
-            'time_format': '24h',
-            'refresh_rate': 5,
-            'reset_hour': 12,
-            'custom_limit_tokens': None,
-            'view': 'realtime'
-        })()
+        mock_settings = type(
+            "MockSettings",
+            (),
+            {
+                "plan": "pro",
+                "theme": "dark",
+                "timezone": "UTC",
+                "time_format": "24h",
+                "refresh_rate": 5,
+                "reset_hour": 12,
+                "custom_limit_tokens": None,
+                "view": "realtime",
+            },
+        )()
 
         last_used.save(mock_settings)
 
