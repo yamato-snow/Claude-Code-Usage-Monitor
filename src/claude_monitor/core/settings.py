@@ -293,10 +293,17 @@ class Settings(BaseSettings):
         cli_provided_fields = set()
         if argv:
             for _i, arg in enumerate(argv):
-                if arg.startswith("--"):
-                    field_name = arg[2:].replace("-", "_")
-                    if field_name in cls.model_fields:
-                        cli_provided_fields.add(field_name)
+                if not arg.startswith("--"):
+                    continue
+                key = arg[2:]  # drop leading --
+                if "=" in key:
+                    key = key.split("=", 1)[0]  # support --flag=value
+                field_name = key.replace("-", "_")
+                # Handle negated boolean flags (--no-flag -> flag)
+                if field_name.startswith("no_"):
+                    field_name = field_name[3:]  # strip "no_" prefix
+                if field_name in cls.model_fields:
+                    cli_provided_fields.add(field_name)
 
         if clear_config:
             last_used = LastUsedParams()
