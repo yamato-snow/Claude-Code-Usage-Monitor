@@ -1003,6 +1003,8 @@ error: externally-managed-environment
 
 **解決策（優先順位順）：**
 
+> **重要**: システムの安定性と安全性のため、uv、pipx、または仮想環境の使用を強く推奨します。`--break-system-packages`オプションの使用は避けてください。
+
 1. **uvを使用（推奨）**
 
 ```bash
@@ -1021,6 +1023,9 @@ error: externally-managed-environment
    # または
    python3 -m pip install --user pipx
 
+   # PATHを確実に設定
+   pipx ensurepath
+
    # claude-monitorをインストール
    pipx install claude-monitor
    ```
@@ -1033,13 +1038,16 @@ error: externally-managed-environment
    pip install claude-monitor
    ```
 
-4. **強制インストール（推奨しません）**
+4. **強制インストール（非推奨・危険）**
 
 ```bash
    pip install --user claude-monitor --break-system-packages
    ```
 
-   ⚠️ **警告**: これはシステム保護をバイパスし、競合を引き起こす可能性があります。代わりに仮想環境の使用を強く推奨します。
+   ⚠️ **重大な警告**: 
+   - この方法はシステム保護をバイパスし、他のPythonパッケージとの競合を引き起こす可能性があります
+   - システムの安定性に影響を与える可能性があります
+   - **絶対に推奨しません** - 代わりに上記のuv、pipx、または仮想環境の使用を強く推奨します
 
 #### pipインストール後にコマンドが見つからない
 
@@ -1157,7 +1165,7 @@ CLAUDE_CONFIG_DIR=~/.config/claude claude-monitor
 
 <div align="center">
 
-**⭐ 有用だと思ったらこのリポジトリにスターを付けてください！ ⭐**
+### ⭐ 有用だと思ったらこのリポジトリにスターを付けてください！ ⭐
 
 [バグ報告](https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor/issues) • [機能リクエスト](https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor/issues) • [貢献](CONTRIBUTING.md)
 
