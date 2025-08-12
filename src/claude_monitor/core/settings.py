@@ -350,7 +350,15 @@ class Settings(BaseSettings):
 
         # Apply locale setting to i18n system
         from claude_monitor.i18n import set_locale
-        set_locale(settings.locale)
+        import os
+
+        env_locale = os.getenv("CLAUDE_MONITOR_LOCALE")
+        # CLI > env > last-used/default
+        if env_locale and env_locale.strip() and ("locale" not in cli_provided_fields):
+            # Allow broader formats like 'ja_JP'/'en-US' here; i18n.set_locale normalizes.
+            set_locale(env_locale)
+        else:
+            set_locale(settings.locale)
 
         if not clear_config:
             last_used = LastUsedParams()

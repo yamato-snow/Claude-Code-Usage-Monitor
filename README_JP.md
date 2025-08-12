@@ -179,7 +179,7 @@ claude-monitor --help
 |-----------|------|---------|-------------|
 | --plan | string | custom | プランタイプ: pro、max5、max20、またはcustom |
 | --custom-limit-tokens | int | None | customプラン用のトークン制限（0より大きい必要があります） |
-| --view | string | realtime | 表示タイプ: realtime、daily、またはmonthly |
+| --view | string | realtime | 表示タイプ: realtime、daily、monthly、またはsession |
 | --timezone | string | auto | タイムゾーン（自動検出）。例: UTC、America/New_York、Europe/London |
 | --time-format | string | auto | 時刻形式: 12h、24h、またはauto |
 | --locale | string | auto | ロケール: auto、en、ja（環境変数 CLAUDE_MONITOR_LOCALE でも設定可） |
@@ -581,7 +581,7 @@ tzdata                      # Windows タイムゾーンデータ
 
 1. **検出**: 監視ツールがトークン使用量が7,000を超えることを検知
 2. **分析**: 実際の制限について以前のセッションをスキャン
-3. **切り替え**: 自動的にcustom_maxモードに変更
+3. **切り替え**: 自動的にcustom（P90自動検出）に変更
 4. **通知**: 変更について明確なメッセージを表示
 5. **継続**: 新しい、より高い制限で監視を継続
 
@@ -972,7 +972,7 @@ source venv/bin/activate  # Linux/Mac
 
 # 監視ツールを実行
 claude-monitor  # Linux/Mac
-# python claude_monitor.py  # Windows
+# python -m claude_monitor  # Windows
 
 # 完了したら、非有効化
 deactivate
