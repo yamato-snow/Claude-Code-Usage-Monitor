@@ -58,6 +58,22 @@ claude-monitor --time-format 12h
 claude-monitor --timezone auto --time-format auto
 ```
 
+### 言語設定
+```bash
+# 日本語を強制（デフォルト）
+claude-monitor --locale ja
+
+# 英語を強制
+claude-monitor --locale en
+
+# システム設定に基づく自動検出
+claude-monitor --locale auto
+
+# 環境変数で設定
+export CLAUDE_MONITOR_LOCALE=ja
+claude-monitor
+```
+
 ### テーマ設定
 ```bash
 # ダークテーマを強制

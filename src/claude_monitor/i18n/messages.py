@@ -46,6 +46,19 @@ MESSAGES = {
         "notification.approaching_limit": "Approaching token limit",
         "notification.cost_warning": "Cost approaching limit",
         
+        # UI messages
+        "ui.title": "CLAUDE CODE USAGE MONITOR",
+        "ui.session_based_limits": "📊 Session-Based Dynamic Limits",
+        "ui.session_based_limits_desc": "Based on your historical usage patterns when hitting limits (P90)",
+        "ui.cost_usage": "💰 Cost Usage:",
+        "ui.token_usage": "📊 Token Usage:",
+        "ui.messages_usage": "📨 Messages Usage:",
+        "ui.time_to_reset": "⏱️  Time to Reset:",
+        "ui.model_distribution": "🤖 Model Distribution:",
+        "ui.burn_rate": "🔥 Burn Rate:",
+        "ui.cost_rate": "💲 Cost Rate:",
+        "ui.predictions": "🔮 Predictions:",
+        
         # Help messages
         "help.timezone_examples": "Examples: UTC, America/New_York, Europe/London, Asia/Tokyo",
         "help.refresh_rate": "Refresh rate in seconds (1-60)",
@@ -84,6 +97,19 @@ MESSAGES = {
         "notification.switching_to_custom": "より高い使用量が検出されたため、カスタムプランに切り替えます",
         "notification.approaching_limit": "トークン制限に近づいています",
         "notification.cost_warning": "コストが制限に近づいています",
+        
+        # UIメッセージ
+        "ui.title": "🎯 Claude Code使用量監視ツール",
+        "ui.session_based_limits": "📊 セッションベース動的制限",
+        "ui.session_based_limits_desc": "制限に達した際の履歴使用パターンに基づく（P90）",
+        "ui.cost_usage": "💰 コスト使用量:",
+        "ui.token_usage": "📊 トークン使用量:",
+        "ui.messages_usage": "📨 メッセージ使用量:",
+        "ui.time_to_reset": "⏱️  リセットまでの時間:",
+        "ui.model_distribution": "🤖 モデル分布:",
+        "ui.burn_rate": "🔥 消費レート:",
+        "ui.cost_rate": "💲 コストレート:",
+        "ui.predictions": "🔮 予測:",
         
         # ヘルプメッセージ
         "help.timezone_examples": "例: UTC, America/New_York, Europe/London, Asia/Tokyo",

@@ -46,6 +46,7 @@ Claude AIのトークン使用量をリアルタイムで監視する美しい�
 
 ### 🚀 **v3.0.0 メジャーアップデート - 完全なアーキテクチャ再構築**
 
+- **🌐 完全日本語化対応** - 日本語と英語の完全なローカライゼーション、自動言語検出
 - **🔮 ML（機械学習）ベースの予測** - P90パーセンタイル計算とインテリジェントなセッション制限検出
 - **🔄 リアルタイム監視** - 設定可能な更新頻度（0.1-20 Hz）とインテリジェントな表示更新
 - **📊 高度なRich UI** - 美しいカラーコード付きプログレスバー、テーブル、レイアウト（WCAG準拠コントラスト）
@@ -327,6 +328,25 @@ claude-monitor --theme dark  # light、dark、classic、auto
 
 # 保存された設定をクリア
 claude-monitor --clear
+```
+
+#### 言語設定
+
+ツールは日本語と英語の両方をサポートしています。デフォルトでは日本語が使用されます：
+
+```bash
+# 日本語を強制（デフォルト）
+claude-monitor --locale ja
+
+# 英語を強制
+claude-monitor --locale en
+
+# システム設定に基づく自動検出
+claude-monitor --locale auto
+
+# 環境変数で設定
+export CLAUDE_MONITOR_LOCALE=ja
+claude-monitor
 ```
 
 #### タイムゾーン設定

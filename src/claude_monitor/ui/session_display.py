@@ -9,6 +9,7 @@ from typing import Any, Optional
 
 import pytz
 
+from claude_monitor.i18n.messages import get_message
 from claude_monitor.ui.components import CostIndicator, VelocityIndicator
 from claude_monitor.ui.layouts import HeaderManager
 from claude_monitor.ui.progress_bars import (
@@ -193,9 +194,9 @@ class SessionDisplayComponent:
 
             screen_buffer.append("")
             if plan == "custom":
-                screen_buffer.append("[bold]📊 Session-Based Dynamic Limits[/bold]")
+                screen_buffer.append(f"[bold]{get_message('ui.session_based_limits')}[/bold]")
                 screen_buffer.append(
-                    "[dim]Based on your historical usage patterns when hitting limits (P90)[/dim]"
+                    f"[dim]{get_message('ui.session_based_limits_desc')}[/dim]"
                 )
                 screen_buffer.append(f"[separator]{'─' * 60}[/]")
             else:
@@ -208,13 +209,13 @@ class SessionDisplayComponent:
             )
             cost_bar = self._render_wide_progress_bar(cost_percentage)
             screen_buffer.append(
-                f"💰 [value]Cost Usage:[/]           {cost_bar} {cost_percentage:4.1f}%    [value]${session_cost:.2f}[/] / [dim]${cost_limit_p90:.2f}[/]"
+                f"{get_message('ui.cost_usage')}           {cost_bar} {cost_percentage:4.1f}%    [value]${session_cost:.2f}[/] / [dim]${cost_limit_p90:.2f}[/]"
             )
             screen_buffer.append("")
 
             token_bar = self._render_wide_progress_bar(usage_percentage)
             screen_buffer.append(
-                f"📊 [value]Token Usage:[/]          {token_bar} {usage_percentage:4.1f}%    [value]{tokens_used:,}[/] / [dim]{token_limit:,}[/]"
+                f"{get_message('ui.token_usage')}          {token_bar} {usage_percentage:4.1f}%    [value]{tokens_used:,}[/] / [dim]{token_limit:,}[/]"
             )
             screen_buffer.append("")
 
@@ -225,7 +226,7 @@ class SessionDisplayComponent:
             )
             messages_bar = self._render_wide_progress_bar(messages_percentage)
             screen_buffer.append(
-                f"📨 [value]Messages Usage:[/]       {messages_bar} {messages_percentage:4.1f}%    [value]{sent_messages}[/] / [dim]{messages_limit_p90:,}[/]"
+                f"{get_message('ui.messages_usage')}       {messages_bar} {messages_percentage:4.1f}%    [value]{sent_messages}[/] / [dim]{messages_limit_p90:,}[/]"
             )
             screen_buffer.append(f"[separator]{'─' * 60}[/]")
 
@@ -239,21 +240,21 @@ class SessionDisplayComponent:
             time_left_hours = int(time_remaining // 60)
             time_left_mins = int(time_remaining % 60)
             screen_buffer.append(
-                f"⏱️  [value]Time to Reset:[/]       {time_bar} {time_left_hours}h {time_left_mins}m"
+                f"{get_message('ui.time_to_reset')}       {time_bar} {time_left_hours}h {time_left_mins}m"
             )
             screen_buffer.append("")
 
             if per_model_stats:
                 model_bar = self.model_usage.render(per_model_stats)
-                screen_buffer.append(f"🤖 [value]Model Distribution:[/]   {model_bar}")
+                screen_buffer.append(f"{get_message('ui.model_distribution')}   {model_bar}")
             else:
                 model_bar = self.model_usage.render({})
-                screen_buffer.append(f"🤖 [value]Model Distribution:[/]   {model_bar}")
+                screen_buffer.append(f"{get_message('ui.model_distribution')}   {model_bar}")
             screen_buffer.append(f"[separator]{'─' * 60}[/]")
 
             velocity_emoji = VelocityIndicator.get_velocity_emoji(burn_rate)
             screen_buffer.append(
-                f"🔥 [value]Burn Rate:[/]              [warning]{burn_rate:.1f}[/] [dim]tokens/min[/] {velocity_emoji}"
+                f"{get_message('ui.burn_rate')}              [warning]{burn_rate:.1f}[/] [dim]tokens/min[/] {velocity_emoji}"
             )
 
             cost_per_min = (
@@ -263,7 +264,7 @@ class SessionDisplayComponent:
             )
             cost_per_min_display = CostIndicator.render(cost_per_min)
             screen_buffer.append(
-                f"💲 [value]Cost Rate:[/]              {cost_per_min_display} [dim]$/min[/]"
+                f"{get_message('ui.cost_rate')}              {cost_per_min_display} [dim]$/min[/]"
             )
         else:
             cost_display = CostIndicator.render(session_cost)
@@ -309,7 +310,7 @@ class SessionDisplayComponent:
             screen_buffer.append("")
 
         screen_buffer.append("")
-        screen_buffer.append("🔮 [value]Predictions:[/]")
+        screen_buffer.append(f"{get_message('ui.predictions')}")
         screen_buffer.append(
             f"   [info]Tokens will run out:[/] [warning]{predicted_end_str}[/]"
         )
