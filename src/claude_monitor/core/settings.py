@@ -44,7 +44,7 @@ class LastUsedParams:
             self.config_dir.mkdir(parents=True, exist_ok=True)
 
             temp_file = self.params_file.with_suffix(".tmp")
-            with open(temp_file, "w") as f:
+            with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(params, f, indent=2)
             temp_file.replace(self.params_file)
 
