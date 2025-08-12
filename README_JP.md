@@ -23,7 +23,7 @@ Claude AIのトークン使用量をリアルタイムで監視する美しい�
   - [基本的な使用方法](#基本的な使用方法)
   - [設定オプション](#設定オプション)
   - [利用可能なプラン](#利用可能なプラン)
-- [🙏 このリリースのテストにご協力ください！](#🙏-このリリースのテストにご協力ください)
+
 - [✨ 機能と動作原理](#-機能と動作原理)
   - [現在の機能](#現在の機能)
   - [Claudeセッションについて理解する](#claudeセッションについて理解する)
@@ -51,7 +51,7 @@ Claude AIのトークン使用量をリアルタイムで監視する美しい�
 - **🔄 リアルタイム監視** - 設定可能な更新頻度（0.1-20 Hz）とインテリジェントな表示更新
 - **📊 高度なRich UI** - 美しいカラーコード付きプログレスバー、テーブル、レイアウト（WCAG準拠コントラスト）
 - **🤖 スマート自動検出** - カスタム制限発見による自動プラン切り替え
-- **📋 強化されたプランサポート** - 更新された制限：Pro（44k）、Max5（88k）、Max20（220k）、Custom（P90ベース）
+- **📋 強化されたプランサポート** - 更新された制限：Pro（約19k）、Max5（88k）、Max20（220k）、Custom（P90ベース）
 - **⚠️ 高度な警告システム** - コストと時間予測を含む多段階アラート
 - **💼 プロフェッショナルアーキテクチャ** - 単一責任原則（SRP）準拠のモジュラー設計
 - **🎨 インテリジェントテーマ** - 自動ターミナル背景検出による科学的カラースキーム
@@ -182,6 +182,7 @@ claude-monitor --help
 | --view | string | realtime | 表示タイプ: realtime、daily、またはmonthly |
 | --timezone | string | auto | タイムゾーン（自動検出）。例: UTC、America/New_York、Europe/London |
 | --time-format | string | auto | 時刻形式: 12h、24h、またはauto |
+| --locale | string | auto | ロケール: auto、en、ja（環境変数 CLAUDE_MONITOR_LOCALE でも設定可） |
 | --theme | string | auto | 表示テーマ: light、dark、classic、またはauto |
 | --refresh-rate | int | 10 | データ更新頻度（秒）（1-60） |
 | --refresh-per-second | float | 0.75 | 表示更新頻度（Hz）（0.1-20.0） |
@@ -191,6 +192,8 @@ claude-monitor --help
 | --debug | flag | False | デバッグログを有効にする |
 | --version, -v | flag | False | バージョン情報を表示 |
 | --clear | flag | False | 保存された設定をクリア |
+
+注: ロケールは環境変数 CLAUDE_MONITOR_LOCALE（ja/en/auto）でも上書きできます。
 
 #### プランオプション
 
@@ -275,7 +278,7 @@ ccm                  # 最短エイリアス
 # P90自動検出付きCustomプラン（デフォルト）
 claude-monitor --plan custom
 
-# Proプラン（約44,000トークン）
+# Proプラン（約19,000トークン）
 claude-monitor --plan pro
 
 # Max5プラン（約88,000トークン）
@@ -332,10 +335,10 @@ claude-monitor --clear
 
 #### 言語設定
 
-ツールは日本語と英語の両方をサポートしています。デフォルトでは日本語が使用されます：
+ツールは日本語と英語の両方をサポートしています。デフォルトは「自動検出」で、システムの言語が日本語の場合に日本語を使用します：
 
 ```bash
-# 日本語を強制（デフォルト）
+# 日本語を強制
 claude-monitor --locale ja
 
 # 英語を強制
@@ -407,7 +410,7 @@ claude-monitor --log-level WARNING  # DEBUG、INFO、WARNING、ERROR、CRITICAL
 
 #### **機能強化**
 - **P90分析**: 90パーセンタイル計算を使用した機械学習ベースの制限検出
-- **更新されたプラン制限**: Pro（44k）、Max5（88k）、Max20（220k）トークン
+- **更新されたプラン制限**: Pro（約19k）、Max5（88k）、Max20（220k）トークン
 - **コスト分析**: キャッシュトークン計算を含むモデル固有の価格設定
 - **Rich UI**: 自動ターミナル背景検出によるWCAG準拠テーマ
 
@@ -951,11 +954,8 @@ source venv/bin/activate
 pip install pytz
 pip install rich>=13.0.0
 
-# 5. スクリプトを実行可能にする（Linux/Macのみ）
-chmod +x claude_monitor.py
-
-# 6. 監視ツールを実行
-python claude_monitor.py
+# 5. モジュールとして実行
+python -m claude_monitor
 ```
 
 #### 日常使用
