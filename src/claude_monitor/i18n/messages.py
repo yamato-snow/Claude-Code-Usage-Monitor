@@ -53,7 +53,7 @@ MESSAGES = {
         "loading.please_wait": "This may take a few seconds",
         
         # Session messages
-        "session.no_active_session": "No active session found",
+        "session.no_active_session": "アクティブセッションが見つかりません",
         "session.monitoring_stopped": "Monitoring stopped.",
         "session.tokens_used": "Tokens Used",
         "session.burn_rate": "Burn Rate",
@@ -84,6 +84,18 @@ MESSAGES = {
         "ui.burn_rate": "🔥 Burn Rate:",
         "ui.cost_rate": "💲 Cost Rate:",
         "ui.predictions": "🔮 Predictions:",
+        "ui.tokens_will_run_out": "Tokens will run out:",
+        "ui.limit_resets_at": "Limit resets at:",
+        "ui.active_session": "Active session",
+        "ui.no_active_session": "No active session",
+        "ui.ctrl_c_to_exit": "Ctrl+C to exit",
+        "ui.token_limit_exceeded": "Token limit exceeded",
+        "ui.max_cost_limit_exceeded": "You have exceeded the maximum cost limit!",
+        "ui.cost_limit_will_exceed": "Cost limit will be exceeded before reset!",
+        "ui.tokens_per_minute": "tokens/min",
+        "ui.dollars_per_minute": "$/min",
+        "ui.messages": "messages",
+        "ui.tokens": "tokens",
         
         # Help messages
         "help.timezone_examples": "Examples: UTC, America/New_York, Europe/London, Asia/Tokyo",
@@ -136,6 +148,18 @@ MESSAGES = {
         "ui.burn_rate": "🔥 消費レート:",
         "ui.cost_rate": "💲 コストレート:",
         "ui.predictions": "🔮 予測:",
+        "ui.tokens_will_run_out": "トークンが不足する時刻:",
+        "ui.limit_resets_at": "制限リセット時刻:",
+        "ui.active_session": "アクティブセッション",
+        "ui.no_active_session": "アクティブセッションなし",
+        "ui.ctrl_c_to_exit": "Ctrl+Cで終了",
+        "ui.token_limit_exceeded": "トークン制限を超過しました",
+        "ui.max_cost_limit_exceeded": "最大コスト制限を超過しました！",
+        "ui.cost_limit_will_exceed": "リセット前にコスト制限を超過する見込みです！",
+        "ui.tokens_per_minute": "トークン/分",
+        "ui.dollars_per_minute": "$/分",
+        "ui.messages": "メッセージ",
+        "ui.tokens": "トークン",
         
         # ヘルプメッセージ
         "help.timezone_examples": "例: UTC, America/New_York, Europe/London, Asia/Tokyo",

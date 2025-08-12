@@ -254,7 +254,7 @@ class SessionDisplayComponent:
 
             velocity_emoji = VelocityIndicator.get_velocity_emoji(burn_rate)
             screen_buffer.append(
-                f"{get_message('ui.burn_rate')}              [warning]{burn_rate:.1f}[/] [dim]tokens/min[/] {velocity_emoji}"
+                f"{get_message('ui.burn_rate')}              [warning]{burn_rate:.1f}[/] [dim]{get_message('ui.tokens_per_minute')}[/] {velocity_emoji}"
             )
 
             cost_per_min = (
@@ -264,7 +264,7 @@ class SessionDisplayComponent:
             )
             cost_per_min_display = CostIndicator.render(cost_per_min)
             screen_buffer.append(
-                f"{get_message('ui.cost_rate')}              {cost_per_min_display} [dim]$/min[/]"
+                f"{get_message('ui.cost_rate')}              {cost_per_min_display} [dim]{get_message('ui.dollars_per_minute')}[/]"
             )
         else:
             cost_display = CostIndicator.render(session_cost)
@@ -276,7 +276,7 @@ class SessionDisplayComponent:
             cost_per_min_display = CostIndicator.render(cost_per_min)
             screen_buffer.append(f"💲 [value]Session Cost:[/]   {cost_display}")
             screen_buffer.append(
-                f"💲 [value]Cost Rate:[/]      {cost_per_min_display} [dim]$/min[/]"
+                f"💲 [value]Cost Rate:[/]      {cost_per_min_display} [dim]{get_message('ui.dollars_per_minute')}[/]"
             )
             screen_buffer.append("")
 
@@ -285,16 +285,16 @@ class SessionDisplayComponent:
             screen_buffer.append("")
 
             screen_buffer.append(
-                f"🎯 [value]Tokens:[/]         [value]{tokens_used:,}[/] / [dim]~{token_limit:,}[/] ([info]{tokens_left:,} left[/])"
+                f"🎯 [value]Tokens:[/]         [value]{tokens_used:,}[/] / [dim]~{token_limit:,}[/] ([info]{tokens_left:,} {get_message('ui.tokens')} left[/])"
             )
 
             velocity_emoji = VelocityIndicator.get_velocity_emoji(burn_rate)
             screen_buffer.append(
-                f"🔥 [value]Burn Rate:[/]      [warning]{burn_rate:.1f}[/] [dim]tokens/min[/] {velocity_emoji}"
+                f"🔥 [value]Burn Rate:[/]      [warning]{burn_rate:.1f}[/] [dim]{get_message('ui.tokens_per_minute')}[/] {velocity_emoji}"
             )
 
             screen_buffer.append(
-                f"📨 [value]Sent Messages:[/]  [info]{sent_messages}[/] [dim]messages[/]"
+                f"📨 [value]Sent Messages:[/]  [info]{sent_messages}[/] [dim]{get_message('ui.messages')}[/]"
             )
 
             if per_model_stats:
@@ -312,10 +312,10 @@ class SessionDisplayComponent:
         screen_buffer.append("")
         screen_buffer.append(f"{get_message('ui.predictions')}")
         screen_buffer.append(
-            f"   [info]Tokens will run out:[/] [warning]{predicted_end_str}[/]"
+            f"   {get_message('ui.tokens_will_run_out')} [warning]{predicted_end_str}[/]"
         )
         screen_buffer.append(
-            f"   [info]Limit resets at:[/]     [success]{reset_time_str}[/]"
+            f"   {get_message('ui.limit_resets_at')}     [success]{reset_time_str}[/]"
         )
         screen_buffer.append("")
 
@@ -329,7 +329,7 @@ class SessionDisplayComponent:
         )
 
         screen_buffer.append(
-            f"⏰ [dim]{current_time_str}[/] 📝 [success]Active session[/] | [dim]Ctrl+C to exit[/] 🟢"
+            f"⏰ [dim]{current_time_str}[/] 📝 [success]{get_message('ui.active_session')}[/] | [dim]{get_message('ui.ctrl_c_to_exit')}[/] 🟢"
         )
 
         return screen_buffer
@@ -357,19 +357,19 @@ class SessionDisplayComponent:
 
         if show_switch_notification and token_limit > original_limit:
             screen_buffer.append(
-                f"🔄 [warning]Token limit exceeded ({token_limit:,} tokens)[/]"
+                f"🔄 [warning]{get_message('ui.token_limit_exceeded')} ({token_limit:,} {get_message('ui.tokens')})[/]"
             )
             notifications_added = True
 
         if show_exceed_notification:
             screen_buffer.append(
-                "⚠️  [error]You have exceeded the maximum cost limit![/]"
+                f"⚠️  [error]{get_message('ui.max_cost_limit_exceeded')}[/]"
             )
             notifications_added = True
 
         if show_tokens_will_run_out:
             screen_buffer.append(
-                "⏰ [warning]Cost limit will be exceeded before reset![/]"
+                f"⏰ [warning]{get_message('ui.cost_limit_will_exceed')}[/]"
             )
             notifications_added = True
 
@@ -410,12 +410,12 @@ class SessionDisplayComponent:
             f"🎯 [value]Tokens:[/]         [value]0[/] / [dim]~{token_limit:,}[/] ([info]0 left[/])"
         )
         screen_buffer.append(
-            "🔥 [value]Burn Rate:[/]      [warning]0.0[/] [dim]tokens/min[/]"
+            f"🔥 [value]Burn Rate:[/]      [warning]0.0[/] [dim]{get_message('ui.tokens_per_minute')}[/]"
         )
         screen_buffer.append(
-            "💲 [value]Cost Rate:[/]      [cost.low]$0.00[/] [dim]$/min[/]"
+            f"💲 [value]Cost Rate:[/]      [cost.low]$0.00[/] [dim]{get_message('ui.dollars_per_minute')}[/]"
         )
-        screen_buffer.append("📨 [value]Sent Messages:[/]  [info]0[/] [dim]messages[/]")
+        screen_buffer.append(f"📨 [value]Sent Messages:[/]  [info]0[/] [dim]{get_message('ui.messages')}[/]")
         screen_buffer.append("")
 
         if current_time and args:
@@ -428,15 +428,15 @@ class SessionDisplayComponent:
                     include_seconds=True,
                 )
                 screen_buffer.append(
-                    f"⏰ [dim]{current_time_str}[/] 📝 [info]No active session[/] | [dim]Ctrl+C to exit[/] 🟨"
+                    f"⏰ [dim]{current_time_str}[/] 📝 [info]{get_message('ui.no_active_session')}[/] | [dim]{get_message('ui.ctrl_c_to_exit')}[/] 🟨"
                 )
             except (pytz.exceptions.UnknownTimeZoneError, AttributeError):
                 screen_buffer.append(
-                    "⏰ [dim]--:--:--[/] 📝 [info]No active session[/] | [dim]Ctrl+C to exit[/] 🟨"
+                    f"⏰ [dim]--:--:--[/] 📝 [info]{get_message('ui.no_active_session')}[/] | [dim]{get_message('ui.ctrl_c_to_exit')}[/] 🟨"
                 )
         else:
             screen_buffer.append(
-                "⏰ [dim]--:--:--[/] 📝 [info]No active session[/] | [dim]Ctrl+C to exit[/] 🟨"
+                f"⏰ [dim]--:--:--[/] 📝 [info]{get_message('ui.no_active_session')}[/] | [dim]{get_message('ui.ctrl_c_to_exit')}[/] 🟨"
             )
 
         return screen_buffer
