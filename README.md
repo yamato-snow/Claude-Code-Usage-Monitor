@@ -597,10 +597,10 @@ The auto-detection system:
 
 ```bash
 # Set custom reset time to 9 AM
-./claude_monitor.py --reset-hour 9
+claude-monitor --reset-hour 9
 
 # With your timezone
-./claude_monitor.py --reset-hour 9 --timezone US/Eastern
+claude-monitor --reset-hour 9 --timezone US/Eastern
 ```
 
 
@@ -614,10 +614,10 @@ The auto-detection system:
 
 ```bash
 # Reset at midnight for clean daily boundaries
-./claude_monitor.py --reset-hour 0
+claude-monitor --reset-hour 0
 
 # Late evening reset (11 PM)
-./claude_monitor.py --reset-hour 23
+claude-monitor --reset-hour 23
 ```
 
 
@@ -736,7 +736,7 @@ claude-monitor --plan custom_max
    claude-monitor
 
    # Or development mode
-   ./claude_monitor.py
+   python -m claude_monitor
    ```
 
    - Gives accurate session tracking from the start
@@ -759,7 +759,7 @@ claude-monitor --plan custom_max
 
 ```bash
    # Add to ~/.bashrc or ~/.zshrc (only for development setup)
-   alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && ./claude_monitor.py'
+   alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && python -m claude_monitor'
    ```
 
 
@@ -807,7 +807,7 @@ claude-monitor --plan custom_max
    tmux new-session -d -s claude-monitor 'claude-monitor'
 
    # Or development mode
-   tmux new-session -d -s claude-monitor './claude_monitor.py'
+   tmux new-session -d -s claude-monitor 'python -m claude_monitor'
 
    # Check status anytime
    tmux attach -t claude-monitor
@@ -963,11 +963,10 @@ source venv/bin/activate
 # 4. Install Python dependencies
 pip install pytz
 pip install rich>=13.0.0
-# 5. Make script executable (Linux/Mac only)
-chmod +x claude_monitor.py
+# 5. Note: No need to make executable as we use module runner
 
 # 6. Run the monitor
-python claude_monitor.py
+python -m claude_monitor
 ```
 
 
@@ -984,8 +983,8 @@ source venv/bin/activate  # Linux/Mac
 # venv\Scripts\activate   # Windows
 
 # Run monitor
-./claude_monitor.py  # Linux/Mac
-# python claude_monitor.py  # Windows
+claude-monitor  # Linux/Mac
+# python -m claude_monitor  # Windows
 
 # When done, deactivate
 deactivate
@@ -997,7 +996,7 @@ deactivate
 Create an alias for quick access:
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
-alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && ./claude_monitor.py'
+alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && claude-monitor'
 
 # Then just run:
 claude-monitor
@@ -1137,7 +1136,7 @@ If you encounter the error No active session found, please follow these steps:
    If the issue persists, consider specifying a custom configuration path. By default, Claude Code uses ~/.config/claude. You may need to adjust this path depending on your environment.
 
 ```bash
-CLAUDE_CONFIG_DIR=~/.config/claude ./claude_monitor.py
+CLAUDE_CONFIG_DIR=~/.config/claude claude-monitor
 ```
 
 
