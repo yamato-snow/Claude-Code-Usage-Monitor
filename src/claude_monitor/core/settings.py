@@ -289,6 +289,15 @@ class Settings(BaseSettings):
 
         clear_config = argv and "--clear" in argv
 
+        # Initialize cli_provided_fields early to avoid NameError
+        cli_provided_fields = set()
+        if argv:
+            for _i, arg in enumerate(argv):
+                if arg.startswith("--"):
+                    field_name = arg[2:].replace("-", "_")
+                    if field_name in cls.model_fields:
+                        cli_provided_fields.add(field_name)
+
         if clear_config:
             last_used = LastUsedParams()
             last_used.clear()
@@ -298,14 +307,6 @@ class Settings(BaseSettings):
             last_params = last_used.load()
 
             settings = cls(_cli_parse_args=argv)
-
-            cli_provided_fields = set()
-            if argv:
-                for _i, arg in enumerate(argv):
-                    if arg.startswith("--"):
-                        field_name = arg[2:].replace("-", "_")
-                        if field_name in cls.model_fields:
-                            cli_provided_fields.add(field_name)
 
             for key, value in last_params.items():
                 if key == "plan":
