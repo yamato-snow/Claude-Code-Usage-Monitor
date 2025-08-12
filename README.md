@@ -191,6 +191,7 @@ claude-monitor --help
 | --view | string | realtime | View type: realtime, daily, or monthly |
 | --timezone | string | auto | Timezone (auto-detected). Examples: UTC, America/New_York, Europe/London |
 | --time-format | string | auto | Time format: 12h, 24h, or auto |
+| --locale | string | auto | Language: auto (system), en (English), ja (Japanese) |
 | --theme | string | auto | Display theme: light, dark, classic, or auto |
 | --refresh-rate | int | 10 | Data refresh rate in seconds (1-60) |
 | --refresh-per-second | float | 0.75 | Display refresh rate in Hz (0.1-20.0) |
@@ -228,6 +229,7 @@ The monitor automatically saves your preferences to avoid re-specifying them on 
 - Theme preferences (--theme)
 - Timezone settings (--timezone)
 - Time format (--time-format)
+- Locale (--locale)
 - Refresh rates (--refresh-rate, --refresh-per-second)
 - Reset hour (--reset-hour)
 - Custom token limits (--custom-limit-tokens)
@@ -339,6 +341,18 @@ claude-monitor --theme dark  # light, dark, classic, auto
 # Clear saved configuration
 claude-monitor --clear
 ```
+
+#### Localization
+
+You can control the UI language via CLI or environment variable:
+
+- CLI (takes precedence): `claude-monitor --locale ja`  # or en, auto
+- Environment variable: `CLAUDE_MONITOR_LOCALE=ja_JP claude-monitor`
+
+Notes:
+- CLI accepts: auto, en, ja
+- Env var accepts broader forms (e.g., ja_JP, en-US) and is normalized automatically
+- Precedence: CLI > CLAUDE_MONITOR_LOCALE > saved/default
 
 #### Timezone Configuration
 

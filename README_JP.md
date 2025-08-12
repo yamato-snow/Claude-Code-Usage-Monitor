@@ -182,7 +182,7 @@ claude-monitor --help
 | --view | string | realtime | 表示タイプ: realtime、daily、monthly、またはsession |
 | --timezone | string | auto | タイムゾーン（自動検出）。例: UTC、America/New_York、Europe/London |
 | --time-format | string | auto | 時刻形式: 12h、24h、またはauto |
-| --locale | string | auto | ロケール: auto、en、ja（環境変数 CLAUDE_MONITOR_LOCALE でも設定可） |
+| --locale | string | auto | 言語: auto（システム）、en（英語）、ja（日本語） |
 | --theme | string | auto | 表示テーマ: light、dark、classic、またはauto |
 | --refresh-rate | int | 10 | データ更新頻度（秒）（1-60） |
 | --refresh-per-second | float | 0.75 | 表示更新頻度（Hz）（0.1-20.0） |
@@ -222,6 +222,7 @@ claude-monitor --help
 - テーマ設定（--theme）
 - タイムゾーン設定（--timezone）
 - 時刻形式（--time-format）
+- ロケール（--locale）
 - 更新頻度（--refresh-rate、--refresh-per-second）
 - リセット時刻（--reset-hour）
 - カスタムトークン制限（--custom-limit-tokens）
@@ -351,6 +352,18 @@ claude-monitor --locale auto
 export CLAUDE_MONITOR_LOCALE=ja
 claude-monitor
 ```
+
+#### ローカライゼーション
+
+UI言語はCLIまたは環境変数で制御できます：
+
+- CLI（優先）: `claude-monitor --locale ja`  # または en、auto
+- 環境変数: `CLAUDE_MONITOR_LOCALE=ja_JP claude-monitor`
+
+注意：
+- CLIは以下を受け入れます: auto、en、ja
+- 環境変数はより広い形式（例：ja_JP、en-US）を受け入れ、自動的に正規化されます
+- 優先順位: CLI > CLAUDE_MONITOR_LOCALE > 保存/デフォルト
 
 #### タイムゾーン設定
 

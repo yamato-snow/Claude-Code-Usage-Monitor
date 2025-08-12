@@ -126,7 +126,7 @@ class Settings(BaseSettings):
 
     timezone: str = Field(
         default="auto",
-        description="Timezone for display (auto-detected from system). Examples: UTC, America/New_York, Europe/London, Asia/Tokyo, Australia/Sydney",
+        description="Timezone for display. Use 'auto' to detect from system or 'local' to use OS local time. Examples: UTC, America/New_York, Europe/London, Asia/Tokyo, Australia/Sydney",
     )
 
     locale: Literal["auto", "en", "ja"] = Field(
@@ -365,8 +365,10 @@ class Settings(BaseSettings):
         if env_locale and env_locale.strip() and ("locale" not in cli_provided_fields):
             # Allow broader formats like 'ja_JP'/'en-US' here; i18n.set_locale normalizes.
             set_locale(env_locale)
+            logger.debug(f"Applied locale from env: {env_locale}")
         else:
             set_locale(settings.locale)
+            logger.debug(f"Applied locale from settings: {settings.locale}")
 
         if not clear_config:
             last_used = LastUsedParams()
