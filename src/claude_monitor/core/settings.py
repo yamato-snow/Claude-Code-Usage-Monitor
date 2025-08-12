@@ -218,6 +218,20 @@ class Settings(BaseSettings):
             )
         return v
 
+    @field_validator("locale", mode="before")
+    @classmethod
+    def validate_locale(cls, v: Any) -> str:
+        """Validate and normalize locale value."""
+        if isinstance(v, str):
+            v_lower = v.lower()
+            valid_locales = ["auto", "en", "ja"]
+            if v_lower in valid_locales:
+                return v_lower
+            raise ValueError(
+                f"Invalid locale: {v}. Must be one of: {', '.join(valid_locales)}"
+            )
+        return v
+
     @field_validator("timezone")
     @classmethod
     def validate_timezone(cls, v: str) -> str:
