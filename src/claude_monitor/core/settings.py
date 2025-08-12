@@ -34,6 +34,7 @@ class LastUsedParams:
                 "refresh_rate": settings.refresh_rate,
                 "reset_hour": settings.reset_hour,
                 "view": settings.view,
+                "locale": settings.locale,
                 "timestamp": datetime.now().isoformat(),
             }
 
@@ -333,6 +334,10 @@ class Settings(BaseSettings):
             else:
                 settings.theme = "auto"
 
+        # Apply locale setting to i18n system
+        from claude_monitor.i18n import set_locale
+        set_locale(settings.locale)
+
         if not clear_config:
             last_used = LastUsedParams()
             last_used.save(settings)
@@ -352,6 +357,7 @@ class Settings(BaseSettings):
         args.reset_hour = self.reset_hour
         args.custom_limit_tokens = self.custom_limit_tokens
         args.time_format = self.time_format
+        args.locale = self.locale
         args.log_level = self.log_level
         args.log_file = str(self.log_file) if self.log_file else None
         args.version = self.version

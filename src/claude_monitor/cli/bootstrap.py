@@ -51,13 +51,15 @@ def setup_environment() -> None:
         "CLAUDE_MONITOR_CACHE_DIR", str(Path.home() / ".claude-monitor" / "cache")
     )
     
-    # Setup default locale for Japanese users
-    import locale
-    system_locale = locale.getdefaultlocale()[0]
-    if system_locale and system_locale.startswith('ja'):
-        os.environ.setdefault("CLAUDE_MONITOR_LOCALE", "ja")
-    else:
-        os.environ.setdefault("CLAUDE_MONITOR_LOCALE", "en")
+    # Setup default locale with improved detection
+    import locale as pylocale
+    # Respect explicit user override first
+    if "CLAUDE_MONITOR_LOCALE" not in os.environ:
+        sys_loc = (pylocale.getlocale()[0] or os.environ.get("LANG", "") or "").lower()
+        os.environ.setdefault(
+            "CLAUDE_MONITOR_LOCALE",
+            "ja" if sys_loc.startswith("ja") else "en",
+        )
 
 
 def init_timezone(timezone: str = "Asia/Tokyo") -> TimezoneHandler:

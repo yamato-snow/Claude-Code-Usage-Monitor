@@ -5,10 +5,36 @@ English and Japanese languages.
 """
 
 import os
+import locale
 from typing import Dict, Any
 
-# Current locale (default to Japanese for Japanese users)
-_current_locale = os.environ.get("CLAUDE_MONITOR_LOCALE", "ja")
+# Determine current locale with env/system detection; fallback to English
+def _normalize_locale(value: str) -> str:
+    v = (value or "").lower().replace("_", "-")
+    if v.startswith("ja"):
+        return "ja"
+    if v.startswith("en"):
+        return "en"
+    return "en"
+
+def _detect_default_locale() -> str:
+    # Explicit env override
+    env = os.environ.get("CLAUDE_MONITOR_LOCALE")
+    if env:
+        return _normalize_locale(env)
+    # Common POSIX locale envs
+    for var in ("LC_ALL", "LC_MESSAGES", "LANG"):
+        v = os.environ.get(var)
+        if v:
+            return _normalize_locale(v)
+    # Fallback to system default
+    try:
+        loc = locale.getdefaultlocale()[0] or ""
+    except Exception:
+        loc = ""
+    return _normalize_locale(loc)
+
+_current_locale = _detect_default_locale()
 
 # Message translations
 MESSAGES = {
@@ -123,13 +149,14 @@ def set_locale(locale: str) -> None:
     """Set the current locale.
     
     Args:
-        locale: Locale code ('en' or 'ja')
+        locale: Locale code ('en', 'ja', or 'auto'; also accepts variants like 'ja_JP'/'en-US')
     """
     global _current_locale
-    if locale in MESSAGES:
-        _current_locale = locale
-    else:
-        _current_locale = "en"  # fallback to English
+    if locale and locale.lower() == "auto":
+        _current_locale = _detect_default_locale()
+        return
+    normalized = _normalize_locale(locale)
+    _current_locale = normalized if normalized in MESSAGES else "en"  # fallback to English
 
 
 def get_current_locale() -> str:
@@ -152,9 +179,12 @@ def get_message(key: str, **kwargs: Any) -> str:
         Localized message string
     """
     messages = MESSAGES.get(_current_locale, MESSAGES["en"])
-    message = messages.get(key, key)  # fallback to key if not found
+    message = messages.get(key)
+    if message is None:
+        # Fallback to English if the key is missing in the active locale
+        message = MESSAGES["en"].get(key, key)
     
-    if kwargs:
+    if kwargs and isinstance(message, str):
         try:
             return message.format(**kwargs)
         except (KeyError, ValueError):
