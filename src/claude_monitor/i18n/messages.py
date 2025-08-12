@@ -96,6 +96,15 @@ MESSAGES = {
         "ui.dollars_per_minute": "$/min",
         "ui.messages": "messages",
         "ui.tokens": "tokens",
+        "ui.tokens_label": "Tokens:",
+        "ui.burn_rate_label": "Burn Rate:",
+        "ui.cost_rate_label": "Cost Rate:",
+        "ui.sent_messages_label": "Sent Messages:",
+        "ui.token_usage_label": "Token Usage:",
+        "ui.session_cost_label": "Session Cost:",
+        "ui.model_usage_label": "Model Usage:",
+        "ui.time_to_reset_label": "Time to Reset:",
+        "ui.left": "left",
         
         # Help messages
         "help.timezone_examples": "Examples: UTC, America/New_York, Europe/London, Asia/Tokyo",
@@ -160,6 +169,15 @@ MESSAGES = {
         "ui.dollars_per_minute": "$/分",
         "ui.messages": "メッセージ",
         "ui.tokens": "トークン",
+        "ui.tokens_label": "トークン:",
+        "ui.burn_rate_label": "消費レート:",
+        "ui.cost_rate_label": "コストレート:",
+        "ui.sent_messages_label": "送信メッセージ:",
+        "ui.token_usage_label": "トークン使用量:",
+        "ui.session_cost_label": "セッションコスト:",
+        "ui.model_usage_label": "モデル使用量:",
+        "ui.time_to_reset_label": "リセットまでの時間:",
+        "ui.left": "残り",
         
         # ヘルプメッセージ
         "help.timezone_examples": "例: UTC, America/New_York, Europe/London, Asia/Tokyo",

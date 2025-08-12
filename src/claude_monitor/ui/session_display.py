@@ -274,39 +274,39 @@ class SessionDisplayComponent:
                 else 0
             )
             cost_per_min_display = CostIndicator.render(cost_per_min)
-            screen_buffer.append(f"💲 [value]Session Cost:[/]   {cost_display}")
+            screen_buffer.append(f"💲 [value]{get_message('ui.session_cost_label')}[/]   {cost_display}")
             screen_buffer.append(
-                f"💲 [value]Cost Rate:[/]      {cost_per_min_display} [dim]{get_message('ui.dollars_per_minute')}[/]"
+                f"💲 [value]{get_message('ui.cost_rate_label')}[/]      {cost_per_min_display} [dim]{get_message('ui.dollars_per_minute')}[/]"
             )
             screen_buffer.append("")
 
             token_bar = self.token_progress.render(usage_percentage)
-            screen_buffer.append(f"📊 [value]Token Usage:[/]    {token_bar}")
+            screen_buffer.append(f"📊 [value]{get_message('ui.token_usage_label')}[/]    {token_bar}")
             screen_buffer.append("")
 
             screen_buffer.append(
-                f"🎯 [value]Tokens:[/]         [value]{tokens_used:,}[/] / [dim]~{token_limit:,}[/] ([info]{tokens_left:,} {get_message('ui.tokens')} left[/])"
+                f"🎯 [value]{get_message('ui.tokens_label')}[/]         [value]{tokens_used:,}[/] / [dim]~{token_limit:,}[/] ([info]{tokens_left:,} {get_message('ui.tokens')} {get_message('ui.left')}[/])"
             )
 
             velocity_emoji = VelocityIndicator.get_velocity_emoji(burn_rate)
             screen_buffer.append(
-                f"🔥 [value]Burn Rate:[/]      [warning]{burn_rate:.1f}[/] [dim]{get_message('ui.tokens_per_minute')}[/] {velocity_emoji}"
+                f"🔥 [value]{get_message('ui.burn_rate_label')}[/]      [warning]{burn_rate:.1f}[/] [dim]{get_message('ui.tokens_per_minute')}[/] {velocity_emoji}"
             )
 
             screen_buffer.append(
-                f"📨 [value]Sent Messages:[/]  [info]{sent_messages}[/] [dim]{get_message('ui.messages')}[/]"
+                f"📨 [value]{get_message('ui.sent_messages_label')}[/]  [info]{sent_messages}[/] [dim]{get_message('ui.messages')}[/]"
             )
 
             if per_model_stats:
                 model_bar = self.model_usage.render(per_model_stats)
-                screen_buffer.append(f"🤖 [value]Model Usage:[/]    {model_bar}")
+                screen_buffer.append(f"🤖 [value]{get_message('ui.model_usage_label')}[/]    {model_bar}")
 
             screen_buffer.append("")
 
             time_bar = self.time_progress.render(
                 elapsed_session_minutes, total_session_minutes
             )
-            screen_buffer.append(f"⏱️  [value]Time to Reset:[/]  {time_bar}")
+            screen_buffer.append(f"⏱️  [value]{get_message('ui.time_to_reset_label')}[/]  {time_bar}")
             screen_buffer.append("")
 
         screen_buffer.append("")
@@ -403,19 +403,19 @@ class SessionDisplayComponent:
         screen_buffer.extend(header_manager.create_header(plan, timezone))
 
         empty_token_bar = self.token_progress.render(0.0)
-        screen_buffer.append(f"📊 [value]Token Usage:[/]    {empty_token_bar}")
+        screen_buffer.append(f"📊 [value]{get_message('ui.token_usage_label')}[/]    {empty_token_bar}")
         screen_buffer.append("")
 
         screen_buffer.append(
-            f"🎯 [value]Tokens:[/]         [value]0[/] / [dim]~{token_limit:,}[/] ([info]0 left[/])"
+            f"🎯 [value]{get_message('ui.tokens_label')}[/]         [value]0[/] / [dim]~{token_limit:,}[/] ([info]0 {get_message('ui.left')}[/])"
         )
         screen_buffer.append(
-            f"🔥 [value]Burn Rate:[/]      [warning]0.0[/] [dim]{get_message('ui.tokens_per_minute')}[/]"
+            f"🔥 [value]{get_message('ui.burn_rate_label')}[/]      [warning]0.0[/] [dim]{get_message('ui.tokens_per_minute')}[/]"
         )
         screen_buffer.append(
-            f"💲 [value]Cost Rate:[/]      [cost.low]$0.00[/] [dim]{get_message('ui.dollars_per_minute')}[/]"
+            f"💲 [value]{get_message('ui.cost_rate_label')}[/]      [cost.low]$0.00[/] [dim]{get_message('ui.dollars_per_minute')}[/]"
         )
-        screen_buffer.append(f"📨 [value]Sent Messages:[/]  [info]0[/] [dim]{get_message('ui.messages')}[/]")
+        screen_buffer.append(f"📨 [value]{get_message('ui.sent_messages_label')}[/]  [info]0[/] [dim]{get_message('ui.messages')}[/]")
         screen_buffer.append("")
 
         if current_time and args:
