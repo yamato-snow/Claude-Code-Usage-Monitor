@@ -50,9 +50,17 @@ def setup_environment() -> None:
     os.environ.setdefault(
         "CLAUDE_MONITOR_CACHE_DIR", str(Path.home() / ".claude-monitor" / "cache")
     )
+    
+    # Setup default locale for Japanese users
+    import locale
+    system_locale = locale.getdefaultlocale()[0]
+    if system_locale and system_locale.startswith('ja'):
+        os.environ.setdefault("CLAUDE_MONITOR_LOCALE", "ja")
+    else:
+        os.environ.setdefault("CLAUDE_MONITOR_LOCALE", "en")
 
 
-def init_timezone(timezone: str = "Europe/Warsaw") -> TimezoneHandler:
+def init_timezone(timezone: str = "Asia/Tokyo") -> TimezoneHandler:
     """Initialize timezone handler.
 
     Args:
@@ -62,7 +70,7 @@ def init_timezone(timezone: str = "Europe/Warsaw") -> TimezoneHandler:
         Configured TimezoneHandler instance
     """
     tz_handler = TimezoneHandler()
-    if timezone != "Europe/Warsaw":
+    if timezone != "Asia/Tokyo":
         tz_handler.set_timezone(timezone)
     return tz_handler
 

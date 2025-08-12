@@ -125,7 +125,12 @@ class Settings(BaseSettings):
 
     timezone: str = Field(
         default="auto",
-        description="Timezone for display (auto-detected from system). Examples: UTC, America/New_York, Europe/London, Europe/Warsaw, Asia/Tokyo, Australia/Sydney",
+        description="Timezone for display (auto-detected from system). Examples: UTC, America/New_York, Europe/London, Asia/Tokyo, Australia/Sydney",
+    )
+
+    locale: Literal["auto", "en", "ja"] = Field(
+        default="auto",
+        description="Language locale (auto, en=English, ja=Japanese). Auto-detects based on system locale",
     )
 
     time_format: str = Field(
