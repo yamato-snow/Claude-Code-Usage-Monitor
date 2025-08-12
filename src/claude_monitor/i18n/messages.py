@@ -53,7 +53,7 @@ MESSAGES = {
         "loading.please_wait": "This may take a few seconds",
         
         # Session messages
-        "session.no_active_session": "アクティブセッションが見つかりません",
+        "session.no_active_session": "No active session found",
         "session.monitoring_stopped": "Monitoring stopped.",
         "session.tokens_used": "Tokens Used",
         "session.burn_rate": "Burn Rate",
