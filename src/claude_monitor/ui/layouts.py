@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Final, Sequence
 
+from claude_monitor.i18n.messages import get_message
+
 
 class HeaderManager:
     """Manager for header layout and formatting."""
@@ -36,7 +38,7 @@ class HeaderManager:
             List of formatted header lines
         """
         sparkles: str = self.DEFAULT_SPARKLES
-        title: str = "CLAUDE CODE USAGE MONITOR"
+        title: str = get_message("ui.title")
         separator: str = self.separator_char * self.separator_length
 
         return [

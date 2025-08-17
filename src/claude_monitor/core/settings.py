@@ -34,6 +34,7 @@ class LastUsedParams:
                 "refresh_rate": settings.refresh_rate,
                 "reset_hour": settings.reset_hour,
                 "view": settings.view,
+                "locale": settings.locale,
                 "timestamp": datetime.now().isoformat(),
             }
 
@@ -43,7 +44,7 @@ class LastUsedParams:
             self.config_dir.mkdir(parents=True, exist_ok=True)
 
             temp_file = self.params_file.with_suffix(".tmp")
-            with open(temp_file, "w") as f:
+            with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(params, f, indent=2)
             temp_file.replace(self.params_file)
 
@@ -125,7 +126,12 @@ class Settings(BaseSettings):
 
     timezone: str = Field(
         default="auto",
-        description="Timezone for display (auto-detected from system). Examples: UTC, America/New_York, Europe/London, Europe/Warsaw, Asia/Tokyo, Australia/Sydney",
+        description="Timezone for display. Use 'auto' to detect from system or 'local' to use OS local time. Examples: UTC, America/New_York, Europe/London, Asia/Tokyo, Australia/Sydney",
+    )
+
+    locale: Literal["auto", "en", "ja"] = Field(
+        default="auto",
+        description="Language locale (auto, en=English, ja=Japanese). Auto-detects based on system locale",
     )
 
     time_format: str = Field(
@@ -212,6 +218,20 @@ class Settings(BaseSettings):
             )
         return v
 
+    @field_validator("locale", mode="before")
+    @classmethod
+    def validate_locale(cls, v: Any) -> str:
+        """Validate and normalize locale value."""
+        if isinstance(v, str):
+            v_lower = v.lower()
+            valid_locales = ["auto", "en", "ja"]
+            if v_lower in valid_locales:
+                return v_lower
+            raise ValueError(
+                f"Invalid locale: {v}. Must be one of: {', '.join(valid_locales)}"
+            )
+        return v
+
     @field_validator("timezone")
     @classmethod
     def validate_timezone(cls, v: str) -> str:
@@ -269,6 +289,22 @@ class Settings(BaseSettings):
 
         clear_config = argv and "--clear" in argv
 
+        # Initialize cli_provided_fields early to avoid NameError
+        cli_provided_fields = set()
+        if argv:
+            for _i, arg in enumerate(argv):
+                if not arg.startswith("--"):
+                    continue
+                key = arg[2:]  # drop leading --
+                if "=" in key:
+                    key = key.split("=", 1)[0]  # support --flag=value
+                field_name = key.replace("-", "_")
+                # Handle negated boolean flags (--no-flag -> flag)
+                if field_name.startswith("no_"):
+                    field_name = field_name[3:]  # strip "no_" prefix
+                if field_name in cls.model_fields:
+                    cli_provided_fields.add(field_name)
+
         if clear_config:
             last_used = LastUsedParams()
             last_used.clear()
@@ -278,14 +314,6 @@ class Settings(BaseSettings):
             last_params = last_used.load()
 
             settings = cls(_cli_parse_args=argv)
-
-            cli_provided_fields = set()
-            if argv:
-                for _i, arg in enumerate(argv):
-                    if arg.startswith("--"):
-                        field_name = arg[2:].replace("-", "_")
-                        if field_name in cls.model_fields:
-                            cli_provided_fields.add(field_name)
 
             for key, value in last_params.items():
                 if key == "plan":
@@ -328,6 +356,20 @@ class Settings(BaseSettings):
             else:
                 settings.theme = "auto"
 
+        # Apply locale setting to i18n system
+        from claude_monitor.i18n import set_locale
+        import os
+
+        env_locale = os.getenv("CLAUDE_MONITOR_LOCALE")
+        # CLI > env > last-used/default
+        if env_locale and env_locale.strip() and ("locale" not in cli_provided_fields):
+            # Allow broader formats like 'ja_JP'/'en-US' here; i18n.set_locale normalizes.
+            set_locale(env_locale)
+            logger.debug(f"Applied locale from env: {env_locale}")
+        else:
+            set_locale(settings.locale)
+            logger.debug(f"Applied locale from settings: {settings.locale}")
+
         if not clear_config:
             last_used = LastUsedParams()
             last_used.save(settings)
@@ -347,6 +389,7 @@ class Settings(BaseSettings):
         args.reset_hour = self.reset_hour
         args.custom_limit_tokens = self.custom_limit_tokens
         args.time_format = self.time_format
+        args.locale = self.locale
         args.log_level = self.log_level
         args.log_file = str(self.log_file) if self.log_file else None
         args.version = self.version

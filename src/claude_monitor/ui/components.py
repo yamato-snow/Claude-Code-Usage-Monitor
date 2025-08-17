@@ -100,13 +100,15 @@ class ErrorDisplayComponent:
         header_manager = HeaderManager()
         screen_buffer.extend(header_manager.create_header(plan, timezone))
 
-        screen_buffer.append("[error]Failed to get usage data[/]")
+        from claude_monitor.i18n import get_message
+        
+        screen_buffer.append(f"[error]{get_message('error.failed_to_get_data')}[/]")
         screen_buffer.append("")
-        screen_buffer.append("[warning]Possible causes:[/]")
-        screen_buffer.append("  • You're not logged into Claude")
-        screen_buffer.append("  • Network connection issues")
+        screen_buffer.append(f"[warning]{get_message('error.possible_causes')}[/]")
+        screen_buffer.append(f"  • {get_message('error.not_logged_in')}")
+        screen_buffer.append(f"  • {get_message('error.network_issues')}")
         screen_buffer.append("")
-        screen_buffer.append("[dim]Retrying in 3 seconds... (Ctrl+C to exit)[/]")
+        screen_buffer.append(f"[dim]{get_message('error.retrying')}[/]")
 
         return screen_buffer
 
@@ -137,24 +139,26 @@ class LoadingScreenComponent:
         header_manager = HeaderManager()
         screen_buffer.extend(header_manager.create_header(plan, timezone))
 
+        from claude_monitor.i18n import get_message
+        
         screen_buffer.append("")
-        screen_buffer.append("[info]⏳ Loading...[/]")
+        screen_buffer.append(f"[info]{get_message('loading.title')}[/]")
         screen_buffer.append("")
 
         if custom_message:
             screen_buffer.append(f"[warning]{custom_message}[/]")
         else:
-            screen_buffer.append("[warning]Fetching Claude usage data...[/]")
+            screen_buffer.append(f"[warning]{get_message('loading.fetching_data')}[/]")
 
         screen_buffer.append("")
 
         if plan == "custom" and not custom_message:
             screen_buffer.append(
-                "[info]Calculating your P90 session limits from usage history...[/]"
+                f"[info]{get_message('loading.calculating_limits')}[/]"
             )
             screen_buffer.append("")
 
-        screen_buffer.append("[dim]This may take a few seconds[/]")
+        screen_buffer.append(f"[dim]{get_message('loading.please_wait')}[/]")
 
         return screen_buffer
 

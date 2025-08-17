@@ -68,7 +68,7 @@ def enter_alternate_screen() -> None:
 
 
 def handle_cleanup_and_exit(
-    old_terminal_settings: Optional[List[Any]], message: str = "Monitoring stopped."
+    old_terminal_settings: Optional[List[Any]], message: Optional[str] = None
 ) -> None:
     """Handle cleanup and exit gracefully.
 
@@ -77,6 +77,9 @@ def handle_cleanup_and_exit(
         message: Exit message to display to user.
     """
     restore_terminal(old_terminal_settings)
+    if message is None:
+        from claude_monitor.i18n import get_message
+        message = get_message('session.monitoring_stopped')
     print_themed(f"\n\n{message}", style="info")
     sys.exit(0)
 

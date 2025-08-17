@@ -43,8 +43,8 @@ source venv/bin/activate  # Linux/Mac
 # Install project and development dependencies
 pip install -e .[dev]
 
-# Make script executable (Linux/Mac)
-chmod +x claude_monitor.py
+# Note: No need to make executable as we use module runner
+# python -m claude_monitor
 ```
 
 ### 3. Create a Feature Branch
